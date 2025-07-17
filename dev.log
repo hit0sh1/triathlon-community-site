@@ -1,0 +1,879 @@
+
+> triathlon-community-site@0.1.0 dev
+> next dev
+
+   ▲ Next.js 15.3.5
+   - Local:        http://localhost:3000
+   - Network:      http://172.31.2.153:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 1392ms
+ ✓ Compiled /middleware in 226ms (180 modules)
+ ○ Compiling /api/cafes/[id] ...
+ ✓ Compiled /api/cafes/[id] in 1003ms (458 modules)
+ ✓ Compiled /api/notifications/unread-count in 151ms (460 modules)
+ ⨯ [TypeError: URL.canParse is not a function] {
+  page: '/api/cafes/aa8b13a1-c355-4b6c-bd59-fa62c29d75f4'
+}
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 444ms
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 533ms (795 modules)
+ GET /api/cafes/aa8b13a1-c355-4b6c-bd59-fa62c29d75f4 500 in 2559ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 137ms
+ ○ Compiling /cafes/[id] ...
+ ✓ Compiled /cafes/[id] in 3.4s (2573 modules)
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 687ms
+ GET /cafes/aa8b13a1-c355-4b6c-bd59-fa62c29d75f4 200 in 4075ms
+ ⨯ [TypeError: URL.canParse is not a function] {
+  page: '/api/cafes/aa8b13a1-c355-4b6c-bd59-fa62c29d75f4'
+}
+ GET /api/cafes/aa8b13a1-c355-4b6c-bd59-fa62c29d75f4 500 in 424ms
+ ⨯ [TypeError: URL.canParse is not a function] {
+  page: '/api/cafes/aa8b13a1-c355-4b6c-bd59-fa62c29d75f4'
+}
+ GET /api/cafes/aa8b13a1-c355-4b6c-bd59-fa62c29d75f4 500 in 519ms
+ ○ Compiling /cafes ...
+ ✓ Compiled /cafes in 903ms (2574 modules)
+ GET /cafes 200 in 973ms
+ GET /cafes 200 in 19ms
+ ✓ Compiled /api/cafes in 348ms (2576 modules)
+ GET /api/cafes? 200 in 466ms
+ GET /api/cafes? 200 in 70ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 87ms
+ GET /cafes 200 in 167ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 506ms (2580 modules)
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 642ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 546ms (1343 modules)
+ ✓ Compiled in 0ms (1343 modules)
+ ✓ Compiled in 0ms (1343 modules)
+ ✓ Compiled in 0ms (1343 modules)
+ GET /favicon.ico 200 in 964ms
+ GET /api/cafes? 200 in 750ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 675ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 91ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 74ms
+ GET /cafes/aa8b13a1-c355-4b6c-bd59-fa62c29d75f4 200 in 57ms
+ ✓ Compiled in 733ms (2596 modules)
+ GET /cafes/aa8b13a1-c355-4b6c-bd59-fa62c29d75f4 200 in 50ms
+ GET /cafes/aa8b13a1-c355-4b6c-bd59-fa62c29d75f4/edit 404 in 23ms
+ GET /cafes/aa8b13a1-c355-4b6c-bd59-fa62c29d75f4/edit 404 in 148ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 58ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 140ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 77ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 68ms
+ GET /cafes/aa8b13a1-c355-4b6c-bd59-fa62c29d75f4 200 in 167ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 81ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 66ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 70ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 69ms
+ GET /cafes/aa8b13a1-c355-4b6c-bd59-fa62c29d75f4/edit 404 in 18ms
+ GET /cafes/aa8b13a1-c355-4b6c-bd59-fa62c29d75f4/edit 404 in 80ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 53ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 86ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 72ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 77ms
+ GET /cafes/aa8b13a1-c355-4b6c-bd59-fa62c29d75f4 200 in 96ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 59ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 90ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 86ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 97ms
+ GET /cafes/aa8b13a1-c355-4b6c-bd59-fa62c29d75f4 200 in 148ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 81ms
+ GET /favicon.ico 200 in 22ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 67ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 68ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 99ms
+ GET /cafes/aa8b13a1-c355-4b6c-bd59-fa62c29d75f4/edit 404 in 14ms
+ GET /cafes/aa8b13a1-c355-4b6c-bd59-fa62c29d75f4/edit 404 in 80ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 71ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 68ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 72ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 62ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 76ms
+ GET /cafes/aa8b13a1-c355-4b6c-bd59-fa62c29d75f4 200 in 102ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 63ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 64ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 72ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 78ms
+ ✓ Compiled in 394ms (1252 modules)
+ GET /cafes/aa8b13a1-c355-4b6c-bd59-fa62c29d75f4 200 in 35ms
+ ○ Compiling /api/cafes/[id]/reviews ...
+ ✓ Compiled /api/cafes/[id]/reviews in 769ms (2629 modules)
+[Error: Route "/api/cafes/[id]/reviews" used `cookies().get('sb-glkltvfyvgtfwjzlfjin-auth-token')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+Failed to parse cookie string: SyntaxError: Unexpected token 'b', "base64-eyJ"... is not valid JSON
+    at JSON.parse (<anonymous>)
+[Error: Route "/api/cafes/[id]/reviews" used `cookies().get('sb-glkltvfyvgtfwjzlfjin-auth-token')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+Failed to parse cookie string: SyntaxError: Unexpected token 'b', "base64-eyJ"... is not valid JSON
+    at JSON.parse (<anonymous>)
+ POST /api/cafes/aa8b13a1-c355-4b6c-bd59-fa62c29d75f4/reviews 401 in 1252ms
+ ✓ Compiled in 179ms (1252 modules)
+ GET /cafes/aa8b13a1-c355-4b6c-bd59-fa62c29d75f4 200 in 56ms
+ GET /cafes/aa8b13a1-c355-4b6c-bd59-fa62c29d75f4 200 in 24ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 75ms
+ GET /cafes/aa8b13a1-c355-4b6c-bd59-fa62c29d75f4 200 in 256ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 124ms
+ ✓ Compiled /favicon.ico in 294ms (1393 modules)
+ GET /favicon.ico 200 in 365ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 111ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 73ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 77ms
+ GET /cafes/aa8b13a1-c355-4b6c-bd59-fa62c29d75f4 200 in 167ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 83ms
+ GET /favicon.ico 200 in 17ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 82ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 63ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 65ms
+ ✓ Compiled in 192ms (1252 modules)
+ GET /cafes/aa8b13a1-c355-4b6c-bd59-fa62c29d75f4 200 in 26ms
+ ○ Compiling /cafes/[id]/edit ...
+ ✓ Compiled /cafes/[id]/edit in 1081ms (2650 modules)
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 593ms
+ GET /cafes/aa8b13a1-c355-4b6c-bd59-fa62c29d75f4/edit 200 in 1496ms
+ ✓ Compiled /api/cafes/[id] in 258ms (1406 modules)
+ ⨯ [TypeError: URL.canParse is not a function] {
+  page: '/api/cafes/aa8b13a1-c355-4b6c-bd59-fa62c29d75f4'
+}
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 757ms (2599 modules)
+ DELETE /api/cafes/aa8b13a1-c355-4b6c-bd59-fa62c29d75f4 500 in 1518ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 158ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 92ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 85ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 86ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 81ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 92ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 109ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 90ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 87ms
+Error: fetch failed
+    at context.fetch (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/web/sandbox/context.js:322:60)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/helpers.js:114:25)
+    at _handleRequest (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:115:24)
+    at _request (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:105:24)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1060:82)
+    at SupabaseAuthClient._useSession (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:955:26)
+    at async SupabaseAuthClient._getUser (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1050:20)
+    at async eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1037:20)
+    at async eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:900:28) {
+  
+}
+Error fetching unread count: {
+  message: 'TypeError: fetch failed',
+  details: 'TypeError: fetch failed\n' +
+    '    at Object.fetch (node:internal/deps/undici/undici:11457:11)\n' +
+    '    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n' +
+    '    at async GET (webpack-internal:///(rsc)/./app/api/notifications/unread-count/route.ts:22:34)\n' +
+    '    at async AppRouteRouteModule.do (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:34112)\n' +
+    '    at async AppRouteRouteModule.handle (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:41338)\n' +
+    '    at async doRender (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1518:42)\n' +
+    '    at async DevServer.renderToResponseWithComponentsImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1920:28)\n' +
+    '    at async DevServer.renderPageComponent (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:2408:24)\n' +
+    '    at async DevServer.renderToResponseImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:2445:32)\n' +
+    '    at async DevServer.pipeImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1008:25)\n' +
+    '    at async NextNodeServer.handleCatchallRenderRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/next-server.js:305:17)\n' +
+    '    at async DevServer.handleRequestImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:900:17)\n' +
+    '    at async /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/dev/next-dev-server.js:371:20\n' +
+    '    at async Span.traceAsyncFn (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/trace/trace.js:157:20)\n' +
+    '    at async DevServer.handleRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/dev/next-dev-server.js:368:24)\n' +
+    '    at async invokeRender (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:237:21)\n' +
+    '    at async handleRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:428:24)\n' +
+    '    at async requestHandlerImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:452:13)\n' +
+    '    at async Server.requestListener (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/start-server.js:158:13)',
+  hint: '',
+  code: ''
+}
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 500 in 19ms
+Error: fetch failed
+    at context.fetch (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/web/sandbox/context.js:322:60)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/helpers.js:114:25)
+    at _handleRequest (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:115:24)
+    at _request (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:105:24)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1060:82)
+    at SupabaseAuthClient._useSession (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:955:26)
+    at async SupabaseAuthClient._getUser (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1050:20)
+    at async eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1037:20)
+    at async eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:900:28) {
+  
+}
+Error fetching unread count: {
+  message: 'TypeError: fetch failed',
+  details: 'TypeError: fetch failed\n' +
+    '    at Object.fetch (node:internal/deps/undici/undici:11457:11)\n' +
+    '    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n' +
+    '    at async GET (webpack-internal:///(rsc)/./app/api/notifications/unread-count/route.ts:22:34)\n' +
+    '    at async AppRouteRouteModule.do (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:34112)\n' +
+    '    at async AppRouteRouteModule.handle (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:41338)\n' +
+    '    at async doRender (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1518:42)\n' +
+    '    at async DevServer.renderToResponseWithComponentsImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1920:28)\n' +
+    '    at async DevServer.renderPageComponent (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:2408:24)\n' +
+    '    at async DevServer.renderToResponseImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:2445:32)\n' +
+    '    at async DevServer.pipeImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1008:25)\n' +
+    '    at async NextNodeServer.handleCatchallRenderRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/next-server.js:305:17)\n' +
+    '    at async DevServer.handleRequestImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:900:17)\n' +
+    '    at async /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/dev/next-dev-server.js:371:20\n' +
+    '    at async Span.traceAsyncFn (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/trace/trace.js:157:20)\n' +
+    '    at async DevServer.handleRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/dev/next-dev-server.js:368:24)\n' +
+    '    at async invokeRender (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:237:21)\n' +
+    '    at async handleRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:428:24)\n' +
+    '    at async requestHandlerImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:452:13)\n' +
+    '    at async Server.requestListener (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/start-server.js:158:13)',
+  hint: '',
+  code: ''
+}
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 500 in 16ms
+Error: fetch failed
+    at context.fetch (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/web/sandbox/context.js:322:60)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/helpers.js:114:25)
+    at _handleRequest (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:115:24)
+    at _request (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:105:24)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1060:82)
+    at SupabaseAuthClient._useSession (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:955:26)
+    at async SupabaseAuthClient._getUser (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1050:20)
+    at async eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1037:20)
+    at async eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:900:28) {
+  
+}
+Error fetching unread count: {
+  message: 'TypeError: fetch failed',
+  details: 'TypeError: fetch failed\n' +
+    '    at Object.fetch (node:internal/deps/undici/undici:11457:11)\n' +
+    '    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n' +
+    '    at async GET (webpack-internal:///(rsc)/./app/api/notifications/unread-count/route.ts:22:34)\n' +
+    '    at async AppRouteRouteModule.do (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:34112)\n' +
+    '    at async AppRouteRouteModule.handle (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:41338)\n' +
+    '    at async doRender (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1518:42)\n' +
+    '    at async DevServer.renderToResponseWithComponentsImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1920:28)\n' +
+    '    at async DevServer.renderPageComponent (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:2408:24)\n' +
+    '    at async DevServer.renderToResponseImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:2445:32)\n' +
+    '    at async DevServer.pipeImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1008:25)\n' +
+    '    at async NextNodeServer.handleCatchallRenderRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/next-server.js:305:17)\n' +
+    '    at async DevServer.handleRequestImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:900:17)\n' +
+    '    at async /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/dev/next-dev-server.js:371:20\n' +
+    '    at async Span.traceAsyncFn (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/trace/trace.js:157:20)\n' +
+    '    at async DevServer.handleRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/dev/next-dev-server.js:368:24)\n' +
+    '    at async invokeRender (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:237:21)\n' +
+    '    at async handleRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:428:24)\n' +
+    '    at async requestHandlerImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:452:13)\n' +
+    '    at async Server.requestListener (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/start-server.js:158:13)',
+  hint: '',
+  code: ''
+}
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 500 in 15ms
+Error: fetch failed
+    at context.fetch (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/web/sandbox/context.js:322:60)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/helpers.js:114:25)
+    at _handleRequest (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:115:24)
+    at _request (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:105:24)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1060:82)
+    at SupabaseAuthClient._useSession (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:955:26)
+    at async SupabaseAuthClient._getUser (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1050:20)
+    at async eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1037:20)
+    at async eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:900:28) {
+  
+}
+Error fetching unread count: {
+  message: 'TypeError: fetch failed',
+  details: 'TypeError: fetch failed\n' +
+    '    at Object.fetch (node:internal/deps/undici/undici:11457:11)\n' +
+    '    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n' +
+    '    at async GET (webpack-internal:///(rsc)/./app/api/notifications/unread-count/route.ts:22:34)\n' +
+    '    at async AppRouteRouteModule.do (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:34112)\n' +
+    '    at async AppRouteRouteModule.handle (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:41338)\n' +
+    '    at async doRender (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1518:42)\n' +
+    '    at async DevServer.renderToResponseWithComponentsImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1920:28)\n' +
+    '    at async DevServer.renderPageComponent (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:2408:24)\n' +
+    '    at async DevServer.renderToResponseImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:2445:32)\n' +
+    '    at async DevServer.pipeImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1008:25)\n' +
+    '    at async NextNodeServer.handleCatchallRenderRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/next-server.js:305:17)\n' +
+    '    at async DevServer.handleRequestImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:900:17)\n' +
+    '    at async /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/dev/next-dev-server.js:371:20\n' +
+    '    at async Span.traceAsyncFn (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/trace/trace.js:157:20)\n' +
+    '    at async DevServer.handleRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/dev/next-dev-server.js:368:24)\n' +
+    '    at async invokeRender (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:237:21)\n' +
+    '    at async handleRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:428:24)\n' +
+    '    at async requestHandlerImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:452:13)\n' +
+    '    at async Server.requestListener (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/start-server.js:158:13)',
+  hint: '',
+  code: ''
+}
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 500 in 15ms
+Error: fetch failed
+    at context.fetch (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/web/sandbox/context.js:322:60)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/helpers.js:114:25)
+    at _handleRequest (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:115:24)
+    at _request (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:105:24)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1060:82)
+    at SupabaseAuthClient._useSession (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:955:26)
+    at async SupabaseAuthClient._getUser (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1050:20)
+    at async eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1037:20)
+    at async eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:900:28) {
+  
+}
+Error fetching unread count: {
+  message: 'TypeError: fetch failed',
+  details: 'TypeError: fetch failed\n' +
+    '    at Object.fetch (node:internal/deps/undici/undici:11457:11)\n' +
+    '    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n' +
+    '    at async GET (webpack-internal:///(rsc)/./app/api/notifications/unread-count/route.ts:22:34)\n' +
+    '    at async AppRouteRouteModule.do (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:34112)\n' +
+    '    at async AppRouteRouteModule.handle (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:41338)\n' +
+    '    at async doRender (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1518:42)\n' +
+    '    at async DevServer.renderToResponseWithComponentsImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1920:28)\n' +
+    '    at async DevServer.renderPageComponent (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:2408:24)\n' +
+    '    at async DevServer.renderToResponseImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:2445:32)\n' +
+    '    at async DevServer.pipeImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1008:25)\n' +
+    '    at async NextNodeServer.handleCatchallRenderRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/next-server.js:305:17)\n' +
+    '    at async DevServer.handleRequestImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:900:17)\n' +
+    '    at async /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/dev/next-dev-server.js:371:20\n' +
+    '    at async Span.traceAsyncFn (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/trace/trace.js:157:20)\n' +
+    '    at async DevServer.handleRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/dev/next-dev-server.js:368:24)\n' +
+    '    at async invokeRender (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:237:21)\n' +
+    '    at async handleRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:428:24)\n' +
+    '    at async requestHandlerImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:452:13)\n' +
+    '    at async Server.requestListener (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/start-server.js:158:13)',
+  hint: '',
+  code: ''
+}
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 500 in 15ms
+Error: fetch failed
+    at context.fetch (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/web/sandbox/context.js:322:60)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/helpers.js:114:25)
+    at _handleRequest (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:115:24)
+    at _request (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:105:24)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1060:82)
+    at SupabaseAuthClient._useSession (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:955:26)
+    at async SupabaseAuthClient._getUser (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1050:20)
+    at async eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1037:20)
+    at async eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:900:28) {
+  
+}
+Error fetching unread count: {
+  message: 'TypeError: fetch failed',
+  details: 'TypeError: fetch failed\n' +
+    '    at Object.fetch (node:internal/deps/undici/undici:11457:11)\n' +
+    '    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n' +
+    '    at async GET (webpack-internal:///(rsc)/./app/api/notifications/unread-count/route.ts:22:34)\n' +
+    '    at async AppRouteRouteModule.do (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:34112)\n' +
+    '    at async AppRouteRouteModule.handle (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:41338)\n' +
+    '    at async doRender (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1518:42)\n' +
+    '    at async DevServer.renderToResponseWithComponentsImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1920:28)\n' +
+    '    at async DevServer.renderPageComponent (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:2408:24)\n' +
+    '    at async DevServer.renderToResponseImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:2445:32)\n' +
+    '    at async DevServer.pipeImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1008:25)\n' +
+    '    at async NextNodeServer.handleCatchallRenderRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/next-server.js:305:17)\n' +
+    '    at async DevServer.handleRequestImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:900:17)\n' +
+    '    at async /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/dev/next-dev-server.js:371:20\n' +
+    '    at async Span.traceAsyncFn (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/trace/trace.js:157:20)\n' +
+    '    at async DevServer.handleRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/dev/next-dev-server.js:368:24)\n' +
+    '    at async invokeRender (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:237:21)\n' +
+    '    at async handleRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:428:24)\n' +
+    '    at async requestHandlerImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:452:13)\n' +
+    '    at async Server.requestListener (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/start-server.js:158:13)',
+  hint: '',
+  code: ''
+}
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 500 in 15ms
+Error: fetch failed
+    at context.fetch (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/web/sandbox/context.js:322:60)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/helpers.js:114:25)
+    at _handleRequest (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:115:24)
+    at _request (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:105:24)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1060:82)
+    at SupabaseAuthClient._useSession (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:955:26)
+    at async SupabaseAuthClient._getUser (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1050:20)
+    at async eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1037:20)
+    at async eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:900:28) {
+  
+}
+Error fetching unread count: {
+  message: 'TypeError: fetch failed',
+  details: 'TypeError: fetch failed\n' +
+    '    at Object.fetch (node:internal/deps/undici/undici:11457:11)\n' +
+    '    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n' +
+    '    at async GET (webpack-internal:///(rsc)/./app/api/notifications/unread-count/route.ts:22:34)\n' +
+    '    at async AppRouteRouteModule.do (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:34112)\n' +
+    '    at async AppRouteRouteModule.handle (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:41338)\n' +
+    '    at async doRender (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1518:42)\n' +
+    '    at async DevServer.renderToResponseWithComponentsImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1920:28)\n' +
+    '    at async DevServer.renderPageComponent (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:2408:24)\n' +
+    '    at async DevServer.renderToResponseImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:2445:32)\n' +
+    '    at async DevServer.pipeImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1008:25)\n' +
+    '    at async NextNodeServer.handleCatchallRenderRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/next-server.js:305:17)\n' +
+    '    at async DevServer.handleRequestImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:900:17)\n' +
+    '    at async /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/dev/next-dev-server.js:371:20\n' +
+    '    at async Span.traceAsyncFn (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/trace/trace.js:157:20)\n' +
+    '    at async DevServer.handleRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/dev/next-dev-server.js:368:24)\n' +
+    '    at async invokeRender (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:237:21)\n' +
+    '    at async handleRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:428:24)\n' +
+    '    at async requestHandlerImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:452:13)\n' +
+    '    at async Server.requestListener (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/start-server.js:158:13)',
+  hint: '',
+  code: ''
+}
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 500 in 14ms
+Error: fetch failed
+    at context.fetch (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/web/sandbox/context.js:322:60)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/helpers.js:114:25)
+    at _handleRequest (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:115:24)
+    at _request (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:105:24)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1060:82)
+    at SupabaseAuthClient._useSession (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:955:26)
+    at async SupabaseAuthClient._getUser (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1050:20)
+    at async eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1037:20)
+    at async eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:900:28) {
+  
+}
+Error fetching unread count: {
+  message: 'TypeError: fetch failed',
+  details: 'TypeError: fetch failed\n' +
+    '    at Object.fetch (node:internal/deps/undici/undici:11457:11)\n' +
+    '    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n' +
+    '    at async GET (webpack-internal:///(rsc)/./app/api/notifications/unread-count/route.ts:22:34)\n' +
+    '    at async AppRouteRouteModule.do (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:34112)\n' +
+    '    at async AppRouteRouteModule.handle (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:41338)\n' +
+    '    at async doRender (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1518:42)\n' +
+    '    at async DevServer.renderToResponseWithComponentsImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1920:28)\n' +
+    '    at async DevServer.renderPageComponent (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:2408:24)\n' +
+    '    at async DevServer.renderToResponseImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:2445:32)\n' +
+    '    at async DevServer.pipeImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1008:25)\n' +
+    '    at async NextNodeServer.handleCatchallRenderRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/next-server.js:305:17)\n' +
+    '    at async DevServer.handleRequestImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:900:17)\n' +
+    '    at async /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/dev/next-dev-server.js:371:20\n' +
+    '    at async Span.traceAsyncFn (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/trace/trace.js:157:20)\n' +
+    '    at async DevServer.handleRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/dev/next-dev-server.js:368:24)\n' +
+    '    at async invokeRender (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:237:21)\n' +
+    '    at async handleRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:428:24)\n' +
+    '    at async requestHandlerImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:452:13)\n' +
+    '    at async Server.requestListener (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/start-server.js:158:13)',
+  hint: '',
+  code: ''
+}
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 500 in 14ms
+Error: fetch failed
+    at context.fetch (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/web/sandbox/context.js:322:60)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/helpers.js:114:25)
+    at _handleRequest (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:115:24)
+    at _request (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:105:24)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1060:82)
+    at SupabaseAuthClient._useSession (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:955:26)
+    at async SupabaseAuthClient._getUser (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1050:20)
+    at async eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1037:20)
+    at async eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:900:28) {
+  
+}
+Error fetching unread count: {
+  message: 'TypeError: fetch failed',
+  details: 'TypeError: fetch failed\n' +
+    '    at Object.fetch (node:internal/deps/undici/undici:11457:11)\n' +
+    '    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n' +
+    '    at async GET (webpack-internal:///(rsc)/./app/api/notifications/unread-count/route.ts:22:34)\n' +
+    '    at async AppRouteRouteModule.do (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:34112)\n' +
+    '    at async AppRouteRouteModule.handle (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:41338)\n' +
+    '    at async doRender (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1518:42)\n' +
+    '    at async DevServer.renderToResponseWithComponentsImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1920:28)\n' +
+    '    at async DevServer.renderPageComponent (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:2408:24)\n' +
+    '    at async DevServer.renderToResponseImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:2445:32)\n' +
+    '    at async DevServer.pipeImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1008:25)\n' +
+    '    at async NextNodeServer.handleCatchallRenderRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/next-server.js:305:17)\n' +
+    '    at async DevServer.handleRequestImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:900:17)\n' +
+    '    at async /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/dev/next-dev-server.js:371:20\n' +
+    '    at async Span.traceAsyncFn (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/trace/trace.js:157:20)\n' +
+    '    at async DevServer.handleRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/dev/next-dev-server.js:368:24)\n' +
+    '    at async invokeRender (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:237:21)\n' +
+    '    at async handleRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:428:24)\n' +
+    '    at async requestHandlerImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:452:13)\n' +
+    '    at async Server.requestListener (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/start-server.js:158:13)',
+  hint: '',
+  code: ''
+}
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 500 in 16ms
+Error: fetch failed
+    at context.fetch (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/web/sandbox/context.js:322:60)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/helpers.js:114:25)
+    at _handleRequest (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:115:24)
+    at _request (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:105:24)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1060:82)
+    at SupabaseAuthClient._useSession (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:955:26)
+    at async SupabaseAuthClient._getUser (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1050:20)
+    at async eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1037:20)
+    at async eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:900:28) {
+  
+}
+Error fetching unread count: {
+  message: 'TypeError: fetch failed',
+  details: 'TypeError: fetch failed\n' +
+    '    at Object.fetch (node:internal/deps/undici/undici:11457:11)\n' +
+    '    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n' +
+    '    at async GET (webpack-internal:///(rsc)/./app/api/notifications/unread-count/route.ts:22:34)\n' +
+    '    at async AppRouteRouteModule.do (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:34112)\n' +
+    '    at async AppRouteRouteModule.handle (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:41338)\n' +
+    '    at async doRender (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1518:42)\n' +
+    '    at async DevServer.renderToResponseWithComponentsImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1920:28)\n' +
+    '    at async DevServer.renderPageComponent (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:2408:24)\n' +
+    '    at async DevServer.renderToResponseImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:2445:32)\n' +
+    '    at async DevServer.pipeImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1008:25)\n' +
+    '    at async NextNodeServer.handleCatchallRenderRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/next-server.js:305:17)\n' +
+    '    at async DevServer.handleRequestImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:900:17)\n' +
+    '    at async /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/dev/next-dev-server.js:371:20\n' +
+    '    at async Span.traceAsyncFn (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/trace/trace.js:157:20)\n' +
+    '    at async DevServer.handleRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/dev/next-dev-server.js:368:24)\n' +
+    '    at async invokeRender (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:237:21)\n' +
+    '    at async handleRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:428:24)\n' +
+    '    at async requestHandlerImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:452:13)\n' +
+    '    at async Server.requestListener (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/start-server.js:158:13)',
+  hint: '',
+  code: ''
+}
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 500 in 22ms
+Error: fetch failed
+    at context.fetch (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/web/sandbox/context.js:322:60)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/helpers.js:114:25)
+    at _handleRequest (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:115:24)
+    at _request (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:105:24)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1060:82)
+    at SupabaseAuthClient._useSession (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:955:26)
+    at async SupabaseAuthClient._getUser (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1050:20)
+    at async eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1037:20)
+    at async eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:900:28) {
+  
+}
+Error fetching unread count: {
+  message: 'TypeError: fetch failed',
+  details: 'TypeError: fetch failed\n' +
+    '    at Object.fetch (node:internal/deps/undici/undici:11457:11)\n' +
+    '    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n' +
+    '    at async GET (webpack-internal:///(rsc)/./app/api/notifications/unread-count/route.ts:22:34)\n' +
+    '    at async AppRouteRouteModule.do (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:34112)\n' +
+    '    at async AppRouteRouteModule.handle (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:41338)\n' +
+    '    at async doRender (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1518:42)\n' +
+    '    at async DevServer.renderToResponseWithComponentsImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1920:28)\n' +
+    '    at async DevServer.renderPageComponent (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:2408:24)\n' +
+    '    at async DevServer.renderToResponseImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:2445:32)\n' +
+    '    at async DevServer.pipeImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1008:25)\n' +
+    '    at async NextNodeServer.handleCatchallRenderRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/next-server.js:305:17)\n' +
+    '    at async DevServer.handleRequestImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:900:17)\n' +
+    '    at async /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/dev/next-dev-server.js:371:20\n' +
+    '    at async Span.traceAsyncFn (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/trace/trace.js:157:20)\n' +
+    '    at async DevServer.handleRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/dev/next-dev-server.js:368:24)\n' +
+    '    at async invokeRender (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:237:21)\n' +
+    '    at async handleRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:428:24)\n' +
+    '    at async requestHandlerImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:452:13)\n' +
+    '    at async Server.requestListener (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/start-server.js:158:13)',
+  hint: '',
+  code: ''
+}
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 500 in 14ms
+Error: fetch failed
+    at context.fetch (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/web/sandbox/context.js:322:60)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/helpers.js:114:25)
+    at _handleRequest (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:115:24)
+    at _request (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:105:24)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1060:82)
+    at SupabaseAuthClient._useSession (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:955:26)
+    at async SupabaseAuthClient._getUser (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1050:20)
+    at async eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1037:20)
+    at async eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:900:28) {
+  
+}
+Error fetching unread count: {
+  message: 'TypeError: fetch failed',
+  details: 'TypeError: fetch failed\n' +
+    '    at Object.fetch (node:internal/deps/undici/undici:11457:11)\n' +
+    '    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n' +
+    '    at async GET (webpack-internal:///(rsc)/./app/api/notifications/unread-count/route.ts:22:34)\n' +
+    '    at async AppRouteRouteModule.do (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:34112)\n' +
+    '    at async AppRouteRouteModule.handle (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:41338)\n' +
+    '    at async doRender (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1518:42)\n' +
+    '    at async DevServer.renderToResponseWithComponentsImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1920:28)\n' +
+    '    at async DevServer.renderPageComponent (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:2408:24)\n' +
+    '    at async DevServer.renderToResponseImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:2445:32)\n' +
+    '    at async DevServer.pipeImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1008:25)\n' +
+    '    at async NextNodeServer.handleCatchallRenderRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/next-server.js:305:17)\n' +
+    '    at async DevServer.handleRequestImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:900:17)\n' +
+    '    at async /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/dev/next-dev-server.js:371:20\n' +
+    '    at async Span.traceAsyncFn (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/trace/trace.js:157:20)\n' +
+    '    at async DevServer.handleRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/dev/next-dev-server.js:368:24)\n' +
+    '    at async invokeRender (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:237:21)\n' +
+    '    at async handleRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:428:24)\n' +
+    '    at async requestHandlerImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:452:13)\n' +
+    '    at async Server.requestListener (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/start-server.js:158:13)',
+  hint: '',
+  code: ''
+}
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 500 in 15ms
+Error: fetch failed
+    at context.fetch (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/web/sandbox/context.js:322:60)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/helpers.js:114:25)
+    at _handleRequest (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:115:24)
+    at _request (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:105:24)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1060:82)
+    at SupabaseAuthClient._useSession (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:955:26)
+    at async SupabaseAuthClient._getUser (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1050:20)
+    at async eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1037:20)
+    at async eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:900:28) {
+  
+}
+Error fetching unread count: {
+  message: 'TypeError: fetch failed',
+  details: 'TypeError: fetch failed\n' +
+    '    at Object.fetch (node:internal/deps/undici/undici:11457:11)\n' +
+    '    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n' +
+    '    at async GET (webpack-internal:///(rsc)/./app/api/notifications/unread-count/route.ts:22:34)\n' +
+    '    at async AppRouteRouteModule.do (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:34112)\n' +
+    '    at async AppRouteRouteModule.handle (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:41338)\n' +
+    '    at async doRender (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1518:42)\n' +
+    '    at async DevServer.renderToResponseWithComponentsImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1920:28)\n' +
+    '    at async DevServer.renderPageComponent (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:2408:24)\n' +
+    '    at async DevServer.renderToResponseImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:2445:32)\n' +
+    '    at async DevServer.pipeImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1008:25)\n' +
+    '    at async NextNodeServer.handleCatchallRenderRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/next-server.js:305:17)\n' +
+    '    at async DevServer.handleRequestImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:900:17)\n' +
+    '    at async /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/dev/next-dev-server.js:371:20\n' +
+    '    at async Span.traceAsyncFn (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/trace/trace.js:157:20)\n' +
+    '    at async DevServer.handleRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/dev/next-dev-server.js:368:24)\n' +
+    '    at async invokeRender (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:237:21)\n' +
+    '    at async handleRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:428:24)\n' +
+    '    at async requestHandlerImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:452:13)\n' +
+    '    at async Server.requestListener (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/start-server.js:158:13)',
+  hint: '',
+  code: ''
+}
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 500 in 34ms
+Error: fetch failed
+    at context.fetch (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/web/sandbox/context.js:322:60)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/helpers.js:114:25)
+    at _handleRequest (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:115:24)
+    at _request (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:105:24)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1060:82)
+    at SupabaseAuthClient._useSession (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:955:26)
+    at async SupabaseAuthClient._getUser (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1050:20)
+    at async eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1037:20)
+    at async eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:900:28) {
+  
+}
+Error fetching unread count: {
+  message: 'TypeError: fetch failed',
+  details: 'TypeError: fetch failed\n' +
+    '    at Object.fetch (node:internal/deps/undici/undici:11457:11)\n' +
+    '    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n' +
+    '    at async GET (webpack-internal:///(rsc)/./app/api/notifications/unread-count/route.ts:22:34)\n' +
+    '    at async AppRouteRouteModule.do (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:34112)\n' +
+    '    at async AppRouteRouteModule.handle (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:41338)\n' +
+    '    at async doRender (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1518:42)\n' +
+    '    at async DevServer.renderToResponseWithComponentsImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1920:28)\n' +
+    '    at async DevServer.renderPageComponent (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:2408:24)\n' +
+    '    at async DevServer.renderToResponseImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:2445:32)\n' +
+    '    at async DevServer.pipeImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1008:25)\n' +
+    '    at async NextNodeServer.handleCatchallRenderRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/next-server.js:305:17)\n' +
+    '    at async DevServer.handleRequestImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:900:17)\n' +
+    '    at async /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/dev/next-dev-server.js:371:20\n' +
+    '    at async Span.traceAsyncFn (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/trace/trace.js:157:20)\n' +
+    '    at async DevServer.handleRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/dev/next-dev-server.js:368:24)\n' +
+    '    at async invokeRender (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:237:21)\n' +
+    '    at async handleRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:428:24)\n' +
+    '    at async requestHandlerImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:452:13)\n' +
+    '    at async Server.requestListener (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/start-server.js:158:13)',
+  hint: '',
+  code: ''
+}
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 500 in 33ms
+Error: fetch failed
+    at context.fetch (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/web/sandbox/context.js:322:60)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/helpers.js:114:25)
+    at _handleRequest (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:115:24)
+    at _request (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:105:24)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1060:82)
+    at SupabaseAuthClient._useSession (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:955:26)
+    at async SupabaseAuthClient._getUser (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1050:20)
+    at async eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1037:20)
+    at async eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:900:28) {
+  
+}
+Error fetching unread count: {
+  message: 'TypeError: fetch failed',
+  details: 'TypeError: fetch failed\n' +
+    '    at Object.fetch (node:internal/deps/undici/undici:11457:11)\n' +
+    '    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n' +
+    '    at async GET (webpack-internal:///(rsc)/./app/api/notifications/unread-count/route.ts:22:34)\n' +
+    '    at async AppRouteRouteModule.do (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:34112)\n' +
+    '    at async AppRouteRouteModule.handle (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:41338)\n' +
+    '    at async doRender (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1518:42)\n' +
+    '    at async DevServer.renderToResponseWithComponentsImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1920:28)\n' +
+    '    at async DevServer.renderPageComponent (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:2408:24)\n' +
+    '    at async DevServer.renderToResponseImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:2445:32)\n' +
+    '    at async DevServer.pipeImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1008:25)\n' +
+    '    at async NextNodeServer.handleCatchallRenderRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/next-server.js:305:17)\n' +
+    '    at async DevServer.handleRequestImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:900:17)\n' +
+    '    at async /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/dev/next-dev-server.js:371:20\n' +
+    '    at async Span.traceAsyncFn (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/trace/trace.js:157:20)\n' +
+    '    at async DevServer.handleRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/dev/next-dev-server.js:368:24)\n' +
+    '    at async invokeRender (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:237:21)\n' +
+    '    at async handleRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:428:24)\n' +
+    '    at async requestHandlerImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:452:13)\n' +
+    '    at async Server.requestListener (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/start-server.js:158:13)',
+  hint: '',
+  code: ''
+}
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 500 in 13ms
+Error: fetch failed
+    at context.fetch (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/web/sandbox/context.js:322:60)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/helpers.js:114:25)
+    at _handleRequest (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:115:24)
+    at _request (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:105:24)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1543:82)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/helpers.js:204:42)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/helpers.js:217:11)
+    at new Promise (<anonymous>)
+    at retryable (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/helpers.js:198:21)
+    at SupabaseAuthClient._refreshAccessToken (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1538:81)
+    at SupabaseAuthClient._callRefreshToken (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1649:48)
+    at SupabaseAuthClient.__loadSession (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1014:51)
+    at async SupabaseAuthClient._useSession (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:954:28)
+    at async SupabaseAuthClient._emitInitialSession (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1399:16) {
+  
+}
+Error: fetch failed
+    at context.fetch (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/web/sandbox/context.js:322:60)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/helpers.js:114:25)
+    at _handleRequest (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:115:24)
+    at _request (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:105:24)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1543:82)
+    at async eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/helpers.js:204:36) {
+  
+}
+Error: fetch failed
+    at context.fetch (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/web/sandbox/context.js:322:60)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/helpers.js:114:25)
+    at _handleRequest (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:115:24)
+    at _request (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:105:24)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1543:82)
+    at async eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/helpers.js:204:36) {
+  
+}
+Error: fetch failed
+    at context.fetch (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/web/sandbox/context.js:322:60)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/helpers.js:114:25)
+    at _handleRequest (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:115:24)
+    at _request (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:105:24)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1543:82)
+    at async eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/helpers.js:204:36) {
+  
+}
+Error: fetch failed
+    at context.fetch (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/web/sandbox/context.js:322:60)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/helpers.js:114:25)
+    at _handleRequest (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:115:24)
+    at _request (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/fetch.js:105:24)
+    at eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/GoTrueClient.js:1543:82)
+    at runNextTicks (node:internal/process/task_queues:60:5)
+    at process.processTimers (node:internal/timers:511:9)
+    at async eval (webpack-internal:///(middleware)/./node_modules/@supabase/auth-js/dist/module/lib/helpers.js:204:36) {
+  
+}
+AuthRetryableFetchError: fetch failed {
+  __isAuthError: true,
+  status: 0,
+  code: undefined
+}
+AuthRetryableFetchError: fetch failed {
+  __isAuthError: true,
+  status: 0,
+  code: undefined
+}
+Error fetching unread count: {
+  message: 'TypeError: fetch failed',
+  details: 'TypeError: fetch failed\n' +
+    '    at Object.fetch (node:internal/deps/undici/undici:11457:11)\n' +
+    '    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n' +
+    '    at async GET (webpack-internal:///(rsc)/./app/api/notifications/unread-count/route.ts:22:34)\n' +
+    '    at async AppRouteRouteModule.do (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:34112)\n' +
+    '    at async AppRouteRouteModule.handle (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/compiled/next-server/app-route.runtime.dev.js:26:41338)\n' +
+    '    at async doRender (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1518:42)\n' +
+    '    at async DevServer.renderToResponseWithComponentsImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1920:28)\n' +
+    '    at async DevServer.renderPageComponent (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:2408:24)\n' +
+    '    at async DevServer.renderToResponseImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:2445:32)\n' +
+    '    at async DevServer.pipeImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:1008:25)\n' +
+    '    at async NextNodeServer.handleCatchallRenderRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/next-server.js:305:17)\n' +
+    '    at async DevServer.handleRequestImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/base-server.js:900:17)\n' +
+    '    at async /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/dev/next-dev-server.js:371:20\n' +
+    '    at async Span.traceAsyncFn (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/trace/trace.js:157:20)\n' +
+    '    at async DevServer.handleRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/dev/next-dev-server.js:368:24)\n' +
+    '    at async invokeRender (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:237:21)\n' +
+    '    at async handleRequest (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:428:24)\n' +
+    '    at async requestHandlerImpl (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/router-server.js:452:13)\n' +
+    '    at async Server.requestListener (/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/start-server.js:158:13)',
+  hint: '',
+  code: ''
+}
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 500 in 27ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 150ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 98ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 106ms
+ ✓ Compiled in 990ms (2562 modules)
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 217ms
+ ✓ Compiled /api/cafes/[id]/reviews in 312ms (1401 modules)
+[Error: Route "/api/cafes/[id]/reviews" used `cookies().get('sb-glkltvfyvgtfwjzlfjin-auth-token')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+Failed to parse cookie string: SyntaxError: Unexpected token 'b', "base64-eyJ"... is not valid JSON
+    at JSON.parse (<anonymous>)
+[Error: Route "/api/cafes/[id]/reviews" used `cookies().get('sb-glkltvfyvgtfwjzlfjin-auth-token')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+Failed to parse cookie string: SyntaxError: Unexpected token 'b', "base64-eyJ"... is not valid JSON
+    at JSON.parse (<anonymous>)
+ POST /api/cafes/aa8b13a1-c355-4b6c-bd59-fa62c29d75f4/reviews 401 in 430ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 113ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 85ms
+ ✓ Compiled in 471ms (2658 modules)
+ ✓ Compiled in 316ms (2658 modules)
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 189ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 110ms
+[Error: Route "/api/cafes/[id]/reviews" used `cookies().get('sb-glkltvfyvgtfwjzlfjin-auth-token')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+Failed to parse cookie string: SyntaxError: Unexpected token 'b', "base64-eyJ"... is not valid JSON
+    at JSON.parse (<anonymous>)
+[Error: Route "/api/cafes/[id]/reviews" used `cookies().get('sb-glkltvfyvgtfwjzlfjin-auth-token')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis]
+Failed to parse cookie string: SyntaxError: Unexpected token 'b', "base64-eyJ"... is not valid JSON
+    at JSON.parse (<anonymous>)
+ POST /api/cafes/aa8b13a1-c355-4b6c-bd59-fa62c29d75f4/reviews 401 in 69ms
+ GET /cafes/aa8b13a1-c355-4b6c-bd59-fa62c29d75f4 200 in 194ms
+ ✓ Compiled /_not-found in 424ms (2648 modules)
+ GET /.well-known/appspecific/com.chrome.devtools.json 404 in 610ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 510ms (1404 modules)
+ GET /favicon.ico 200 in 770ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 617ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 88ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 83ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 105ms
+ ✓ Compiled in 640ms (2664 modules)
+ GET /cafes/aa8b13a1-c355-4b6c-bd59-fa62c29d75f4 200 in 76ms
+ ✓ Compiled in 560ms (2664 modules)
+ GET /cafes/aa8b13a1-c355-4b6c-bd59-fa62c29d75f4 200 in 76ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 155ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 88ms
+ ✓ Compiled in 406ms (2562 modules)
+ GET /cafes/aa8b13a1-c355-4b6c-bd59-fa62c29d75f4 200 in 130ms
+ ✓ Compiled in 366ms (2562 modules)
+ GET /cafes/aa8b13a1-c355-4b6c-bd59-fa62c29d75f4 200 in 172ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 154ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 82ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 106ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 82ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 94ms
+ ✓ Compiled in 712ms (2562 modules)
+ GET /cafes/aa8b13a1-c355-4b6c-bd59-fa62c29d75f4 200 in 65ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 121ms
+ ✓ Compiled in 579ms (2562 modules)
+ GET /cafes/aa8b13a1-c355-4b6c-bd59-fa62c29d75f4 200 in 61ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 91ms
+ GET /cafes 200 in 59ms
+ ✓ Compiled /api/cafes in 433ms (1307 modules)
+ GET /api/cafes? 200 in 568ms
+ GET /api/cafes? 200 in 106ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 109ms
+ GET /cafes/e23b474e-449a-4516-ac3f-d301fb019e9f 200 in 46ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 100ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 92ms
+ ✓ Compiled in 541ms (1257 modules)
+ GET /cafes/e23b474e-449a-4516-ac3f-d301fb019e9f 200 in 35ms
+ GET /api/notifications/unread-count?user_id=cac4f5aa-0e95-4b4e-9637-0de0a67b0c99 200 in 107ms

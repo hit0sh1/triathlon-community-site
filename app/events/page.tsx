@@ -1,0 +1,189 @@
+'use client'
+
+import Link from 'next/link'
+import { Calendar, MapPin, Users, Trophy, ArrowRight, Plus } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { getEvents, getEventTypes, EventWithDetails } from '@/lib/events'
+
+const getStatusColor = (status: string) => {
+  switch (status) {
+    case 'エントリー受付中':
+      return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+    case 'エントリー終了':
+      return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+    case 'エントリー開始前':
+      return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+    default:
+      return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
+  }
+}
+
+export default function EventsPage() {
+  const [selectedType, setSelectedType] = useState('全て')
+  const [events, setEvents] = useState<EventWithDetails[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  
+  const eventTypes = ['全て', ...getEventTypes()]
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        setLoading(true)
+        const eventsData = await getEvents()
+        setEvents(eventsData)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'データの取得に失敗しました')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchEvents()
+  }, [])
+
+  const filteredEvents = events.filter((event) => {
+    const typeMatch = selectedType === '全て' || event.event_type === selectedType
+    return typeMatch
+  })
+
+  // 距離情報を整理する関数
+  const formatDistances = (distances: any[]) => {
+    const distanceMap: { [key: string]: string } = {}
+    distances.forEach(d => {
+      distanceMap[d.discipline] = d.distance
+    })
+    return distanceMap
+  }
+
+  return (
+    <div className="bg-white dark:bg-gray-900 min-h-screen">
+      <div className="bg-gradient-to-r from-primary to-blue-600 text-white py-16">
+        <div className="max-w-7xl mx-auto px-4">
+          <h1 className="text-4xl font-bold mb-4">大会情報</h1>
+          <p className="text-xl">全国で開催されるトライアスロン・マラソン・サイクリング大会</p>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="mb-8 space-y-6">
+          <div className="flex justify-between items-center">
+            <div>
+              <h2 className="text-lg font-semibold mb-4 text-black dark:text-white">種目別フィルター</h2>
+              <div className="flex flex-wrap gap-2">
+                {eventTypes.map((type) => (
+                  <button
+                    key={type}
+                    onClick={() => setSelectedType(type)}
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                      type === selectedType
+                        ? 'bg-primary text-white'
+                        : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                    }`}
+                  >
+                    {type}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <Link
+              href="/events/new"
+              className="bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-dark transition-colors flex items-center gap-2"
+            >
+              <Plus size={20} />
+              <span>大会を投稿</span>
+            </Link>
+          </div>
+        </div>
+
+        {loading ? (
+          <div className="text-center py-12">
+            <p className="text-gray-600 dark:text-gray-400">読み込み中...</p>
+          </div>
+        ) : error ? (
+          <div className="text-center py-12">
+            <p className="text-red-600 dark:text-red-400">エラー: {error}</p>
+          </div>
+        ) : filteredEvents.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-gray-600 dark:text-gray-400">該当する大会が見つかりませんでした。</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredEvents.map((event) => {
+              const distances = formatDistances(event.event_distances || [])
+              const defaultImage = 'https://images.unsplash.com/photo-1544717297-fa95b6ee9643?w=800&auto=format&fit=crop'
+              
+              return (
+                <Link
+                  key={event.id}
+                  href={`/events/${event.id}`}
+                  className="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
+                >
+                  <div className="aspect-video relative overflow-hidden">
+                    <img
+                      src={event.image_url || defaultImage}
+                      alt={event.name}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    />
+                    <div className="absolute top-4 left-4 bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">
+                      {event.event_type}
+                    </div>
+                    <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(event.entry_status || '')}`}>
+                      {event.entry_status || 'ステータス未設定'}
+                    </div>
+                  </div>
+                  <div className="p-6">
+                    <h3 className="text-xl font-semibold mb-2 text-black dark:text-white">{event.name}</h3>
+                    <div className="space-y-2 mb-4">
+                      <div className="flex items-center gap-2">
+                        <Calendar size={16} className="text-gray-400" />
+                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                          {event.event_date ? new Date(event.event_date).toLocaleDateString('ja-JP') : '日程未定'}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <MapPin size={16} className="text-gray-400" />
+                        <span className="text-sm text-gray-600 dark:text-gray-400">{event.location}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Users size={16} className="text-gray-400" />
+                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                          {event.current_participants || 0}/{event.max_participants || '制限なし'}名
+                        </span>
+                      </div>
+                    </div>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                      {event.description || '詳細情報はこちらをご確認ください。'}
+                    </p>
+                    <div className="flex items-center gap-2 mb-4">
+                      {distances.swim && (
+                        <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded">
+                          スイム {distances.swim}
+                        </span>
+                      )}
+                      {distances.bike && (
+                        <span className="text-xs bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-2 py-1 rounded">
+                          バイク {distances.bike}
+                        </span>
+                      )}
+                      {distances.run && (
+                        <span className="text-xs bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-orange-200 px-2 py-1 rounded">
+                          ラン {distances.run}
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-primary">詳細を見る</span>
+                      <ArrowRight size={16} className="text-primary" />
+                    </div>
+                  </div>
+                </Link>
+              )
+            })}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
