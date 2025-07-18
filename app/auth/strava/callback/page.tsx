@@ -124,6 +124,8 @@ function StravaCallbackContent() {
   )
 }
 
+export const dynamic = 'force-dynamic'
+
 export default function StravaCallbackPage() {
   return (
     <Suspense fallback={

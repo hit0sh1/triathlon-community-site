@@ -54,6 +54,8 @@ function AuthCodeErrorContent() {
   )
 }
 
+export const dynamic = 'force-dynamic'
+
 export default function AuthCodeErrorPage() {
   return (
     <Suspense fallback={
