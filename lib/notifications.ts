@@ -1,10 +1,20 @@
 import { createClient } from '@supabase/supabase-js'
 
-// service roleキーを使用してSupabaseクライアントを作成
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+// service roleキーを使用してSupabaseクライアントを作成（動的に作成）
+const getSupabaseAdmin = () => {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    console.warn('Supabase environment variables not found')
+    // ビルド時のために一時的なクライアントを返す
+    return createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
+      process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key'
+    )
+  }
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.SUPABASE_SERVICE_ROLE_KEY
+  )
+}
 
 export interface NotificationData {
   title: string
@@ -37,7 +47,7 @@ export async function createNotification(
 
     if (all_users) {
       // 全ユーザーへの通知
-      const { data: users, error: usersError } = await supabaseAdmin.auth.admin.listUsers()
+      const { data: users, error: usersError } = await getSupabaseAdmin().auth.admin.listUsers()
       if (usersError) throw usersError
       targetUserIds = users.users.map(user => user.id)
     } else if (user_ids) {
@@ -61,7 +71,7 @@ export async function createNotification(
       expires_at
     }))
 
-    const { data: result, error } = await supabaseAdmin
+    const { data: result, error } = await getSupabaseAdmin()
       .from('notifications')
       .insert(notifications)
       .select()
@@ -115,7 +125,7 @@ export async function notifyNewPost(
   authorName: string,
   excludeUserId?: string
 ) {
-  const { data: users, error } = await supabaseAdmin.auth.admin.listUsers()
+  const { data: users, error } = await getSupabaseAdmin().auth.admin.listUsers()
   if (error) throw error
 
   const targetUsers = excludeUserId 
