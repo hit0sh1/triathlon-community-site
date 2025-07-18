@@ -1,11 +1,11 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { stravaAPI } from '@/lib/strava'
 
-export default function StravaCallbackPage() {
+function StravaCallbackContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { user } = useAuth()
@@ -121,5 +121,24 @@ export default function StravaCallbackPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function StravaCallbackPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="max-w-md w-full mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+              読み込み中...
+            </h2>
+          </div>
+        </div>
+      </div>
+    }>
+      <StravaCallbackContent />
+    </Suspense>
   )
 }
