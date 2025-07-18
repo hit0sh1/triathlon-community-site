@@ -177,14 +177,14 @@ export default function EditCoursePage() {
       // 更新データを準備
       const updateData = {
         name: formData.name,
-        description: formData.description || null,
+        description: formData.description || undefined,
         type: formData.type,
         distance: parseFloat(formData.distance),
         area: formData.area,
-        difficulty_level: formData.difficulty_level ? parseInt(formData.difficulty_level) : null,
-        elevation_gain: formData.elevation_gain ? parseInt(formData.elevation_gain) : null,
-        map_url: formData.map_url || null,
-        image_url: formData.image_url || null,
+        difficulty_level: formData.difficulty_level ? parseInt(formData.difficulty_level) : undefined,
+        elevation_gain: formData.elevation_gain ? parseInt(formData.elevation_gain) : undefined,
+        map_url: formData.map_url || undefined,
+        image_url: formData.image_url || undefined,
         is_featured: formData.is_featured,
       }
 

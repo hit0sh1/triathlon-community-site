@@ -1,10 +1,10 @@
 import { supabase } from './supabase'
 import type { Database } from './supabase'
 
-export type GearReview = Database['public']['Tables']['gear_reviews']['Row']
-export type GearCategory = Database['public']['Tables']['gear_categories']['Row']
-export type GearReviewPro = Database['public']['Tables']['gear_review_pros']['Row']
-export type GearReviewCon = Database['public']['Tables']['gear_review_cons']['Row']
+export type GearReview = any
+export type GearCategory = any
+export type GearReviewPro = any
+export type GearReviewCon = any
 
 export interface GearReviewWithDetails extends GearReview {
   gear_categories: GearCategory | null

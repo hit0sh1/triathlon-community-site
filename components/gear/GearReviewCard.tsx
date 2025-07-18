@@ -10,8 +10,8 @@ import { formatDistanceToNow } from 'date-fns'
 import { ja } from 'date-fns/locale'
 
 interface GearReviewCardProps {
-  review: GearReviewWithDetails
-  onEdit: (review: GearReviewWithDetails) => void
+  review: any
+  onEdit: (review: any) => void
   onDelete: () => void
 }
 
@@ -121,7 +121,7 @@ export default function GearReviewCard({ review, onEdit, onDelete }: GearReviewC
         
         <div className="mb-4">
           <div className="flex flex-wrap gap-1 mb-2">
-            {review.gear_review_pros.slice(0, 2).map((pro, index) => (
+            {review.gear_review_pros.slice(0, 2).map((pro: any, index: number) => (
               <span
                 key={index}
                 className="text-xs bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200 px-2 py-1 rounded font-medium"
@@ -131,7 +131,7 @@ export default function GearReviewCard({ review, onEdit, onDelete }: GearReviewC
             ))}
           </div>
           <div className="flex flex-wrap gap-1">
-            {review.gear_review_cons.slice(0, 2).map((con, index) => (
+            {review.gear_review_cons.slice(0, 2).map((con: any, index: number) => (
               <span
                 key={index}
                 className="text-xs bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-200 px-2 py-1 rounded font-medium"

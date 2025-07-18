@@ -203,7 +203,7 @@ export default function ColumnsPage() {
                     </div>
                     <div className="absolute bottom-4 left-4">
                       <span className="bg-black bg-opacity-50 text-white px-3 py-1 rounded-full text-sm">
-                        {getCategoryIcon(column.category)} {categories.find(c => c.id === column.category)?.name}
+                        {getCategoryIcon(column.category || '')} {categories.find(c => c.id === column.category)?.name}
                       </span>
                     </div>
                   </div>
@@ -258,7 +258,7 @@ export default function ColumnsPage() {
                     />
                     <div className="absolute bottom-4 left-4">
                       <span className="bg-black bg-opacity-50 text-white px-3 py-1 rounded-full text-sm">
-                        {getCategoryIcon(column.category)} {categories.find(c => c.id === column.category)?.name}
+                        {getCategoryIcon(column.category || '')} {categories.find(c => c.id === column.category)?.name}
                       </span>
                     </div>
                   </div>

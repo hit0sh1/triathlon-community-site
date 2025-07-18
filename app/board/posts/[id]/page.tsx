@@ -23,6 +23,7 @@ interface PostWithDetails extends BoardPost {
 interface ReplyWithProfile extends BoardReply {
   profiles: Profile
   isLiked?: boolean
+  like_count?: number
 }
 
 export default function PostDetailPage() {

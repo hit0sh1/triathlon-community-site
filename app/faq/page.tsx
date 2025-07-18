@@ -5,7 +5,16 @@ import { ChevronDown, ChevronUp, Search } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { Database } from '@/lib/supabase'
 
-type FAQ = Database['public']['Tables']['faqs']['Row']
+type FAQ = {
+  id: string
+  question: string
+  answer: string
+  category: string
+  display_order: number
+  is_published: boolean
+  created_at: string
+  updated_at: string
+}
 
 export default function FAQPage() {
   const [faqs, setFaqs] = useState<FAQ[]>([])

@@ -15,7 +15,7 @@ interface GearReviewFormProps {
   isOpen: boolean
   onClose: () => void
   onSubmit: () => void
-  editingReview?: GearReviewWithDetails | null
+  editingReview?: any
 }
 
 interface FormData {
@@ -71,11 +71,11 @@ export default function GearReviewForm({ isOpen, onClose, onSubmit, editingRevie
         summary: editingReview.summary || '',
         detailedReview: editingReview.detailed_review || '',
         pros: [
-          ...editingReview.gear_review_pros.map(p => p.pro_point),
+          ...editingReview.gear_review_pros.map((p: any) => p.pro_point),
           ...Array(Math.max(0, 3 - editingReview.gear_review_pros.length)).fill('')
         ].slice(0, 3),
         cons: [
-          ...editingReview.gear_review_cons.map(c => c.con_point),
+          ...editingReview.gear_review_cons.map((c: any) => c.con_point),
           ...Array(Math.max(0, 3 - editingReview.gear_review_cons.length)).fill('')
         ].slice(0, 3),
         imageUrl: editingReview.image_url || ''

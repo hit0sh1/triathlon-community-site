@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server'
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const supabase = createRouteHandlerClient({ cookies })
 
@@ -26,10 +26,11 @@ export async function POST(
       )
     }
 
+    const { id } = await params
     const { data: review, error } = await supabase
       .from('cafe_reviews')
       .upsert({
-        cafe_post_id: params.id,
+        cafe_post_id: id,
         user_id: user.id,
         rating: parseInt(rating),
         comment: comment || ''

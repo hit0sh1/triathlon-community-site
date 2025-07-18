@@ -26,7 +26,7 @@ export default function CourseRatingSection({ courseId }: CourseRatingSectionPro
   const [showRatingForm, setShowRatingForm] = useState(false)
   const [newRating, setNewRating] = useState(0)
   const [newComment, setNewComment] = useState('')
-  const [stats, setStats] = useState({
+  const [stats, setStats] = useState<any>({
     averageRating: 0,
     ratingCount: 0,
     ratingDistribution: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }

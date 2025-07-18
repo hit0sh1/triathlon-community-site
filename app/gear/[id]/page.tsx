@@ -16,7 +16,7 @@ const defaultImage = 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d
 export default function GearReviewDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { user } = useAuth()
   const router = useRouter()
-  const [review, setReview] = useState<GearReviewWithDetails | null>(null)
+  const [review, setReview] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [deleting, setDeleting] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
@@ -273,7 +273,7 @@ export default function GearReviewDetailPage({ params }: { params: Promise<{ id:
                       良い点
                     </h3>
                     <ul className="space-y-2">
-                      {review.gear_review_pros.map((pro) => (
+                      {review.gear_review_pros.map((pro: any) => (
                         <li
                           key={pro.id}
                           className="flex items-start gap-2 text-green-700 dark:text-green-300"
@@ -293,7 +293,7 @@ export default function GearReviewDetailPage({ params }: { params: Promise<{ id:
                       悪い点
                     </h3>
                     <ul className="space-y-2">
-                      {review.gear_review_cons.map((con) => (
+                      {review.gear_review_cons.map((con: any) => (
                         <li
                           key={con.id}
                           className="flex items-start gap-2 text-red-700 dark:text-red-300"

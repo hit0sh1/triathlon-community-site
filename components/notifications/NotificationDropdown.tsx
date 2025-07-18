@@ -166,7 +166,7 @@ function NotificationContent({
   getIcon 
 }: { 
   notification: Notification
-  getIcon: (type: string) => JSX.Element 
+  getIcon: (type: string) => React.ReactElement 
 }) {
   return (
     <>

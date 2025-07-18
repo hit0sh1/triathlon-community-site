@@ -37,16 +37,15 @@ export default function StravaCallbackPage() {
         }
 
         // 認証コードをトークンに交換（PKCE対応）
-        const result = await stravaAPI.exchangeCodeForToken(code)
-        
-        if (!result.success) {
+        try {
+          const result = await stravaAPI.exchangeCodeForToken(code)
+          setStatus('success')
+          setMessage('Strava連携が完了しました！')
+        } catch (error) {
           setStatus('error')
-          setMessage(`連携に失敗しました: ${result.error || '不明なエラー'}`)
+          setMessage(`連携に失敗しました: ${error instanceof Error ? error.message : '不明なエラー'}`)
           return
         }
-
-        setStatus('success')
-        setMessage('Strava連携が完了しました！')
         
         // 3秒後にプロフィールページへリダイレクト
         setTimeout(() => {

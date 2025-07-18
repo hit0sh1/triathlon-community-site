@@ -234,7 +234,7 @@ export default function ColumnDetailPage() {
           <div className="mb-8">
             <div className="flex items-center gap-4 mb-4">
               <span className="bg-blue-100 dark:bg-blue-900/20 text-blue-600 px-3 py-1 rounded-full text-sm font-semibold">
-                {getCategoryIcon(column.category)} {getCategoryName(column.category)}
+                {getCategoryIcon(column.category || '')} {getCategoryName(column.category || '')}
               </span>
               {column.is_featured && (
                 <span className="bg-yellow-100 dark:bg-yellow-900/20 text-yellow-600 px-3 py-1 rounded-full text-sm font-semibold">

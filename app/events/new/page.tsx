@@ -151,12 +151,12 @@ export default function NewEventPage() {
       // 大会を作成
       const eventData = {
         ...formData,
-        max_participants: formData.max_participants ? parseInt(formData.max_participants) : null,
+        max_participants: formData.max_participants ? parseInt(formData.max_participants) : undefined,
         current_participants: parseInt(formData.current_participants),
-        entry_deadline: formData.entry_deadline || null,
-        entry_url: formData.entry_url || null,
-        image_url: formData.image_url || null,
-        website_url: formData.website_url || null,
+        entry_deadline: formData.entry_deadline || undefined,
+        entry_url: formData.entry_url || undefined,
+        image_url: formData.image_url || undefined,
+        website_url: formData.website_url || undefined,
         created_by: user.id,
       }
 

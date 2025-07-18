@@ -56,7 +56,7 @@ export default function CafePostForm({ initialData, isEdit = false }: CafePostFo
   const handleRemoveTag = (tagToRemove: string) => {
     setFormData(prev => ({
       ...prev,
-      tags: prev.tags.filter(tag => tag !== tagToRemove)
+      tags: prev.tags.filter((tag: any) => tag !== tagToRemove)
     }))
   }
 
@@ -304,7 +304,7 @@ export default function CafePostForm({ initialData, isEdit = false }: CafePostFo
               タグ
             </label>
             <div className="flex flex-wrap gap-2 mb-2">
-              {formData.tags.map((tag, index) => (
+              {formData.tags.map((tag: any, index: number) => (
                 <span
                   key={index}
                   className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"

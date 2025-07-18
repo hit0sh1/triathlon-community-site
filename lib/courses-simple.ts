@@ -68,7 +68,7 @@ export async function testDeleteCourse(courseId: string): Promise<boolean> {
       return false
     }
     
-    return count > 0
+    return (count || 0) > 0
   } catch (error) {
     console.error('Test delete error:', error)
     return false

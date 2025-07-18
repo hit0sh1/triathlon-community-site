@@ -8,9 +8,21 @@ import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
 import toast, { Toaster } from 'react-hot-toast'
 
-type FAQ = Database['public']['Tables']['faqs']['Row']
-type FAQInsert = Database['public']['Tables']['faqs']['Insert']
-type FAQUpdate = Database['public']['Tables']['faqs']['Update']
+type FAQ = {
+  id: string
+  question: string
+  answer: string
+  category: string
+  display_order: number
+  is_published: boolean
+  created_by: string
+  updated_by: string
+  created_at: string
+  updated_at: string
+}
+
+type FAQInsert = Omit<FAQ, 'id' | 'created_at' | 'updated_at'>
+type FAQUpdate = Partial<FAQInsert>
 
 export default function AdminFAQPage() {
   const { user } = useAuth()
@@ -126,8 +138,7 @@ export default function AdminFAQPage() {
     try {
       const updateData: FAQUpdate = {
         ...formData,
-        updated_by: user.id,
-        updated_at: new Date().toISOString()
+        updated_by: user.id
       }
 
       const { error } = await supabase

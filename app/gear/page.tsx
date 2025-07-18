@@ -12,10 +12,10 @@ export default function GearPage() {
   const { user } = useAuth()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState('')
-  const [reviews, setReviews] = useState<GearReviewWithDetails[]>([])
+  const [reviews, setReviews] = useState<any[]>([])
   const [categories, setCategories] = useState<GearCategory[]>([])
   const [loading, setLoading] = useState(true)
-  const [editingReview, setEditingReview] = useState<GearReviewWithDetails | null>(null)
+  const [editingReview, setEditingReview] = useState<any>(null)
 
   useEffect(() => {
     fetchData()

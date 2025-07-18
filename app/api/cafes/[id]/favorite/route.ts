@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server'
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const supabase = createRouteHandlerClient({ cookies })
 
@@ -18,7 +18,7 @@ export async function POST(
     const { data: favorite, error } = await supabase
       .from('cafe_favorites')
       .upsert({
-        cafe_post_id: params.id,
+        cafe_post_id: (await params).id,
         user_id: user.id
       })
       .select()
@@ -38,7 +38,7 @@ export async function POST(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const supabase = createRouteHandlerClient({ cookies })
 
@@ -52,7 +52,7 @@ export async function DELETE(
     const { error } = await supabase
       .from('cafe_favorites')
       .delete()
-      .eq('cafe_post_id', params.id)
+      .eq('cafe_post_id', (await params).id)
       .eq('user_id', user.id)
 
     if (error) {

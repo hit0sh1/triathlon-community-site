@@ -7,7 +7,10 @@ import StarRating from '@/components/StarRating'
 import { supabase } from '@/lib/supabase'
 import type { Database } from '@/lib/supabase'
 
-type Course = Database['public']['Tables']['courses']['Row']
+type Course = Database['public']['Tables']['courses']['Row'] & {
+  average_rating?: number
+  rating_count?: number
+}
 
 const types = ['すべて', 'ラン', 'バイク', 'スイム']
 

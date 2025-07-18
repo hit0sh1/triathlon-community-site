@@ -21,6 +21,8 @@ export default function EditCafePage() {
   }, [user, params.id])
 
   const fetchCafe = async () => {
+    if (!user) return
+    
     try {
       const { createClient } = await import('@supabase/supabase-js')
       const supabase = createClient(

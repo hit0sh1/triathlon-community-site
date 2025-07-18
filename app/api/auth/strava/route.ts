@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
     const tokenData = await tokenResponse.json()
     
     // Get current user from Supabase
-    const cookieStore = cookies()
+    const cookieStore = await cookies()
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,

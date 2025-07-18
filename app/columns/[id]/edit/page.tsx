@@ -59,10 +59,10 @@ export default function EditColumnPage() {
         content: columnData.content,
         excerpt: columnData.excerpt || '',
         image_url: columnData.image_url || '',
-        category: columnData.category,
+        category: columnData.category || '',
         tags: columnData.tags || [],
-        is_published: columnData.is_published,
-        is_featured: columnData.is_featured,
+        is_published: columnData.is_published ?? false,
+        is_featured: columnData.is_featured ?? false,
       })
     } catch (error) {
       console.error('Error fetching column:', error)

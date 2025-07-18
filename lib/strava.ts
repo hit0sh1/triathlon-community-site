@@ -142,7 +142,7 @@ export class StravaAPI {
     refresh_token: string
     expires_at: number
   }> {
-    const response = await fetch(STRAVA_TOKEN_URL, {
+    const response = await fetch('https://www.strava.com/oauth/token', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

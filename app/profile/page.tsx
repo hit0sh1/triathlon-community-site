@@ -31,7 +31,7 @@ export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false)
   const [loading, setLoading] = useState(true)
   const [profile, setProfile] = useState<Profile | null>(null)
-  const [achievements, setAchievements] = useState<UserAchievement[]>([])
+  const [achievements, setAchievements] = useState<any[]>([])
   const [availableAchievements, setAvailableAchievements] = useState<AchievementTemplate[]>([])
   const [userStats, setUserStats] = useState<any>(null)
   const [posts, setPosts] = useState<BoardPost[]>([])

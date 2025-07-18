@@ -12,7 +12,7 @@ export async function GET(request: Request) {
     console.log('Auth callback - origin:', origin)
 
     if (code) {
-      const supabase = createClient()
+      const supabase = await createClient()
       const { data, error } = await supabase.auth.exchangeCodeForSession(code)
       
       console.log('Auth callback - exchange result:', { data, error })
