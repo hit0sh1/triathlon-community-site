@@ -121,7 +121,7 @@ export default function Footer() {
                         <li key={item.name}>
                           <Link
                             href={item.href}
-                            className="text-white hover:text-blue-400 transition-all duration-300 hover:translate-x-2 inline-block text-sm japanese-text"
+                            className="text-white hover:text-blue-400 transition-all duration-300 hover:translate-x-2 inline-block japanese-text font-medium"
                           >
                             {item.name}
                           </Link>

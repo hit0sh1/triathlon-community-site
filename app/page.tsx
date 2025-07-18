@@ -408,31 +408,31 @@ export default async function Home() {
                 <br />
                 今すぐ私たちの仲間になって、素晴らしいトライアスロンライフを始めましょう！
               </p>
-              <div className="flex flex-col sm:flex-row gap-16 justify-center items-center">
+              <div className="flex flex-col sm:flex-row gap-6 justify-center items-center max-w-3xl mx-auto">
                 <Link
                   href="/board"
-                  className="btn-primary bg-white text-blue-600 hover:bg-white/90 px-8 py-4 text-lg font-bold shadow-2xl"
+                  className="w-full sm:w-48 bg-white text-blue-600 hover:bg-white/90 px-6 py-4 text-lg font-bold shadow-2xl rounded-xl transition-all duration-300 text-center"
                 >
-                  <span className="flex items-center gap-3">
+                  <span className="flex items-center justify-center gap-2">
                     掲示板で交流する
-                    <Users size={22} />
+                    <Users size={20} />
                   </span>
                 </Link>
                 <Link
                   href="/events"
-                  className="bg-black/20 backdrop-blur-md text-white border border-white/40 hover:bg-black/30 px-8 py-4 text-lg font-semibold shadow-xl rounded-xl transition-all duration-300"
+                  className="w-full sm:w-48 bg-black/20 backdrop-blur-md text-white border border-white/40 hover:bg-black/30 px-6 py-4 text-lg font-bold shadow-2xl rounded-xl transition-all duration-300 text-center"
                 >
-                  <span className="flex items-center gap-3">
-                    <Calendar size={22} />
+                  <span className="flex items-center justify-center gap-2">
+                    <Calendar size={20} />
                     大会情報を見る
                   </span>
                 </Link>
                 <Link
                   href="/columns"
-                  className="bg-black/20 backdrop-blur-md text-white border border-white/40 hover:bg-black/30 px-8 py-4 text-lg font-semibold shadow-xl rounded-xl transition-all duration-300"
+                  className="w-full sm:w-48 bg-black/20 backdrop-blur-md text-white border border-white/40 hover:bg-black/30 px-6 py-4 text-lg font-bold shadow-2xl rounded-xl transition-all duration-300 text-center"
                 >
-                  <span className="flex items-center gap-3">
-                    <BookOpen size={22} />
+                  <span className="flex items-center justify-center gap-2">
+                    <BookOpen size={20} />
                     コラムを読む
                   </span>
                 </Link>

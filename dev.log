@@ -1277,3 +1277,284 @@ Require stack:
  ✓ Compiled in 3.8s (1257 modules)
  ✓ Compiled in 1733ms (1257 modules)
  ✓ Compiled in 1080ms (1257 modules)
+ ✓ Compiled in 724ms (1437 modules)
+ ⨯ TypeError: Cannot read properties of undefined (reading 'call')
+    at Object.t [as require] (.next/server/webpack-runtime.js:1:128)
+    at JSON.parse (<anonymous>) {
+  digest: '4225081010'
+}
+TypeError: Cannot read properties of undefined (reading 'call')
+    at Object.t [as require] (.next/server/webpack-runtime.js:1:128)
+    at JSON.parse (<anonymous>)
+ ⨯ TypeError: Cannot read properties of undefined (reading 'call')
+    at Object.t [as require] (.next/server/webpack-runtime.js:1:128)
+    at JSON.parse (<anonymous>) {
+  page: '/cafes/e23b474e-449a-4516-ac3f-d301fb019e9f'
+}
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 797ms (2492 modules)
+ ⨯ Error: Cannot find module './8548.js'
+Require stack:
+- /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/.next/server/webpack-runtime.js
+- /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/.next/server/pages/_document.js
+- /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/require.js
+- /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/load-components.js
+- /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/build/utils.js
+- /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/build/swc/options.js
+- /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/build/swc/index.js
+- /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/build/next-config-ts/transpile-config.js
+- /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/config.js
+- /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/next.js
+- /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/start-server.js
+    at __webpack_require__.f.require (.next/server/webpack-runtime.js:198:28)
+    at <unknown> (.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (.next/server/webpack-runtime.js:162:22)
+    at <unknown> (.next/server/pages/_document.js:1:341)
+    at Object.<anonymous> (.next/server/pages/_document.js:1:384) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array]
+}
+ GET /cafes/e23b474e-449a-4516-ac3f-d301fb019e9f 500 in 1219ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 558ms (2496 modules)
+ ⨯ Error: ENOENT: no such file or directory, open '/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/.next/server/vendor-chunks/@supabase.js'
+    at __webpack_require__.f.require (.next/server/webpack-runtime.js:198:28)
+    at <unknown> (.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (.next/server/webpack-runtime.js:162:22)
+    at <unknown> (.next/server/app/_not-found/page.js:418:47)
+    at Object.<anonymous> (.next/server/app/_not-found/page.js:421:3) {
+  errno: -2,
+  syscall: 'open',
+  code: 'ENOENT',
+  path: '/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/.next/server/vendor-chunks/@supabase.js'
+}
+ ⨯ Error: ENOENT: no such file or directory, open '/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/.next/server/vendor-chunks/@supabase.js'
+    at __webpack_require__.f.require (.next/server/webpack-runtime.js:198:28)
+    at <unknown> (.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (.next/server/webpack-runtime.js:162:22)
+    at <unknown> (.next/server/app/_not-found/page.js:418:47)
+    at Object.<anonymous> (.next/server/app/_not-found/page.js:421:3) {
+  errno: -2,
+  syscall: 'open',
+  code: 'ENOENT',
+  path: '/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/.next/server/vendor-chunks/@supabase.js'
+}
+ ⨯ Error: ENOENT: no such file or directory, open '/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/.next/server/vendor-chunks/@supabase.js'
+    at __webpack_require__.f.require (.next/server/webpack-runtime.js:198:28)
+    at <unknown> (.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (.next/server/webpack-runtime.js:162:22)
+    at <unknown> (.next/server/app/_not-found/page.js:418:47)
+    at Object.<anonymous> (.next/server/app/_not-found/page.js:421:3) {
+  errno: -2,
+  syscall: 'open',
+  code: 'ENOENT',
+  path: '/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/.next/server/vendor-chunks/@supabase.js'
+}
+ ⨯ Error: ENOENT: no such file or directory, open '/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/.next/server/vendor-chunks/@supabase.js'
+    at __webpack_require__.f.require (.next/server/webpack-runtime.js:198:28)
+    at <unknown> (.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (.next/server/webpack-runtime.js:162:22)
+    at <unknown> (.next/server/app/_not-found/page.js:418:47)
+    at Object.<anonymous> (.next/server/app/_not-found/page.js:421:3) {
+  errno: -2,
+  syscall: 'open',
+  code: 'ENOENT',
+  path: '/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/.next/server/vendor-chunks/@supabase.js'
+}
+ ⨯ Error: ENOENT: no such file or directory, open '/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/.next/server/vendor-chunks/@supabase.js'
+    at __webpack_require__.f.require (.next/server/webpack-runtime.js:198:28)
+    at <unknown> (.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (.next/server/webpack-runtime.js:162:22)
+    at <unknown> (.next/server/app/_not-found/page.js:418:47)
+    at Object.<anonymous> (.next/server/app/_not-found/page.js:421:3) {
+  errno: -2,
+  syscall: 'open',
+  code: 'ENOENT',
+  path: '/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/.next/server/vendor-chunks/@supabase.js'
+}
+ ⨯ Error: ENOENT: no such file or directory, open '/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/.next/server/vendor-chunks/@supabase.js'
+    at __webpack_require__.f.require (.next/server/webpack-runtime.js:198:28)
+    at <unknown> (.next/server/webpack-runtime.js:111:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (.next/server/webpack-runtime.js:110:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (.next/server/webpack-runtime.js:162:22)
+    at <unknown> (.next/server/app/_not-found/page.js:418:47)
+    at Object.<anonymous> (.next/server/app/_not-found/page.js:421:3) {
+  errno: -2,
+  syscall: 'open',
+  code: 'ENOENT',
+  path: '/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/.next/server/vendor-chunks/@supabase.js'
+}
+ GET /_next/static/chunks/fallback/webpack.js 500 in 728ms
+ GET /_next/static/chunks/fallback/main.js 500 in 726ms
+ GET /_next/static/chunks/fallback/pages/_app.js 500 in 635ms
+ GET /_next/static/chunks/fallback/react-refresh.js 500 in 722ms
+ GET /_next/static/chunks/fallback/pages/_error.js 500 in 633ms
+ GET /.well-known/appspecific/com.chrome.devtools.json 500 in 602ms
+ ○ Compiling /favicon.ico ...
+ ✓ Compiled /favicon.ico in 716ms (1265 modules)
+ GET /favicon.ico 200 in 919ms
+ ⨯ Error: Cannot find module './4447.js'
+Require stack:
+- /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/.next/server/webpack-runtime.js
+- /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/.next/server/app/favicon.ico/route.js
+- /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/require.js
+- /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/load-components.js
+- /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/build/utils.js
+- /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/build/swc/options.js
+- /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/build/swc/index.js
+- /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/build/next-config-ts/transpile-config.js
+- /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/config.js
+- /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/next.js
+- /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/start-server.js
+    at __webpack_require__.f.require (.next/server/webpack-runtime.js:203:28)
+    at <unknown> (.next/server/webpack-runtime.js:116:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (.next/server/webpack-runtime.js:115:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (.next/server/webpack-runtime.js:167:22)
+    at <unknown> (.next/server/app/cafes/[id]/page.js:13:12274)
+    at Object.<anonymous> (.next/server/app/cafes/[id]/page.js:13:12332) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array],
+  page: '/cafes/e23b474e-449a-4516-ac3f-d301fb019e9f'
+}
+ ⨯ Error: Cannot find module './8548.js'
+Require stack:
+- /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/.next/server/webpack-runtime.js
+- /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/.next/server/app/favicon.ico/route.js
+- /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/require.js
+- /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/load-components.js
+- /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/build/utils.js
+- /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/build/swc/options.js
+- /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/build/swc/index.js
+- /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/build/next-config-ts/transpile-config.js
+- /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/config.js
+- /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/next.js
+- /Users/miyagawahitoshi/Documents/dev/triathlon-community-site/node_modules/next/dist/server/lib/start-server.js
+    at __webpack_require__.f.require (.next/server/webpack-runtime.js:203:28)
+    at <unknown> (.next/server/webpack-runtime.js:116:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (.next/server/webpack-runtime.js:115:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (.next/server/webpack-runtime.js:167:22)
+    at <unknown> (.next/server/pages/_document.js:1:341)
+    at Object.<anonymous> (.next/server/pages/_document.js:1:384) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array]
+}
+ GET /cafes/e23b474e-449a-4516-ac3f-d301fb019e9f 500 in 452ms
+ ⨯ Error: ENOENT: no such file or directory, open '/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/.next/server/vendor-chunks/@supabase.js'
+    at __webpack_require__.f.require (.next/server/webpack-runtime.js:203:28)
+    at <unknown> (.next/server/webpack-runtime.js:116:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (.next/server/webpack-runtime.js:115:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (.next/server/webpack-runtime.js:167:22)
+    at <unknown> (.next/server/app/_not-found/page.js:418:47)
+    at Object.<anonymous> (.next/server/app/_not-found/page.js:421:3) {
+  errno: -2,
+  syscall: 'open',
+  code: 'ENOENT',
+  path: '/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/.next/server/vendor-chunks/@supabase.js'
+}
+ ⨯ Error: ENOENT: no such file or directory, open '/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/.next/server/vendor-chunks/@supabase.js'
+    at __webpack_require__.f.require (.next/server/webpack-runtime.js:203:28)
+    at <unknown> (.next/server/webpack-runtime.js:116:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (.next/server/webpack-runtime.js:115:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (.next/server/webpack-runtime.js:167:22)
+    at <unknown> (.next/server/app/_not-found/page.js:418:47)
+    at Object.<anonymous> (.next/server/app/_not-found/page.js:421:3) {
+  errno: -2,
+  syscall: 'open',
+  code: 'ENOENT',
+  path: '/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/.next/server/vendor-chunks/@supabase.js'
+}
+ ⨯ Error: ENOENT: no such file or directory, open '/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/.next/server/vendor-chunks/@supabase.js'
+    at __webpack_require__.f.require (.next/server/webpack-runtime.js:203:28)
+    at <unknown> (.next/server/webpack-runtime.js:116:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (.next/server/webpack-runtime.js:115:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (.next/server/webpack-runtime.js:167:22)
+    at <unknown> (.next/server/app/_not-found/page.js:418:47)
+    at Object.<anonymous> (.next/server/app/_not-found/page.js:421:3) {
+  errno: -2,
+  syscall: 'open',
+  code: 'ENOENT',
+  path: '/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/.next/server/vendor-chunks/@supabase.js'
+}
+ ⨯ Error: ENOENT: no such file or directory, open '/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/.next/server/vendor-chunks/@supabase.js'
+    at __webpack_require__.f.require (.next/server/webpack-runtime.js:203:28)
+    at <unknown> (.next/server/webpack-runtime.js:116:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (.next/server/webpack-runtime.js:115:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (.next/server/webpack-runtime.js:167:22)
+    at <unknown> (.next/server/app/_not-found/page.js:418:47)
+    at Object.<anonymous> (.next/server/app/_not-found/page.js:421:3) {
+  errno: -2,
+  syscall: 'open',
+  code: 'ENOENT',
+  path: '/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/.next/server/vendor-chunks/@supabase.js'
+}
+ GET /_next/static/chunks/fallback/react-refresh.js 500 in 109ms
+ GET /_next/static/chunks/fallback/webpack.js 500 in 108ms
+ GET /_next/static/chunks/fallback/main.js 500 in 108ms
+ GET /_next/static/chunks/fallback/pages/_app.js 500 in 102ms
+ ⨯ Error: ENOENT: no such file or directory, open '/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/.next/server/vendor-chunks/@supabase.js'
+    at __webpack_require__.f.require (.next/server/webpack-runtime.js:203:28)
+    at <unknown> (.next/server/webpack-runtime.js:116:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (.next/server/webpack-runtime.js:115:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (.next/server/webpack-runtime.js:167:22)
+    at <unknown> (.next/server/app/_not-found/page.js:418:47)
+    at Object.<anonymous> (.next/server/app/_not-found/page.js:421:3) {
+  errno: -2,
+  syscall: 'open',
+  code: 'ENOENT',
+  path: '/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/.next/server/vendor-chunks/@supabase.js'
+}
+ GET /_next/static/chunks/fallback/pages/_error.js 500 in 61ms
+ ⨯ Error: ENOENT: no such file or directory, open '/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/.next/server/vendor-chunks/@supabase.js'
+    at __webpack_require__.f.require (.next/server/webpack-runtime.js:203:28)
+    at <unknown> (.next/server/webpack-runtime.js:116:40)
+    at Array.reduce (<anonymous>)
+    at __webpack_require__.e (.next/server/webpack-runtime.js:115:67)
+    at Array.map (<anonymous>)
+    at __webpack_require__.X (.next/server/webpack-runtime.js:167:22)
+    at <unknown> (.next/server/app/_not-found/page.js:418:47)
+    at Object.<anonymous> (.next/server/app/_not-found/page.js:421:3) {
+  errno: -2,
+  syscall: 'open',
+  code: 'ENOENT',
+  path: '/Users/miyagawahitoshi/Documents/dev/triathlon-community-site/.next/server/vendor-chunks/@supabase.js'
+}
+ GET /.well-known/appspecific/com.chrome.devtools.json 500 in 26ms
+ ✓ Compiled in 1090ms (1437 modules)
+ ✓ Compiled in 2.4s (2463 modules)
+ ✓ Compiled in 722ms (1257 modules)
+ ✓ Compiled in 834ms (1257 modules)
+ ✓ Compiled in 1222ms (2463 modules)
