@@ -67,15 +67,24 @@
 
 html {
   scroll-behavior: smooth;
+  background-color: white !important;
+}
+
+html.dark {
+  background-color: black !important;
 }
 
 body {
-  background-color: hsl(var(--background));
+  background-color: white !important;
   color: hsl(var(--foreground));
   font-family: "Inter", "Noto Sans JP", sans-serif;
   font-feature-settings: "rlig" 1, "calt" 1;
   letter-spacing: -0.01em;
   line-height: 1.6;
+}
+
+.dark body {
+  background-color: black !important;
 }
 
 .japanese-text {

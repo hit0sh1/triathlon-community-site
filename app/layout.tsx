@@ -30,7 +30,7 @@ export default function RootLayout({
         <AuthProvider>
           <Toaster />
           <Navigation />
-          <main className="flex-grow">
+          <main className="flex-grow bg-white dark:bg-black">
             {children}
           </main>
           <Footer />
