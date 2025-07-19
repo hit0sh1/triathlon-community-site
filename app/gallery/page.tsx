@@ -156,7 +156,7 @@ export default function GalleryPage() {
 
   return (
     <div className="bg-white dark:bg-gray-900 min-h-screen">
-      <div className="bg-gradient-to-r from-primary to-blue-600 text-white py-16">
+      <div className="bg-blue-600 text-white py-16">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex justify-between items-center mb-4">
             <div>
@@ -166,7 +166,7 @@ export default function GalleryPage() {
             {user && (
               <button
                 onClick={() => setShowPostForm(true)}
-                className="bg-white dark:bg-gray-800 text-primary dark:text-white px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2 transition-colors border border-gray-200 dark:border-gray-600"
+                className="bg-white text-blue-600 hover:bg-gray-100 px-4 py-2 rounded-lg flex items-center gap-2 transition-colors font-medium shadow-lg"
               >
                 <Plus size={20} />
                 写真を投稿
@@ -180,7 +180,7 @@ export default function GalleryPage() {
         <div className="mb-8">
           <div className="flex items-center gap-4 mb-4">
             <Filter size={20} className="text-gray-600 dark:text-gray-400" />
-            <h2 className="text-lg font-semibold dark:text-white">カテゴリー</h2>
+            <h2 className="text-lg font-semibold text-black dark:text-white">カテゴリー</h2>
           </div>
           <div className="flex gap-2">
             {categories.map((category) => (
@@ -189,8 +189,8 @@ export default function GalleryPage() {
                 onClick={() => setSelectedCategory(category)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                   selectedCategory === category
-                    ? 'bg-primary text-white'
-                    : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                    ? 'bg-blue-600 text-white shadow-md'
+                    : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600'
                 }`}
               >
                 {category}
@@ -212,12 +212,12 @@ export default function GalleryPage() {
                   alt={photo.caption || 'ギャラリー写真'}
                   className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
                 />
-                <div className="absolute top-4 left-4 bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">
+                <div className="absolute top-4 left-4 bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">
                   {photo.category}
                 </div>
               </div>
               <div className="p-4">
-                <p className="font-medium mb-2 dark:text-white">{photo.caption || 'キャプションなし'}</p>
+                <p className="font-medium mb-2 text-black dark:text-white">{photo.caption || 'キャプションなし'}</p>
                 <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mb-3">
                   <span>{photo.profiles?.display_name || 'Unknown'}</span>
                   <span>•</span>
@@ -285,7 +285,7 @@ export default function GalleryPage() {
                 <span>•</span>
                 <span>{new Date(selectedPhoto.created_at).toLocaleDateString('ja-JP')}</span>
                 <span>•</span>
-                <span className="bg-primary text-white px-2 py-1 rounded text-sm">
+                <span className="bg-blue-600 text-white px-2 py-1 rounded text-sm">
                   {selectedPhoto.category}
                 </span>
               </div>
@@ -347,7 +347,7 @@ export default function GalleryPage() {
                   <textarea
                     value={postForm.caption}
                     onChange={(e) => setPostForm({...postForm, caption: e.target.value})}
-                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                     rows={3}
                     placeholder="写真についてのコメント"
                     required
@@ -372,7 +372,7 @@ export default function GalleryPage() {
                     type="text"
                     value={postForm.tags}
                     onChange={(e) => setPostForm({...postForm, tags: e.target.value})}
-                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                    className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                     placeholder="トライアスロン, 沖縄, スイム"
                   />
                 </div>
@@ -388,7 +388,7 @@ export default function GalleryPage() {
                   <button
                     type="submit"
                     disabled={uploading}
-                    className="flex-1 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 border border-primary"
+                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 font-medium"
                   >
                     {uploading ? '投稿中...' : '投稿'}
                   </button>

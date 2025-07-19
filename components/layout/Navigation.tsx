@@ -6,6 +6,8 @@ import { useState, useEffect } from 'react'
 import { Menu, X, Home, MapPin, MessageSquare, Coffee, Calendar, Image, Star, User, LogIn, LogOut, UserCircle, BookOpen } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import NotificationBell from '@/components/notifications/NotificationBell'
+import { useRouter } from 'next/navigation'
+import toast from 'react-hot-toast'
 
 const navigation = [
   { name: 'ホーム', href: '/', icon: Home },
@@ -23,6 +25,7 @@ export default function Navigation() {
   const [scrolled, setScrolled] = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const pathname = usePathname()
+  const router = useRouter()
   const { user, loading, signOut } = useAuth()
 
   useEffect(() => {
@@ -51,8 +54,38 @@ export default function Navigation() {
     try {
       await signOut()
       setUserMenuOpen(false)
+      setMobileMenuOpen(false)
+      toast.success('ログアウトしました', {
+        duration: 3000,
+        position: 'top-center',
+        style: {
+          background: '#000000',
+          color: '#ffffff',
+          fontWeight: '600',
+          borderRadius: '12px',
+          padding: '16px 20px',
+          border: '1px solid #404040',
+          boxShadow: '0 10px 25px rgba(0, 0, 0, 0.3)',
+        },
+        icon: '👋'
+      })
+      router.push('/')
     } catch (error) {
       console.error('Error signing out:', error)
+      toast.error('ログアウトに失敗しました', {
+        duration: 3000,
+        position: 'top-center',
+        style: {
+          background: '#ffffff',
+          color: '#000000',
+          fontWeight: '600',
+          borderRadius: '12px',
+          padding: '16px 20px',
+          border: '2px solid #666666',
+          boxShadow: '0 10px 25px rgba(0, 0, 0, 0.2)',
+        },
+        icon: '⚠️'
+      })
     }
   }
 

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { X, Star, Upload } from 'lucide-react'
+import { X, Star, Upload, Link as LinkIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -36,6 +36,7 @@ export default function GearReviewForm({ isOpen, onClose, onSubmit, editingRevie
   const [categories, setCategories] = useState<GearCategory[]>([])
   const [loading, setLoading] = useState(false)
   const [uploadingImage, setUploadingImage] = useState(false)
+  const [imageInputType, setImageInputType] = useState<'upload' | 'url'>('upload')
   const [formData, setFormData] = useState<FormData>({
     productName: '',
     brand: '',
@@ -80,6 +81,10 @@ export default function GearReviewForm({ isOpen, onClose, onSubmit, editingRevie
         ].slice(0, 3),
         imageUrl: editingReview.image_url || ''
       })
+      // 既存の画像がある場合、URL入力タイプに設定
+      if (editingReview.image_url) {
+        setImageInputType('url')
+      }
     } else {
       setFormData({
         productName: '',
@@ -93,6 +98,7 @@ export default function GearReviewForm({ isOpen, onClose, onSubmit, editingRevie
         cons: ['', '', ''],
         imageUrl: ''
       })
+      setImageInputType('upload')
     }
   }, [editingReview, categories])
 
@@ -342,11 +348,38 @@ export default function GearReviewForm({ isOpen, onClose, onSubmit, editingRevie
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-white">
-              <Upload size={16} className="inline mr-2" />
-              商品画像
-            </label>
+            <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-white">商品画像</label>
+            
+            {/* 画像入力タイプの選択 */}
+            <div className="flex gap-2 mb-4">
+              <button
+                type="button"
+                onClick={() => setImageInputType('upload')}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  imageInputType === 'upload'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                }`}
+              >
+                <Upload size={16} />
+                画像をアップロード
+              </button>
+              <button
+                type="button"
+                onClick={() => setImageInputType('url')}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  imageInputType === 'url'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                }`}
+              >
+                <LinkIcon size={16} />
+                URLを入力
+              </button>
+            </div>
+
             <div className="space-y-4">
+              {/* 画像プレビュー */}
               {formData.imageUrl && (
                 <div className="relative">
                   <img
@@ -363,30 +396,52 @@ export default function GearReviewForm({ isOpen, onClose, onSubmit, editingRevie
                   </button>
                 </div>
               )}
-              <div className="flex items-center justify-center w-full">
-                <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
-                  <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                    <Upload className="w-8 h-8 mb-2 text-gray-400" />
-                    <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                      <span className="font-semibold">クリックして画像をアップロード</span>
-                    </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                      PNG、JPG、GIF (最大5MB)
-                    </p>
+
+              {/* 画像アップロード */}
+              {imageInputType === 'upload' && (
+                <>
+                  <div className="flex items-center justify-center w-full">
+                    <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                        <Upload className="w-8 h-8 mb-2 text-gray-400" />
+                        <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                          <span className="font-semibold">クリックして画像をアップロード</span>
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          PNG、JPG、GIF (最大5MB)
+                        </p>
+                      </div>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        disabled={uploadingImage}
+                        className="hidden"
+                      />
+                    </label>
                   </div>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    disabled={uploadingImage}
-                    className="hidden"
+                  {uploadingImage && (
+                    <div className="flex items-center justify-center text-sm text-gray-500 dark:text-gray-400">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
+                      アップロード中...
+                    </div>
+                  )}
+                </>
+              )}
+
+              {/* URL入力 */}
+              {imageInputType === 'url' && (
+                <div>
+                  <Input
+                    type="url"
+                    value={formData.imageUrl}
+                    onChange={(e) => handleInputChange('imageUrl', e.target.value)}
+                    placeholder="https://example.com/image.jpg"
+                    className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                   />
-                </label>
-              </div>
-              {uploadingImage && (
-                <div className="flex items-center justify-center text-sm text-gray-500 dark:text-gray-400">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
-                  アップロード中...
+                  <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                    商品画像のURLを入力してください（HTTPS推奨）
+                  </p>
                 </div>
               )}
             </div>

@@ -1,5 +1,4 @@
-import { supabase } from './supabase'
-import type { Database } from './supabase'
+import { createClient } from './supabase/client'
 
 export type GearReview = any
 export type GearCategory = any
@@ -18,6 +17,7 @@ export interface GearReviewWithDetails extends GearReview {
 }
 
 export async function getGearCategories(): Promise<GearCategory[]> {
+  const supabase = createClient()
   const { data, error } = await supabase
     .from('gear_categories')
     .select('*')
@@ -32,6 +32,7 @@ export async function getGearCategories(): Promise<GearCategory[]> {
 }
 
 export async function getGearReviews(categoryId?: string): Promise<GearReviewWithDetails[]> {
+  const supabase = createClient()
   let query = supabase
     .from('gear_reviews')
     .select(`
@@ -72,6 +73,7 @@ export async function getGearReviews(categoryId?: string): Promise<GearReviewWit
 }
 
 export async function getGearReviewById(id: string): Promise<GearReviewWithDetails | null> {
+  const supabase = createClient()
   const { data, error } = await supabase
     .from('gear_reviews')
     .select(`
@@ -120,6 +122,7 @@ export async function createGearReview(reviewData: {
   cons: string[]
 }): Promise<string | null> {
   try {
+    const supabase = createClient()
     const { data: review, error: reviewError } = await supabase
       .from('gear_reviews')
       .insert({
@@ -199,6 +202,7 @@ export async function updateGearReview(
   }
 ): Promise<boolean> {
   try {
+    const supabase = createClient()
     const { error: reviewError } = await supabase
       .from('gear_reviews')
       .update({
@@ -265,6 +269,7 @@ export async function updateGearReview(
 
 export async function deleteGearReview(reviewId: string): Promise<boolean> {
   try {
+    const supabase = createClient()
     const { error } = await supabase
       .from('gear_reviews')
       .delete()

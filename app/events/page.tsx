@@ -1,9 +1,10 @@
 'use client'
 
 import Link from 'next/link'
-import { Calendar, MapPin, Users, Trophy, ArrowRight, Plus } from 'lucide-react'
+import { Calendar, MapPin, Users, Trophy, ArrowRight, Plus, Grid, CalendarDays } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { getEvents, getEventTypes, EventWithDetails } from '@/lib/events'
+import EventCalendar from '@/components/events/EventCalendar'
 
 const getStatusColor = (status: string) => {
   switch (status) {
@@ -20,11 +21,18 @@ const getStatusColor = (status: string) => {
 
 export default function EventsPage() {
   const [selectedType, setSelectedType] = useState('全て')
+  const [selectedRegion, setSelectedRegion] = useState('全国')
+  const [viewMode, setViewMode] = useState<'grid' | 'calendar'>('grid')
   const [events, setEvents] = useState<EventWithDetails[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   
   const eventTypes = ['全て', ...getEventTypes()]
+  const regions = [
+    '全国', '北海道', '東北', '関東', '中部', '関西', '中国', '四国', '九州・沖縄',
+    '東京都', '神奈川県', '千葉県', '埼玉県', '大阪府', '京都府', '兵庫県', '愛知県',
+    '福岡県', '沖縄県', '静岡県', '長野県', '群馬県', '栃木県', '茨城県'
+  ]
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -44,7 +52,8 @@ export default function EventsPage() {
 
   const filteredEvents = events.filter((event) => {
     const typeMatch = selectedType === '全て' || event.event_type === selectedType
-    return typeMatch
+    const regionMatch = selectedRegion === '全国' || event.location?.includes(selectedRegion)
+    return typeMatch && regionMatch
   })
 
   // 距離情報を整理する関数
@@ -58,18 +67,57 @@ export default function EventsPage() {
 
   return (
     <div className="bg-white dark:bg-gray-900 min-h-screen">
-      <div className="bg-gradient-to-r from-primary to-blue-600 text-white py-16">
+      <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 py-16">
         <div className="max-w-7xl mx-auto px-4">
-          <h1 className="text-4xl font-bold mb-4">大会情報</h1>
-          <p className="text-xl">全国で開催されるトライアスロン・マラソン・サイクリング大会</p>
+          <h1 className="text-4xl font-bold mb-4 text-black dark:text-white">大会情報</h1>
+          <p className="text-xl text-gray-600 dark:text-gray-400">全国で開催されるトライアスロン・マラソン・サイクリング大会</p>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="mb-8 space-y-6">
+          {/* View Mode Toggle */}
           <div className="flex justify-between items-center">
+            <div className="flex items-center gap-4">
+              <h2 className="text-lg font-semibold text-black dark:text-white">表示形式</h2>
+              <div className="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+                <button
+                  onClick={() => setViewMode('grid')}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                    viewMode === 'grid'
+                      ? 'bg-white dark:bg-gray-700 text-black dark:text-white shadow-sm'
+                      : 'text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white'
+                  }`}
+                >
+                  <Grid size={16} />
+                  一覧
+                </button>
+                <button
+                  onClick={() => setViewMode('calendar')}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                    viewMode === 'calendar'
+                      ? 'bg-white dark:bg-gray-700 text-black dark:text-white shadow-sm'
+                      : 'text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white'
+                  }`}
+                >
+                  <CalendarDays size={16} />
+                  カレンダー
+                </button>
+              </div>
+            </div>
+            <Link
+              href="/events/new"
+              className="bg-black dark:bg-white text-white dark:text-black px-6 py-3 rounded-lg font-medium hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors flex items-center gap-2"
+            >
+              <Plus size={20} />
+              <span>大会を投稿</span>
+            </Link>
+          </div>
+
+          {/* Filters */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h2 className="text-lg font-semibold mb-4 text-black dark:text-white">種目別フィルター</h2>
+              <h3 className="text-md font-semibold mb-3 text-black dark:text-white">種目別フィルター</h3>
               <div className="flex flex-wrap gap-2">
                 {eventTypes.map((type) => (
                   <button
@@ -77,7 +125,7 @@ export default function EventsPage() {
                     onClick={() => setSelectedType(type)}
                     className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                       type === selectedType
-                        ? 'bg-primary text-white'
+                        ? 'bg-black dark:bg-white text-white dark:text-black'
                         : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
                     }`}
                   >
@@ -86,13 +134,25 @@ export default function EventsPage() {
                 ))}
               </div>
             </div>
-            <Link
-              href="/events/new"
-              className="bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-dark transition-colors flex items-center gap-2"
-            >
-              <Plus size={20} />
-              <span>大会を投稿</span>
-            </Link>
+            
+            <div>
+              <h3 className="text-md font-semibold mb-3 text-black dark:text-white">地域別フィルター</h3>
+              <div className="flex flex-wrap gap-2">
+                {regions.map((region) => (
+                  <button
+                    key={region}
+                    onClick={() => setSelectedRegion(region)}
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                      region === selectedRegion
+                        ? 'bg-black dark:bg-white text-white dark:text-black'
+                        : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                    }`}
+                  >
+                    {region}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -104,6 +164,12 @@ export default function EventsPage() {
           <div className="text-center py-12">
             <p className="text-red-600 dark:text-red-400">エラー: {error}</p>
           </div>
+        ) : viewMode === 'calendar' ? (
+          <EventCalendar
+            events={events}
+            selectedRegion={selectedRegion}
+            selectedType={selectedType}
+          />
         ) : filteredEvents.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-gray-600 dark:text-gray-400">該当する大会が見つかりませんでした。</p>
@@ -126,7 +192,7 @@ export default function EventsPage() {
                       alt={event.name}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                     />
-                    <div className="absolute top-4 left-4 bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">
+                    <div className="absolute top-4 left-4 bg-black dark:bg-white text-white dark:text-black px-3 py-1 rounded-full text-sm font-medium">
                       {event.event_type}
                     </div>
                     <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(event.entry_status || '')}`}>
@@ -174,8 +240,8 @@ export default function EventsPage() {
                       )}
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-primary">詳細を見る</span>
-                      <ArrowRight size={16} className="text-primary" />
+                      <span className="text-sm font-medium text-gray-600 dark:text-gray-400">詳細を見る</span>
+                      <ArrowRight size={16} className="text-gray-600 dark:text-gray-400" />
                     </div>
                   </div>
                 </Link>
