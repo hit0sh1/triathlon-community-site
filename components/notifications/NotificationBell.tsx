@@ -16,7 +16,7 @@ export default function NotificationBell() {
     if (!user?.id) return
     
     try {
-      const response = await fetch(`/api/notifications/unread-count?user_id=${user.id}`)
+      const response = await fetch('/api/notifications/unread-count')
       if (response.ok) {
         const data = await response.json()
         setUnreadCount(data.count)

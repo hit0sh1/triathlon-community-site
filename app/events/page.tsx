@@ -76,42 +76,83 @@ export default function EventsPage() {
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="mb-8 space-y-6">
-          {/* View Mode Toggle */}
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-4">
-              <h2 className="text-lg font-semibold text-black dark:text-white">表示形式</h2>
-              <div className="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
-                <button
-                  onClick={() => setViewMode('grid')}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                    viewMode === 'grid'
-                      ? 'bg-white dark:bg-gray-700 text-black dark:text-white shadow-sm'
-                      : 'text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white'
-                  }`}
-                >
-                  <Grid size={16} />
-                  一覧
-                </button>
-                <button
-                  onClick={() => setViewMode('calendar')}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                    viewMode === 'calendar'
-                      ? 'bg-white dark:bg-gray-700 text-black dark:text-white shadow-sm'
-                      : 'text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white'
-                  }`}
-                >
-                  <CalendarDays size={16} />
-                  カレンダー
-                </button>
+          {/* View Mode Toggle and Post Button */}
+          <div className="space-y-4">
+            {/* PC表示：横並び */}
+            <div className="hidden md:flex justify-between items-center">
+              <div className="flex items-center gap-4">
+                <h2 className="text-lg font-semibold text-black dark:text-white">表示形式</h2>
+                <div className="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+                  <button
+                    onClick={() => setViewMode('grid')}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                      viewMode === 'grid'
+                        ? 'bg-white dark:bg-gray-700 text-black dark:text-white shadow-sm'
+                        : 'text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white'
+                    }`}
+                  >
+                    <Grid size={16} />
+                    一覧
+                  </button>
+                  <button
+                    onClick={() => setViewMode('calendar')}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                      viewMode === 'calendar'
+                        ? 'bg-white dark:bg-gray-700 text-black dark:text-white shadow-sm'
+                        : 'text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white'
+                    }`}
+                  >
+                    <CalendarDays size={16} />
+                    カレンダー
+                  </button>
+                </div>
               </div>
+              <Link
+                href="/events/new"
+                className="bg-black dark:bg-white text-white dark:text-black px-6 py-3 rounded-lg font-medium hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors flex items-center gap-2"
+              >
+                <Plus size={20} />
+                <span>大会を投稿</span>
+              </Link>
             </div>
-            <Link
-              href="/events/new"
-              className="bg-black dark:bg-white text-white dark:text-black px-6 py-3 rounded-lg font-medium hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors flex items-center gap-2"
-            >
-              <Plus size={20} />
-              <span>大会を投稿</span>
-            </Link>
+
+            {/* モバイル表示：縦並び */}
+            <div className="md:hidden space-y-4">
+              <div className="flex items-center gap-4">
+                <h2 className="text-lg font-semibold text-black dark:text-white">表示形式</h2>
+                <div className="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+                  <button
+                    onClick={() => setViewMode('grid')}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                      viewMode === 'grid'
+                        ? 'bg-white dark:bg-gray-700 text-black dark:text-white shadow-sm'
+                        : 'text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white'
+                    }`}
+                  >
+                    <Grid size={16} />
+                    一覧
+                  </button>
+                  <button
+                    onClick={() => setViewMode('calendar')}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                      viewMode === 'calendar'
+                        ? 'bg-white dark:bg-gray-700 text-black dark:text-white shadow-sm'
+                        : 'text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white'
+                    }`}
+                  >
+                    <CalendarDays size={16} />
+                    カレンダー
+                  </button>
+                </div>
+              </div>
+              <Link
+                href="/events/new"
+                className="w-full bg-black dark:bg-white text-white dark:text-black px-6 py-3 rounded-lg font-medium hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors flex items-center justify-center gap-2"
+              >
+                <Plus size={20} />
+                <span>大会を投稿</span>
+              </Link>
+            </div>
           </div>
 
           {/* Filters */}

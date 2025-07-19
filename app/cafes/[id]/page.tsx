@@ -5,6 +5,8 @@ import { useParams, useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { MapPin, Phone, Globe, Clock, Wifi, Car, Zap, Star, Heart, Edit, Trash2, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
+import toast from 'react-hot-toast'
+import CafeMap from '@/components/cafes/CafeMap'
 
 interface CafePost {
   id: string
@@ -19,7 +21,7 @@ interface CafePost {
   image_url?: string
   tags: string[]
   wifi_available: boolean
-  has_cycle_rack: boolean
+  bike_parking: boolean
   has_power_outlet: boolean
   is_approved: boolean
   user_id: string
@@ -56,7 +58,10 @@ export default function CafeDetailPage() {
 
   useEffect(() => {
     fetchCafeDetail()
-  }, [params.id])
+    if (user) {
+      checkFavoriteStatus()
+    }
+  }, [params.id, user])
 
   const fetchCafeDetail = async () => {
     try {
@@ -96,6 +101,18 @@ export default function CafeDetailPage() {
       router.push('/cafes')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const checkFavoriteStatus = async () => {
+    try {
+      const response = await fetch(`/api/cafes/${params.id}/favorite`)
+      if (response.ok) {
+        const data = await response.json()
+        setIsFavorited(data.isFavorited)
+      }
+    } catch (error) {
+      console.error('Error checking favorite status:', error)
     }
   }
 
@@ -148,14 +165,60 @@ export default function CafeDetailPage() {
 
       if (error) {
         console.error('Error submitting review:', error)
+        toast.error('レビューの投稿に失敗しました', {
+          duration: 3000,
+          position: 'top-center',
+          style: {
+            background: '#ffffff',
+            color: '#000000',
+            fontWeight: '600',
+            borderRadius: '12px',
+            padding: '16px 20px',
+            border: '2px solid #666666',
+            boxShadow: '0 10px 25px rgba(0, 0, 0, 0.2)',
+          },
+          icon: '⚠️'
+        })
         return
       }
 
+      // レビューを追加
       setReviews([review, ...reviews])
       setNewReview({ rating: 5, comment: '' })
-      fetchCafeDetail() // 評価を再取得
+      
+      // カフェ情報を再取得して評価を更新
+      await fetchCafeDetail()
+      
+      toast.success('レビューを投稿しました！', {
+        duration: 3000,
+        position: 'top-center',
+        style: {
+          background: '#000000',
+          color: '#ffffff',
+          fontWeight: '600',
+          borderRadius: '12px',
+          padding: '16px 20px',
+          border: '1px solid #404040',
+          boxShadow: '0 10px 25px rgba(0, 0, 0, 0.3)',
+        },
+        icon: '✅'
+      })
     } catch (error) {
       console.error('Error submitting review:', error)
+      toast.error('レビューの投稿中にエラーが発生しました', {
+        duration: 3000,
+        position: 'top-center',
+        style: {
+          background: '#ffffff',
+          color: '#000000',
+          fontWeight: '600',
+          borderRadius: '12px',
+          padding: '16px 20px',
+          border: '2px solid #666666',
+          boxShadow: '0 10px 25px rgba(0, 0, 0, 0.2)',
+        },
+        icon: '⚠️'
+      })
     } finally {
       setSubmittingReview(false)
     }
@@ -252,7 +315,7 @@ export default function CafeDetailPage() {
                       WiFi
                     </div>
                   )}
-                  {cafe.has_cycle_rack && (
+                  {cafe.bike_parking && (
                     <div className="bg-blue-500 text-white px-3 py-1 rounded-full text-sm flex items-center gap-1">
                       <Car size={16} />
                       サイクルラック
@@ -454,6 +517,26 @@ export default function CafeDetailPage() {
             </div>
           </div>
         </div>
+
+        {/* 地図セクション */}
+        {(cafe.latitude && cafe.longitude) || cafe.address ? (
+          <div className="mt-8 bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+            <div className="p-6">
+              <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white flex items-center gap-2">
+                <MapPin size={24} />
+                アクセス
+              </h2>
+              <div className="h-96">
+                <CafeMap
+                  latitude={cafe.latitude}
+                  longitude={cafe.longitude}
+                  cafeName={cafe.title}
+                  address={cafe.address}
+                />
+              </div>
+            </div>
+          </div>
+        ) : null}
       </div>
     </div>
   )

@@ -18,7 +18,7 @@ interface CafePost {
   image_url?: string
   tags: string[]
   wifi_available: boolean
-  has_cycle_rack: boolean
+  bike_parking: boolean
   has_power_outlet: boolean
   is_approved: boolean
   user_id: string
@@ -79,10 +79,10 @@ export default function CafesPage() {
   if (loading) {
     return (
       <div className="bg-white dark:bg-gray-900 min-h-screen">
-        <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-16">
+        <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 py-16">
           <div className="max-w-7xl mx-auto px-4">
-            <h1 className="text-4xl font-bold mb-4">カフェ情報</h1>
-            <p className="text-xl">トライアスロン仲間におすすめのカフェ</p>
+            <h1 className="text-4xl font-bold mb-4 text-black dark:text-white">カフェ情報</h1>
+            <p className="text-xl text-gray-600 dark:text-gray-400">トライアスロン仲間におすすめのカフェ</p>
           </div>
         </div>
         <div className="max-w-7xl mx-auto px-4 py-8">
@@ -96,27 +96,27 @@ export default function CafesPage() {
 
   return (
     <div className="bg-white dark:bg-gray-900 min-h-screen">
-      <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-16">
+      <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 py-16">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-4xl font-bold mb-4">カフェ情報</h1>
-              <p className="text-xl">トライアスロン仲間におすすめのカフェ</p>
-            </div>
-            {user && (
-              <Link
-                href="/cafes/new"
-                className="bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors flex items-center gap-2"
-              >
-                <Plus size={20} />
-                カフェを投稿
-              </Link>
-            )}
-          </div>
+          <h1 className="text-4xl font-bold mb-4 text-black dark:text-white">カフェ情報</h1>
+          <p className="text-xl text-gray-600 dark:text-gray-400">トライアスロン仲間におすすめのカフェ</p>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-8">
+        {/* カフェ投稿ボタン */}
+        {user && (
+          <div className="mb-6">
+            <Link
+              href="/cafes/new"
+              className="inline-flex items-center gap-2 bg-black dark:bg-white text-white dark:text-black px-6 py-3 rounded-lg font-medium hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors"
+            >
+              <Plus size={20} />
+              カフェを投稿
+            </Link>
+          </div>
+        )}
+
         {/* 検索・フィルター */}
         <div className="mb-8 space-y-4">
           {/* 検索バー */}
@@ -189,7 +189,7 @@ export default function CafesPage() {
                         WiFi
                       </div>
                     )}
-                    {cafe.has_cycle_rack && (
+                    {cafe.bike_parking && (
                       <div className="bg-blue-500 text-white px-2 py-1 rounded text-xs flex items-center gap-1">
                         <Car size={12} />
                         サイクルラック

@@ -122,7 +122,7 @@ export default async function Home() {
       </section>
 
       {/* Notifications Section */}
-      <section className="section-spacing bg-gray-50 dark:bg-gray-900">
+      <section className="pt-16 lg:pt-24 pb-16 lg:pb-24 bg-gray-50 dark:bg-gray-900">
         <div className="container-premium">
           <div className="max-w-4xl mx-auto">
             <NotificationSectionWrapper limit={5} showTitle={true} />

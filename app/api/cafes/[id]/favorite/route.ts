@@ -1,68 +1,103 @@
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
 
 export async function POST(
-  request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const supabase = createRouteHandlerClient({ cookies })
-
   try {
-    const { data: { user } } = await supabase.auth.getUser()
+    const supabase = createClient()
     
-    if (!user) {
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    if (userError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { data: favorite, error } = await supabase
-      .from('cafe_favorites')
-      .upsert({
-        cafe_post_id: (await params).id,
+    const { id } = await params
+
+    const { error } = await supabase
+      .from('cafe_post_favorites')
+      .insert([{
+        cafe_post_id: id,
         user_id: user.id
-      })
-      .select()
-      .single()
+      }])
 
     if (error) {
+      if (error.code === '23505') {
+        return NextResponse.json({ error: 'Already favorited' }, { status: 400 })
+      }
       console.error('Error adding favorite:', error)
-      return NextResponse.json({ error: 'Failed to add favorite' }, { status: 500 })
+      return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
-    return NextResponse.json({ favorite })
+    return NextResponse.json({ success: true })
   } catch (error) {
-    console.error('Unexpected error:', error)
+    console.error('Error in favorite API:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
 
 export async function DELETE(
-  request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const supabase = createRouteHandlerClient({ cookies })
-
   try {
-    const { data: { user } } = await supabase.auth.getUser()
+    const supabase = createClient()
     
-    if (!user) {
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    if (userError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    const { id } = await params
+
     const { error } = await supabase
-      .from('cafe_favorites')
+      .from('cafe_post_favorites')
       .delete()
-      .eq('cafe_post_id', (await params).id)
+      .eq('cafe_post_id', id)
       .eq('user_id', user.id)
 
     if (error) {
       console.error('Error removing favorite:', error)
-      return NextResponse.json({ error: 'Failed to remove favorite' }, { status: 500 })
+      return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error('Unexpected error:', error)
+    console.error('Error in favorite API:', error)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  }
+}
+
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const supabase = createClient()
+    
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    if (userError || !user) {
+      return NextResponse.json({ isFavorited: false })
+    }
+
+    const { id } = await params
+
+    const { data, error } = await supabase
+      .from('cafe_post_favorites')
+      .select('id')
+      .eq('cafe_post_id', id)
+      .eq('user_id', user.id)
+      .single()
+
+    if (error && error.code !== 'PGRST116') {
+      console.error('Error checking favorite:', error)
+      return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+
+    return NextResponse.json({ isFavorited: !!data })
+  } catch (error) {
+    console.error('Error in favorite API:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

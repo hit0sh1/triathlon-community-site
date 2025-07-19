@@ -1,25 +1,21 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 
 export async function GET(request: Request) {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
+  const supabase = await createClient()
 
   try {
-    // Get user_id from query params or headers
-    const { searchParams } = new URL(request.url)
-    const userId = searchParams.get('user_id')
+    // Get authenticated user
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
     
-    if (!userId) {
-      return NextResponse.json({ error: 'User ID required' }, { status: 401 })
+    if (userError || !user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const { count, error } = await supabase
       .from('notifications')
       .select('*', { count: 'exact', head: true })
-      .eq('user_id', userId)
+      .eq('user_id', user.id)
       .eq('is_read', false)
 
     if (error) {
