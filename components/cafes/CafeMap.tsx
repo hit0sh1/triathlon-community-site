@@ -11,8 +11,8 @@ interface CafeMapProps {
 
 export default function CafeMap({ latitude, longitude, cafeName, address }: CafeMapProps) {
   const mapRef = useRef<HTMLDivElement>(null)
-  const mapInstanceRef = useRef<google.maps.Map | null>(null)
-  const markerRef = useRef<google.maps.Marker | null>(null)
+  const mapInstanceRef = useRef<any>(null)
+  const markerRef = useRef<any>(null)
 
   useEffect(() => {
     // Google Maps APIキーが設定されていない場合のフォールバック
@@ -26,9 +26,9 @@ export default function CafeMap({ latitude, longitude, cafeName, address }: Cafe
     // 座標が設定されていない場合は住所から座標を取得
     if (!latitude || !longitude) {
       // 住所から座標を取得する処理（Geocoding）
-      if (address && window.google && window.google.maps) {
-        const geocoder = new google.maps.Geocoder()
-        geocoder.geocode({ address: address }, (results, status) => {
+      if (address && (window as any).google && (window as any).google.maps) {
+        const geocoder = new (window as any).google.maps.Geocoder()
+        geocoder.geocode({ address: address }, (results: any, status: any) => {
           if (status === 'OK' && results && results[0]) {
             const location = results[0].geometry.location
             initializeMap(location.lat(), location.lng())
@@ -41,7 +41,7 @@ export default function CafeMap({ latitude, longitude, cafeName, address }: Cafe
   }, [latitude, longitude, address, cafeName])
 
   const initializeMap = (lat: number, lng: number) => {
-    if (!mapRef.current || !window.google) return
+    if (!mapRef.current || !(window as any).google) return
 
     // 既存のマップがある場合は更新のみ
     if (mapInstanceRef.current && markerRef.current) {
@@ -52,7 +52,7 @@ export default function CafeMap({ latitude, longitude, cafeName, address }: Cafe
     }
 
     // 新規マップの作成
-    const map = new google.maps.Map(mapRef.current, {
+    const map = new (window as any).google.maps.Map(mapRef.current, {
       center: { lat, lng },
       zoom: 16,
       mapTypeControl: false,
@@ -60,14 +60,14 @@ export default function CafeMap({ latitude, longitude, cafeName, address }: Cafe
       fullscreenControl: false,
     })
 
-    const marker = new google.maps.Marker({
+    const marker = new (window as any).google.maps.Marker({
       position: { lat, lng },
       map: map,
       title: cafeName,
     })
 
     // 情報ウィンドウを追加
-    const infoWindow = new google.maps.InfoWindow({
+    const infoWindow = new (window as any).google.maps.InfoWindow({
       content: `
         <div style="padding: 8px;">
           <strong>${cafeName}</strong><br>
