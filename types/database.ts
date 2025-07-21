@@ -47,6 +47,10 @@ export type Database = {
           category_id: string | null
           content: string
           created_at: string | null
+          deleted_at: string | null
+          deleted_by_id: string | null
+          deletion_custom_reason: string | null
+          deletion_reason_id: string | null
           id: string
           is_pinned: boolean | null
           like_count: number | null
@@ -59,6 +63,10 @@ export type Database = {
           category_id?: string | null
           content: string
           created_at?: string | null
+          deleted_at?: string | null
+          deleted_by_id?: string | null
+          deletion_custom_reason?: string | null
+          deletion_reason_id?: string | null
           id?: string
           is_pinned?: boolean | null
           like_count?: number | null
@@ -71,6 +79,10 @@ export type Database = {
           category_id?: string | null
           content?: string
           created_at?: string | null
+          deleted_at?: string | null
+          deleted_by_id?: string | null
+          deletion_custom_reason?: string | null
+          deletion_reason_id?: string | null
           id?: string
           is_pinned?: boolean | null
           like_count?: number | null
@@ -93,6 +105,20 @@ export type Database = {
             referencedRelation: "board_categories"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "board_posts_deleted_by_id_fkey"
+            columns: ["deleted_by_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "board_posts_deletion_reason_id_fkey"
+            columns: ["deletion_reason_id"]
+            isOneToOne: false
+            referencedRelation: "deletion_reasons"
+            referencedColumns: ["id"]
+          },
         ]
       }
       board_replies: {
@@ -100,6 +126,10 @@ export type Database = {
           author_id: string | null
           content: string
           created_at: string | null
+          deleted_at: string | null
+          deleted_by_id: string | null
+          deletion_custom_reason: string | null
+          deletion_reason_id: string | null
           id: string
           parent_reply_id: string | null
           post_id: string | null
@@ -109,6 +139,10 @@ export type Database = {
           author_id?: string | null
           content: string
           created_at?: string | null
+          deleted_at?: string | null
+          deleted_by_id?: string | null
+          deletion_custom_reason?: string | null
+          deletion_reason_id?: string | null
           id?: string
           parent_reply_id?: string | null
           post_id?: string | null
@@ -118,6 +152,10 @@ export type Database = {
           author_id?: string | null
           content?: string
           created_at?: string | null
+          deleted_at?: string | null
+          deleted_by_id?: string | null
+          deletion_custom_reason?: string | null
+          deletion_reason_id?: string | null
           id?: string
           parent_reply_id?: string | null
           post_id?: string | null
@@ -132,6 +170,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "board_replies_deleted_by_id_fkey"
+            columns: ["deleted_by_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "board_replies_deletion_reason_id_fkey"
+            columns: ["deletion_reason_id"]
+            isOneToOne: false
+            referencedRelation: "deletion_reasons"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "board_replies_parent_reply_id_fkey"
             columns: ["parent_reply_id"]
             isOneToOne: false
@@ -143,6 +195,42 @@ export type Database = {
             columns: ["post_id"]
             isOneToOne: false
             referencedRelation: "board_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cafe_favorites: {
+        Row: {
+          cafe_post_id: string
+          created_at: string | null
+          id: string
+          user_id: string
+        }
+        Insert: {
+          cafe_post_id: string
+          created_at?: string | null
+          id?: string
+          user_id: string
+        }
+        Update: {
+          cafe_post_id?: string
+          created_at?: string | null
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cafe_favorites_cafe_post_id_fkey"
+            columns: ["cafe_post_id"]
+            isOneToOne: false
+            referencedRelation: "cafe_posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cafe_favorites_cafe_post_id_fkey"
+            columns: ["cafe_post_id"]
+            isOneToOne: false
+            referencedRelation: "cafe_stats"
             referencedColumns: ["id"]
           },
         ]
@@ -181,6 +269,130 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      cafe_post_reviews: {
+        Row: {
+          cafe_post_id: string | null
+          comment: string | null
+          created_at: string | null
+          id: string
+          rating: number
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          cafe_post_id?: string | null
+          comment?: string | null
+          created_at?: string | null
+          id?: string
+          rating: number
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          cafe_post_id?: string | null
+          comment?: string | null
+          created_at?: string | null
+          id?: string
+          rating?: number
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cafe_post_reviews_cafe_post_id_fkey"
+            columns: ["cafe_post_id"]
+            isOneToOne: false
+            referencedRelation: "cafe_posts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cafe_post_reviews_cafe_post_id_fkey"
+            columns: ["cafe_post_id"]
+            isOneToOne: false
+            referencedRelation: "cafe_stats"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cafe_post_reviews_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cafe_posts: {
+        Row: {
+          address: string | null
+          bike_parking: boolean | null
+          created_at: string | null
+          deleted_at: string | null
+          deleted_by: string | null
+          deletion_reason: string | null
+          description: string | null
+          has_power_outlet: boolean | null
+          id: string
+          image_url: string | null
+          is_approved: boolean | null
+          latitude: number | null
+          longitude: number | null
+          opening_hours: string | null
+          phone: string | null
+          tags: string[] | null
+          title: string
+          updated_at: string | null
+          user_id: string
+          website: string | null
+          wifi_available: boolean | null
+        }
+        Insert: {
+          address?: string | null
+          bike_parking?: boolean | null
+          created_at?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          deletion_reason?: string | null
+          description?: string | null
+          has_power_outlet?: boolean | null
+          id?: string
+          image_url?: string | null
+          is_approved?: boolean | null
+          latitude?: number | null
+          longitude?: number | null
+          opening_hours?: string | null
+          phone?: string | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string | null
+          user_id: string
+          website?: string | null
+          wifi_available?: boolean | null
+        }
+        Update: {
+          address?: string | null
+          bike_parking?: boolean | null
+          created_at?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          deletion_reason?: string | null
+          description?: string | null
+          has_power_outlet?: boolean | null
+          id?: string
+          image_url?: string | null
+          is_approved?: boolean | null
+          latitude?: number | null
+          longitude?: number | null
+          opening_hours?: string | null
+          phone?: string | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string | null
+          user_id?: string
+          website?: string | null
+          wifi_available?: boolean | null
+        }
+        Relationships: []
       }
       cafe_reviews: {
         Row: {
@@ -297,6 +509,10 @@ export type Database = {
           column_id: string | null
           content: string
           created_at: string
+          deleted_at: string | null
+          deleted_by_id: string | null
+          deletion_custom_reason: string | null
+          deletion_reason_id: string | null
           id: string
           updated_at: string
           user_id: string | null
@@ -305,6 +521,10 @@ export type Database = {
           column_id?: string | null
           content: string
           created_at?: string
+          deleted_at?: string | null
+          deleted_by_id?: string | null
+          deletion_custom_reason?: string | null
+          deletion_reason_id?: string | null
           id?: string
           updated_at?: string
           user_id?: string | null
@@ -313,6 +533,10 @@ export type Database = {
           column_id?: string | null
           content?: string
           created_at?: string
+          deleted_at?: string | null
+          deleted_by_id?: string | null
+          deletion_custom_reason?: string | null
+          deletion_reason_id?: string | null
           id?: string
           updated_at?: string
           user_id?: string | null
@@ -325,6 +549,20 @@ export type Database = {
             referencedRelation: "columns"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "column_comments_deleted_by_id_fkey"
+            columns: ["deleted_by_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "column_comments_deletion_reason_id_fkey"
+            columns: ["deletion_reason_id"]
+            isOneToOne: false
+            referencedRelation: "deletion_reasons"
+            referencedColumns: ["id"]
+          },
         ]
       }
       columns: {
@@ -333,6 +571,10 @@ export type Database = {
           content: string
           created_at: string
           created_by: string | null
+          deleted_at: string | null
+          deleted_by_id: string | null
+          deletion_custom_reason: string | null
+          deletion_reason_id: string | null
           excerpt: string | null
           id: string
           image_url: string | null
@@ -348,6 +590,10 @@ export type Database = {
           content: string
           created_at?: string
           created_by?: string | null
+          deleted_at?: string | null
+          deleted_by_id?: string | null
+          deletion_custom_reason?: string | null
+          deletion_reason_id?: string | null
           excerpt?: string | null
           id?: string
           image_url?: string | null
@@ -363,6 +609,10 @@ export type Database = {
           content?: string
           created_at?: string
           created_by?: string | null
+          deleted_at?: string | null
+          deleted_by_id?: string | null
+          deletion_custom_reason?: string | null
+          deletion_reason_id?: string | null
           excerpt?: string | null
           id?: string
           image_url?: string | null
@@ -373,7 +623,89 @@ export type Database = {
           updated_at?: string
           view_count?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "columns_deleted_by_id_fkey"
+            columns: ["deleted_by_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "columns_deletion_reason_id_fkey"
+            columns: ["deletion_reason_id"]
+            isOneToOne: false
+            referencedRelation: "deletion_reasons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      content_action_logs: {
+        Row: {
+          action_type: string
+          admin_notes: string | null
+          content_author_id: string | null
+          content_id: string
+          content_title: string | null
+          content_type: string
+          created_at: string | null
+          custom_reason: string | null
+          deletion_reason_id: string | null
+          id: string
+          is_notification_sent: boolean | null
+          performed_by_id: string
+        }
+        Insert: {
+          action_type: string
+          admin_notes?: string | null
+          content_author_id?: string | null
+          content_id: string
+          content_title?: string | null
+          content_type: string
+          created_at?: string | null
+          custom_reason?: string | null
+          deletion_reason_id?: string | null
+          id?: string
+          is_notification_sent?: boolean | null
+          performed_by_id: string
+        }
+        Update: {
+          action_type?: string
+          admin_notes?: string | null
+          content_author_id?: string | null
+          content_id?: string
+          content_title?: string | null
+          content_type?: string
+          created_at?: string | null
+          custom_reason?: string | null
+          deletion_reason_id?: string | null
+          id?: string
+          is_notification_sent?: boolean | null
+          performed_by_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_action_logs_content_author_id_fkey"
+            columns: ["content_author_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "content_action_logs_deletion_reason_id_fkey"
+            columns: ["deletion_reason_id"]
+            isOneToOne: false
+            referencedRelation: "deletion_reasons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "content_action_logs_performed_by_id_fkey"
+            columns: ["performed_by_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       course_comments: {
         Row: {
@@ -510,6 +842,9 @@ export type Database = {
           average_rating: number | null
           created_at: string | null
           created_by: string | null
+          deleted_at: string | null
+          deleted_by: string | null
+          deletion_reason: string | null
           description: string | null
           difficulty_level: number | null
           distance: number
@@ -528,6 +863,9 @@ export type Database = {
           average_rating?: number | null
           created_at?: string | null
           created_by?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          deletion_reason?: string | null
           description?: string | null
           difficulty_level?: number | null
           distance: number
@@ -546,6 +884,9 @@ export type Database = {
           average_rating?: number | null
           created_at?: string | null
           created_by?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          deletion_reason?: string | null
           description?: string | null
           difficulty_level?: number | null
           distance?: number
@@ -568,6 +909,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      deletion_reasons: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          severity: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          severity?: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          severity?: string
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       event_aid_stations: {
         Row: {
@@ -753,6 +1124,10 @@ export type Database = {
           created_at: string | null
           created_by: string | null
           current_participants: number | null
+          deleted_at: string | null
+          deleted_by_id: string | null
+          deletion_custom_reason: string | null
+          deletion_reason_id: string | null
           description: string | null
           entry_deadline: string | null
           entry_fee: string | null
@@ -772,6 +1147,10 @@ export type Database = {
           created_at?: string | null
           created_by?: string | null
           current_participants?: number | null
+          deleted_at?: string | null
+          deleted_by_id?: string | null
+          deletion_custom_reason?: string | null
+          deletion_reason_id?: string | null
           description?: string | null
           entry_deadline?: string | null
           entry_fee?: string | null
@@ -791,6 +1170,10 @@ export type Database = {
           created_at?: string | null
           created_by?: string | null
           current_participants?: number | null
+          deleted_at?: string | null
+          deleted_by_id?: string | null
+          deletion_custom_reason?: string | null
+          deletion_reason_id?: string | null
           description?: string | null
           entry_deadline?: string | null
           entry_fee?: string | null
@@ -812,6 +1195,20 @@ export type Database = {
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "events_deleted_by_id_fkey"
+            columns: ["deleted_by_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "events_deletion_reason_id_fkey"
+            columns: ["deletion_reason_id"]
+            isOneToOne: false
+            referencedRelation: "deletion_reasons"
             referencedColumns: ["id"]
           },
         ]
@@ -929,6 +1326,9 @@ export type Database = {
           category: string | null
           comment_count: number | null
           created_at: string | null
+          deleted_at: string | null
+          deleted_by: string | null
+          deletion_reason: string | null
           id: string
           like_count: number | null
           photo_url: string
@@ -939,6 +1339,9 @@ export type Database = {
           category?: string | null
           comment_count?: number | null
           created_at?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          deletion_reason?: string | null
           id?: string
           like_count?: number | null
           photo_url: string
@@ -949,6 +1352,9 @@ export type Database = {
           category?: string | null
           comment_count?: number | null
           created_at?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          deletion_reason?: string | null
           id?: string
           like_count?: number | null
           photo_url?: string
@@ -1045,6 +1451,9 @@ export type Database = {
           brand: string | null
           category_id: string | null
           created_at: string | null
+          deleted_at: string | null
+          deleted_by: string | null
+          deletion_reason: string | null
           detailed_review: string | null
           id: string
           image_url: string | null
@@ -1059,6 +1468,9 @@ export type Database = {
           brand?: string | null
           category_id?: string | null
           created_at?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          deletion_reason?: string | null
           detailed_review?: string | null
           id?: string
           image_url?: string | null
@@ -1073,6 +1485,9 @@ export type Database = {
           brand?: string | null
           category_id?: string | null
           created_at?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          deletion_reason?: string | null
           detailed_review?: string | null
           id?: string
           image_url?: string | null
@@ -1132,6 +1547,39 @@ export type Database = {
           },
         ]
       }
+      notifications: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_read: boolean | null
+          message: string | null
+          title: string
+          type: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          message?: string | null
+          title: string
+          type?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          message?: string | null
+          title?: string
+          type?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           achievement_count: number | null
@@ -1186,6 +1634,36 @@ export type Database = {
           total_distance?: number | null
           updated_at?: string | null
           username?: string
+        }
+        Relationships: []
+      }
+      public_announcements: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          message: string | null
+          title: string
+          type: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          message?: string | null
+          title: string
+          type?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          message?: string | null
+          title?: string
+          type?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -1417,6 +1895,32 @@ export type Database = {
       }
     }
     Views: {
+      cafe_stats: {
+        Row: {
+          address: string | null
+          average_rating: number | null
+          bike_parking: boolean | null
+          created_at: string | null
+          description: string | null
+          favorite_count: number | null
+          has_power_outlet: boolean | null
+          id: string | null
+          image_url: string | null
+          is_approved: boolean | null
+          latitude: number | null
+          longitude: number | null
+          opening_hours: string | null
+          phone: string | null
+          review_count: number | null
+          tags: string[] | null
+          title: string | null
+          updated_at: string | null
+          user_id: string | null
+          website: string | null
+          wifi_available: boolean | null
+        }
+        Relationships: []
+      }
       monthly_training_summary: {
         Row: {
           activity_count: number | null
@@ -1438,6 +1942,14 @@ export type Database = {
       }
     }
     Functions: {
+      restore_record: {
+        Args: { table_name: string; record_id: string }
+        Returns: undefined
+      }
+      soft_delete_record: {
+        Args: { table_name: string; record_id: string }
+        Returns: undefined
+      }
       update_course_rating_stats: {
         Args: { course_uuid: string }
         Returns: undefined
