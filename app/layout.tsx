@@ -25,7 +25,7 @@ export default function RootLayout({
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
         <link rel="manifest" href="/manifest.json" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.svg" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <GoogleMapsScript />
       </head>
       <body className="antialiased min-h-screen flex flex-col bg-white dark:bg-black" suppressHydrationWarning>
