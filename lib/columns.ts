@@ -59,7 +59,7 @@ export async function getColumns(): Promise<ColumnWithDetails[]> {
   // 削除されていないコメントのみフィルタリング
   const filteredData = (data || []).map(column => ({
     ...column,
-    column_comments: column.column_comments?.filter(comment => !comment.deleted_at) || []
+    column_comments: column.column_comments?.filter((comment: any) => !comment.deleted_at) || []
   }))
   
   return filteredData
@@ -95,7 +95,7 @@ export async function getColumn(columnId: string): Promise<ColumnWithDetails | n
   // 削除されていないコメントのみフィルタリング
   const filteredData = {
     ...data,
-    column_comments: data?.column_comments?.filter(comment => !comment.deleted_at) || []
+    column_comments: data?.column_comments?.filter((comment: any) => !comment.deleted_at) || []
   }
   
   return filteredData
@@ -542,7 +542,7 @@ export async function getFeaturedColumns(limit: number = 3): Promise<ColumnWithD
   // 削除されていないコメントのみフィルタリング
   const filteredData = (data || []).map(column => ({
     ...column,
-    column_comments: column.column_comments?.filter(comment => !comment.deleted_at) || []
+    column_comments: column.column_comments?.filter((comment: any) => !comment.deleted_at) || []
   }))
   
   return filteredData
@@ -576,7 +576,7 @@ export async function getPopularColumns(limit: number = 3): Promise<ColumnWithDe
   // 削除されていないコメントのみフィルタリング
   const filteredData = (data || []).map(column => ({
     ...column,
-    column_comments: column.column_comments?.filter(comment => !comment.deleted_at) || []
+    column_comments: column.column_comments?.filter((comment: any) => !comment.deleted_at) || []
   }))
   
   return filteredData
@@ -616,7 +616,7 @@ export async function getColumnsByCategory(category: string, limit?: number): Pr
   // 削除されていないコメントのみフィルタリング
   const filteredData = (data || []).map(column => ({
     ...column,
-    column_comments: column.column_comments?.filter(comment => !comment.deleted_at) || []
+    column_comments: column.column_comments?.filter((comment: any) => !comment.deleted_at) || []
   }))
   
   return filteredData
@@ -654,7 +654,7 @@ export async function getMyColumns(): Promise<ColumnWithDetails[]> {
   // 削除されていないコメントのみフィルタリング
   const filteredData = (data || []).map(column => ({
     ...column,
-    column_comments: column.column_comments?.filter(comment => !comment.deleted_at) || []
+    column_comments: column.column_comments?.filter((comment: any) => !comment.deleted_at) || []
   }))
   
   return filteredData
