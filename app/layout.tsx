@@ -5,6 +5,7 @@ import Footer from "@/components/layout/Footer";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { Toaster } from 'react-hot-toast';
 import { GoogleMapsScript } from '@/components/cafes/CafeMap';
+import PWAInstaller from '@/components/PWAInstaller';
 
 export const metadata: Metadata = {
   title: "沖縄トライアスロンコミュニティ",
@@ -36,6 +37,7 @@ export default function RootLayout({
             {children}
           </main>
           <Footer />
+          <PWAInstaller />
         </AuthProvider>
       </body>
     </html>
