@@ -6,7 +6,7 @@ import { ArrowLeft, MessageSquare, Clock, User, Reply, Heart, Trash2 } from 'luc
 import { useState, useEffect, useMemo } from 'react'
 import { Database } from '@/types/database'
 import { createClient } from '@/lib/supabase/client'
-import { incrementViewCount, createBoardReply, deleteBoardReplyByUser, likeBoardReply, unlikeBoardReply, checkUserLikedReply, checkLikeTableExists } from '@/lib/board'
+import { incrementViewCount, createBoardReply, deleteBoardReplyByUser, deleteBoardPostByUser, likeBoardReply, unlikeBoardReply, checkUserLikedReply, checkLikeTableExists } from '@/lib/board'
 import { useAuth } from '@/contexts/AuthContext'
 import { ensureProfileExists } from '@/lib/profile'
 
@@ -263,7 +263,7 @@ export default function PostDetailPage() {
 
     try {
       console.log('Deleting post:', postId)
-      await deleteBoardPost(postId)
+      await deleteBoardPostByUser(postId)
       console.log('Post deleted successfully')
       
       // 削除成功後、掲示板一覧に戻る
