@@ -104,9 +104,9 @@ export default function EditEventPage() {
     try {
       const eventData = {
         ...formData,
-        max_participants: formData.max_participants ? parseInt(formData.max_participants) : null,
+        max_participants: formData.max_participants ? parseInt(formData.max_participants) : undefined,
         current_participants: formData.current_participants ? parseInt(formData.current_participants) : 0,
-        entry_deadline: formData.entry_deadline || null,
+        entry_deadline: formData.entry_deadline || undefined,
       }
 
       await updateEvent(eventId, eventData)
