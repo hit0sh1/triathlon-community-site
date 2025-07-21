@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { Calendar, MapPin, Users, Trophy, ArrowLeft, ExternalLink, Clock, Trash2, Edit } from 'lucide-react'
-import { getEvent, EventWithDetails } from '@/lib/events'
+import { getEvent, EventWithDetails, deleteEventByUser } from '@/lib/events'
 import { createClient } from '@/lib/supabase/client'
 import { isAdmin } from '@/lib/admin'
 import Link from 'next/link'
@@ -88,7 +88,7 @@ export default function EventDetailPage() {
     setDeleting(true)
     setShowDeleteDialog(false)
     try {
-      await deleteEvent(event.id)
+      await deleteEventByUser(event.id)
       router.push('/events')
     } catch (err) {
       alert(err instanceof Error ? err.message : '削除に失敗しました')

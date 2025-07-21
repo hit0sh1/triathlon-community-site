@@ -4,7 +4,7 @@ import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, Calendar, Eye, User, Edit, Trash2, MessageSquare, BookOpen, Tag, Share2 } from 'lucide-react'
 import { useState, useEffect } from 'react'
-import { getColumn, ColumnWithDetails, incrementViewCount, addComment } from '@/lib/columns'
+import { getColumn, ColumnWithDetails, incrementViewCount, addComment, deleteColumnByUser, deleteCommentByUser } from '@/lib/columns'
 import { useAuth } from '@/contexts/AuthContext'
 import { toast } from 'react-hot-toast'
 
@@ -50,7 +50,7 @@ export default function ColumnDetailPage() {
     setDeleting(true)
     setShowDeleteConfirm(false)
     try {
-      await deleteColumn(columnId)
+      await deleteColumnByUser(columnId)
       toast.success('コラムを削除しました')
       router.push('/columns')
     } catch (error) {
@@ -83,7 +83,7 @@ export default function ColumnDetailPage() {
     if (!confirm('このコメントを削除しますか？')) return
 
     try {
-      await deleteComment(commentId)
+      await deleteCommentByUser(commentId)
       await fetchColumn() // コメントを再取得
       toast.success('コメントを削除しました')
     } catch (error) {
