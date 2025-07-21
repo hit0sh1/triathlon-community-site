@@ -1144,6 +1144,7 @@ export type Database = {
           joined_date: string | null
           location: string | null
           post_count: number | null
+          role: string
           strava_athlete_id: number | null
           strava_connected: boolean | null
           total_distance: number | null
@@ -1161,6 +1162,7 @@ export type Database = {
           joined_date?: string | null
           location?: string | null
           post_count?: number | null
+          role?: string
           strava_athlete_id?: number | null
           strava_connected?: boolean | null
           total_distance?: number | null
@@ -1178,6 +1180,7 @@ export type Database = {
           joined_date?: string | null
           location?: string | null
           post_count?: number | null
+          role?: string
           strava_athlete_id?: number | null
           strava_connected?: boolean | null
           total_distance?: number | null

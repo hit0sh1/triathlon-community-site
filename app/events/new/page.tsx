@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { ArrowLeft, Calendar, MapPin, Users, Trophy, Plus, X, Upload, Image } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { createEvent, createEventDistance, getEventTypes, getEventStatuses } from '@/lib/events'
+import { isAdmin } from '@/lib/admin'
 import toast, { Toaster } from 'react-hot-toast'
 
 interface EventDistanceInput {
@@ -46,6 +47,14 @@ export default function NewEventPage() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) {
         router.push('/auth/login')
+        return
+      }
+
+      // Admin権限チェック
+      const adminStatus = await isAdmin()
+      if (!adminStatus) {
+        toast.error('管理者権限が必要です')
+        router.push('/events')
         return
       }
       setUser(user)

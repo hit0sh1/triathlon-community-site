@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { Calendar, MapPin, Users, Trophy, ArrowLeft, ExternalLink, Clock, Trash2 } from 'lucide-react'
+import { Calendar, MapPin, Users, Trophy, ArrowLeft, ExternalLink, Clock, Trash2, Edit } from 'lucide-react'
 import { getEvent, EventWithDetails, deleteEvent } from '@/lib/events'
 import { createClient } from '@/lib/supabase/client'
+import { isAdmin } from '@/lib/admin'
+import Link from 'next/link'
 
 const getStatusColor = (status: string) => {
   switch (status) {
@@ -30,6 +32,7 @@ export default function EventDetailPage() {
   const [user, setUser] = useState<any>(null)
   const [deleting, setDeleting] = useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [userIsAdmin, setUserIsAdmin] = useState(false)
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -52,6 +55,10 @@ export default function EventDetailPage() {
       const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
       setUser(user)
+      
+      // Admin状態もチェック
+      const adminStatus = await isAdmin()
+      setUserIsAdmin(adminStatus)
     }
 
     if (eventId) {
@@ -90,8 +97,8 @@ export default function EventDetailPage() {
     }
   }
 
-  // 投稿者かどうかをチェック
-  const isOwner = user && event && event.created_by === user.id
+  // 投稿者またはadminかどうかをチェック
+  const canManage = user && event && (event.created_by === user.id || userIsAdmin)
 
   if (loading) {
     return (
@@ -139,16 +146,25 @@ export default function EventDetailPage() {
             <span>戻る</span>
           </button>
           
-          {/* 削除ボタン（投稿者のみ） */}
-          {isOwner && (
-            <button
-              onClick={handleDeleteClick}
-              disabled={deleting}
-              className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <Trash2 size={16} />
-              <span>{deleting ? '削除中...' : '削除'}</span>
-            </button>
+          {/* 編集・削除ボタン（投稿者またはadmin） */}
+          {canManage && (
+            <div className="flex items-center gap-2">
+              <Link
+                href={`/events/${eventId}/edit`}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                <Edit size={16} />
+                <span>編集</span>
+              </Link>
+              <button
+                onClick={handleDeleteClick}
+                disabled={deleting}
+                className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Trash2 size={16} />
+                <span>{deleting ? '削除中...' : '削除'}</span>
+              </button>
+            </div>
           )}
         </div>
 

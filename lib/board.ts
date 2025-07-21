@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/client'
 import { Database } from '@/types/database'
+import { logContentAction, sendDeletionNotification, DeleteContentOptions } from '@/lib/content-actions'
 
 type BoardCategory = Database['public']['Tables']['board_categories']['Row']
 type BoardPost = Database['public']['Tables']['board_posts']['Row']
@@ -66,6 +67,7 @@ export async function getBoardPosts(categoryId?: string): Promise<BoardPostWithD
         avatar_url
       )
     `)
+    .is('deleted_at', null)
     .order('created_at', { ascending: false })
   
   if (categoryId) {
@@ -79,13 +81,14 @@ export async function getBoardPosts(categoryId?: string): Promise<BoardPostWithD
     throw error
   }
   
-  // 各投稿の返信数を取得
+  // 各投稿の返信数を取得（削除されていない返信のみカウント）
   const postsWithReplyCount = await Promise.all(
     (data || []).map(async (post) => {
       const { count } = await supabase
         .from('board_replies')
         .select('*', { count: 'exact', head: true })
         .eq('post_id', post.id)
+        .is('deleted_at', null)
       
       return {
         ...post,
@@ -163,11 +166,11 @@ export async function createBoardReply(reply: ReplyInsert): Promise<BoardReply> 
   return data
 }
 
-// 投稿を削除
-export async function deleteBoardPost(postId: string): Promise<void> {
+// ユーザーによる自己削除
+export async function deleteBoardPostByUser(postId: string): Promise<void> {
   const supabase = createClient()
   
-  console.log('Attempting to delete post:', postId)
+  console.log('User attempting to delete own post:', postId)
   
   // 現在のユーザーを取得
   const { data: { user }, error: userError } = await supabase.auth.getUser()
@@ -175,80 +178,66 @@ export async function deleteBoardPost(postId: string): Promise<void> {
     throw new Error('ログインが必要です')
   }
   
-  console.log('Current user:', user.id)
-  
-  // まず投稿が存在するか確認
+  // まず投稿が存在し、削除されていないか確認
   const { data: existingPost, error: fetchError } = await supabase
     .from('board_posts')
-    .select('id, author_id, title')
+    .select('id, author_id, title, deleted_at')
     .eq('id', postId)
+    .is('deleted_at', null)
     .single()
   
   if (fetchError) {
     console.error('Error fetching post for deletion:', fetchError)
+    if (fetchError.code === 'PGRST116') {
+      throw new Error('削除対象の投稿が見つからないか、既に削除されています')
+    }
     throw new Error('削除対象の投稿が見つかりません')
   }
   
-  console.log('Post to delete:', existingPost)
-  
-  // 削除権限をチェック
+  // 削除権限をチェック（自分の投稿のみ）
   if (existingPost.author_id !== user.id) {
     throw new Error('削除権限がありません。自分の投稿のみ削除できます。')
   }
   
-  // 削除実行
-  const { error, count } = await supabase
+  // シンプルな論理削除実行
+  const { error } = await supabase
     .from('board_posts')
-    .delete()
+    .update({ 
+      deleted_at: new Date().toISOString(),
+      deleted_by_id: user.id,
+      deletion_reason_id: await getSelfDeleteReasonId()
+    })
     .eq('id', postId)
-    .eq('author_id', existingPost.author_id) // 追加の安全性チェック
+    .eq('author_id', existingPost.author_id)
+    .is('deleted_at', null)
   
   if (error) {
-    console.error('Error deleting board post:', error)
-    console.error('Error code:', error.code)
-    console.error('Error details:', error.details)
-    
-    if (error.code === 'PGRST301') {
-      throw new Error('削除権限がありません。自分の投稿のみ削除できます。')
-    }
-    
+    console.error('Error soft deleting board post:', error)
     throw error
   }
   
-  console.log('Delete operation completed, affected rows:', count)
-  
-  // 削除後に再度確認
-  const { data: checkPosts, error: checkError } = await supabase
-    .from('board_posts')
-    .select('id')
-    .eq('id', postId)
-  
-  if (checkError) {
-    console.error('Error checking deletion:', checkError)
-    // RLSエラーの場合は削除が成功したと見なす
-    if (checkError.code === 'PGRST301' || checkError.code === '42501') {
-      console.log('Post deleted - RLS prevents verification but deletion likely succeeded')
-      return
-    }
-  } else if (checkPosts && checkPosts.length === 0) {
-    console.log('Post successfully deleted - no longer exists in database')
-  } else {
-    console.error('Post still exists after deletion:', checkPosts)
-    console.error('Delete count was:', count)
-    // RLSが無効化されている場合のみエラーを投げる
-    if (count === null || count === 0) {
-      throw new Error('削除に失敗しました。投稿がまだ存在します。')
-    } else {
-      console.log('Delete operation reported success, assuming post was deleted')
-    }
+  // 簡単なログ記録（通知なし）
+  try {
+    await logContentAction({
+      actionType: 'delete',
+      contentType: 'board_post',
+      contentId: postId,
+      contentTitle: existingPost.title,
+      contentAuthorId: existingPost.author_id,
+      deletionReasonId: await getSelfDeleteReasonId()
+    })
+  } catch (logError) {
+    console.error('Error logging user deletion:', logError)
   }
+  
+  console.log('User self-deletion completed successfully')
 }
 
-// 返信を削除
-export async function deleteBoardReply(replyId: string): Promise<void> {
+// 管理者による削除（削除理由・通知付き）
+export async function deleteBoardPostByAdmin(postId: string, options: DeleteContentOptions): Promise<void> {
   const supabase = createClient()
   
-  console.log('Attempting to delete reply:', replyId)
+  console.log('Admin attempting to delete post:', postId)
   
   // 現在のユーザーを取得
   const { data: { user }, error: userError } = await supabase.auth.getUser()
@@ -256,62 +245,241 @@ export async function deleteBoardReply(replyId: string): Promise<void> {
     throw new Error('ログインが必要です')
   }
   
-  console.log('Current user:', user.id)
+  // 管理者権限をチェック
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single()
   
-  // まず返信が存在するか確認
+  if (profile?.role !== 'admin') {
+    throw new Error('管理者権限が必要です')
+  }
+  
+  // まず投稿が存在し、削除されていないか確認
+  const { data: existingPost, error: fetchError } = await supabase
+    .from('board_posts')
+    .select('id, author_id, title, deleted_at')
+    .eq('id', postId)
+    .is('deleted_at', null)
+    .single()
+  
+  if (fetchError) {
+    console.error('Error fetching post for deletion:', fetchError)
+    if (fetchError.code === 'PGRST116') {
+      throw new Error('削除対象の投稿が見つからないか、既に削除されています')
+    }
+    throw new Error('削除対象の投稿が見つかりません')
+  }
+  
+  // 管理者による論理削除実行（削除理由付き）
+  const updateData: any = {
+    deleted_at: new Date().toISOString(),
+    deleted_by_id: user.id
+  }
+  
+  if (options.reasonId) {
+    updateData.deletion_reason_id = options.reasonId
+  }
+  if (options.customReason) {
+    updateData.deletion_custom_reason = options.customReason
+  }
+  
+  const { error } = await supabase
+    .from('board_posts')
+    .update(updateData)
+    .eq('id', postId)
+    .is('deleted_at', null)
+  
+  if (error) {
+    console.error('Error admin deleting board post:', error)
+    throw error
+  }
+  
+  // 詳細なアクションログを記録
+  const actionLog = await logContentAction({
+    actionType: 'delete',
+    contentType: 'board_post',
+    contentId: postId,
+    contentTitle: existingPost.title,
+    contentAuthorId: existingPost.author_id,
+    deletionReasonId: options.reasonId,
+    customReason: options.customReason,
+    adminNotes: options.adminNotes
+  })
+  
+  // ユーザーに通知を送信
+  await sendDeletionNotification(
+    existingPost.author_id,
+    actionLog,
+    existingPost.title
+  )
+  
+  console.log('Admin deletion completed successfully')
+}
+
+// ユーザーによる返信の自己削除
+export async function deleteBoardReplyByUser(replyId: string): Promise<void> {
+  const supabase = createClient()
+  
+  console.log('User attempting to delete own reply:', replyId)
+  
+  // 現在のユーザーを取得
+  const { data: { user }, error: userError } = await supabase.auth.getUser()
+  if (userError || !user) {
+    throw new Error('ログインが必要です')
+  }
+  
+  // まず返信が存在し、削除されていないか確認
   const { data: existingReply, error: fetchError } = await supabase
     .from('board_replies')
-    .select('id, author_id')
+    .select('id, author_id, content, deleted_at')
     .eq('id', replyId)
+    .is('deleted_at', null)
     .single()
   
   if (fetchError) {
     console.error('Error fetching reply for deletion:', fetchError)
+    if (fetchError.code === 'PGRST116') {
+      throw new Error('削除対象の返信が見つからないか、既に削除されています')
+    }
     throw new Error('削除対象の返信が見つかりません')
   }
   
-  console.log('Reply to delete:', existingReply)
-  
-  // 削除権限をチェック
+  // 削除権限をチェック（自分の返信のみ）
   if (existingReply.author_id !== user.id) {
-    throw new Error('削除権限がありません。自分の投稿のみ削除できます。')
+    throw new Error('削除権限がありません。自分の返信のみ削除できます。')
   }
   
-  // 削除実行
-  const { error, count } = await supabase
+  // シンプルな論理削除実行
+  const { error } = await supabase
     .from('board_replies')
-    .delete()
+    .update({
+      deleted_at: new Date().toISOString(),
+      deleted_by_id: user.id,
+      deletion_reason_id: await getSelfDeleteReasonId()
+    })
     .eq('id', replyId)
-    .eq('author_id', existingReply.author_id) // 追加の安全性チェック
+    .eq('author_id', existingReply.author_id)
+    .is('deleted_at', null)
   
   if (error) {
-    console.error('Error deleting board reply:', error)
-    console.error('Error code:', error.code)
-    console.error('Error details:', error.details)
-    
-    if (error.code === 'PGRST301') {
-      throw new Error('削除権限がありません。自分の投稿のみ削除できます。')
-    }
-    
+    console.error('Error soft deleting board reply:', error)
     throw error
   }
   
-  console.log('Delete operation completed, affected rows:', count)
-  
-  // 削除後に再度確認（より安全な方法）
-  const { data: checkReplies, error: checkError } = await supabase
-    .from('board_replies')
-    .select('id')
-    .eq('id', replyId)
-  
-  if (checkError) {
-    console.error('Error checking deletion:', checkError)
-  } else if (checkReplies && checkReplies.length === 0) {
-    console.log('Reply successfully deleted - no longer exists in database')
-  } else {
-    console.error('Reply still exists after deletion:', checkReplies)
-    throw new Error('削除に失敗しました。返信がまだ存在します。')
+  // 簡単なログ記録（通知なし）
+  try {
+    await logContentAction({
+      actionType: 'delete',
+      contentType: 'board_reply',
+      contentId: replyId,
+      contentTitle: existingReply.content?.substring(0, 50) + '...',
+      contentAuthorId: existingReply.author_id,
+      deletionReasonId: await getSelfDeleteReasonId()
+    })
+  } catch (logError) {
+    console.error('Error logging user deletion:', logError)
   }
+  
+  console.log('User self-deletion completed successfully')
+}
+
+// 管理者による返信削除（削除理由・通知付き）
+export async function deleteBoardReplyByAdmin(replyId: string, options: DeleteContentOptions): Promise<void> {
+  const supabase = createClient()
+  
+  console.log('Admin attempting to delete reply:', replyId)
+  
+  // 現在のユーザーを取得
+  const { data: { user }, error: userError } = await supabase.auth.getUser()
+  if (userError || !user) {
+    throw new Error('ログインが必要です')
+  }
+  
+  // 管理者権限をチェック
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single()
+  
+  if (profile?.role !== 'admin') {
+    throw new Error('管理者権限が必要です')
+  }
+  
+  // まず返信が存在し、削除されていないか確認
+  const { data: existingReply, error: fetchError } = await supabase
+    .from('board_replies')
+    .select('id, author_id, content, deleted_at')
+    .eq('id', replyId)
+    .is('deleted_at', null)
+    .single()
+  
+  if (fetchError) {
+    console.error('Error fetching reply for deletion:', fetchError)
+    if (fetchError.code === 'PGRST116') {
+      throw new Error('削除対象の返信が見つからないか、既に削除されています')
+    }
+    throw new Error('削除対象の返信が見つかりません')
+  }
+  
+  // 管理者による論理削除実行（削除理由付き）
+  const updateData: any = {
+    deleted_at: new Date().toISOString(),
+    deleted_by_id: user.id
+  }
+  
+  if (options.reasonId) {
+    updateData.deletion_reason_id = options.reasonId
+  }
+  if (options.customReason) {
+    updateData.deletion_custom_reason = options.customReason
+  }
+  
+  const { error } = await supabase
+    .from('board_replies')
+    .update(updateData)
+    .eq('id', replyId)
+    .is('deleted_at', null)
+  
+  if (error) {
+    console.error('Error admin deleting board reply:', error)
+    throw error
+  }
+  
+  // 詳細なアクションログを記録
+  const actionLog = await logContentAction({
+    actionType: 'delete',
+    contentType: 'board_reply',
+    contentId: replyId,
+    contentTitle: existingReply.content?.substring(0, 50) + '...',
+    contentAuthorId: existingReply.author_id,
+    deletionReasonId: options.reasonId,
+    customReason: options.customReason,
+    adminNotes: options.adminNotes
+  })
+  
+  // ユーザーに通知を送信
+  await sendDeletionNotification(
+    existingReply.author_id,
+    actionLog,
+    existingReply.content?.substring(0, 50) + '...' || '返信'
+  )
+  
+  console.log('Admin deletion completed successfully')
+}
+
+// 自己削除用の理由IDを取得
+async function getSelfDeleteReasonId(): Promise<string> {
+  const supabase = createClient()
+  const { data } = await supabase
+    .from('deletion_reasons')
+    .select('id')
+    .eq('name', '自己削除')
+    .single()
+  
+  return data?.id || ''
 }
 
 // 返信にいいねを追加

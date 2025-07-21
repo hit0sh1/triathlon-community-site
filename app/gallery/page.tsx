@@ -53,7 +53,7 @@ export default function GalleryPage() {
   const fetchPhotos = async () => {
     try {
       setLoading(true)
-      const { data, error } = await supabase
+      let query = supabase
         .from('gallery_photos')
         .select(`
           *,
@@ -61,6 +61,15 @@ export default function GalleryPage() {
           gallery_photo_tags (tag)
         `)
         .order('created_at', { ascending: false })
+
+      // deleted_atカラムが存在する場合のみフィルタリング
+      try {
+        query = query.is('deleted_at', null)
+      } catch (filterError) {
+        console.log('deleted_at column not found, skipping filter')
+      }
+
+      const { data, error } = await query
 
       if (error) throw error
       setPhotos(data as Photo[])
@@ -130,13 +139,74 @@ export default function GalleryPage() {
     if (!confirm('この写真を削除してもよろしいですか？')) return
 
     try {
+      // ユーザー削除: 論理削除のみ（自分の写真のみ削除可能）
       const { error } = await supabase
         .from('gallery_photos')
-        .delete()
+        .update({ deleted_at: new Date().toISOString() })
         .eq('id', photoId)
-        .eq('user_id', user.id)
+        .eq('user_id', user.id) // 自分の写真のみ削除可能
 
       if (error) throw error
+      
+      await fetchPhotos()
+      setSelectedPhoto(null)
+    } catch (error) {
+      console.error('Error deleting photo:', error)
+      alert('写真の削除に失敗しました。')
+    }
+  }
+
+  const handleDeletePhotoByAdmin = async (photoId: string, deletionReason: string) => {
+    if (!user) return
+    
+    if (!deletionReason) {
+      alert('削除理由を入力してください。')
+      return
+    }
+    
+    const confirmMessage = `この写真を管理者として削除してもよろしいですか？\n理由: ${deletionReason}`
+    if (!confirm(confirmMessage)) return
+
+    try {
+      // 写真の詳細を取得（通知用）
+      const photoToDelete = selectedPhoto || photos.find(p => p.id === photoId)
+      
+      // 管理者削除: 論理削除 + 削除理由記録
+      const { error } = await supabase
+        .from('gallery_photos')
+        .update({ 
+          deleted_at: new Date().toISOString(),
+          deletion_reason: deletionReason,
+          deleted_by: user.id
+        })
+        .eq('id', photoId)
+
+      if (error) throw error
+
+      // 投稿者が削除者と異なる場合のみ通知を送信
+      if (photoToDelete && photoToDelete.user_id !== user.id) {
+        try {
+          const { notifyAdminDeletion } = await import('@/lib/notifications')
+          
+          // 管理者情報を取得
+          const { data: adminProfile } = await supabase
+            .from('profiles')
+            .select('display_name')
+            .eq('id', user.id)
+            .single()
+
+          await notifyAdminDeletion(
+            photoToDelete.user_id,
+            'gallery',
+            photoToDelete.caption || 'ギャラリー写真',
+            adminProfile?.display_name || '管理者',
+            deletionReason
+          )
+        } catch (notificationError) {
+          console.error('Error sending deletion notification:', notificationError)
+          // 通知エラーは削除処理を失敗させない
+        }
+      }
       
       await fetchPhotos()
       setSelectedPhoto(null)

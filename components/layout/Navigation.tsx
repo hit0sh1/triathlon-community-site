@@ -43,11 +43,14 @@ export default function Navigation() {
       if (userMenuOpen && !target.closest('[data-user-menu]')) {
         setUserMenuOpen(false)
       }
+      if (mobileMenuOpen && !target.closest('[data-mobile-menu]')) {
+        setMobileMenuOpen(false)
+      }
     }
 
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [userMenuOpen])
+  }, [userMenuOpen, mobileMenuOpen])
 
 
   const handleSignOut = async () => {
@@ -248,6 +251,7 @@ export default function Navigation() {
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 className="md:hidden w-9 h-9 rounded-lg bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-black dark:text-white hover:text-blue-600 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-300"
+                data-mobile-menu
               >
                 {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
               </button>
@@ -257,8 +261,8 @@ export default function Navigation() {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden transition-all duration-300 opacity-100 visible">
-            <div className="bg-white dark:bg-black border-t border-gray-200 dark:border-gray-800">
+          <div className="md:hidden transition-all duration-300 opacity-100 visible" data-mobile-menu>
+            <div className="bg-white dark:bg-black border-t border-gray-200 dark:border-gray-800" data-mobile-menu>
               <div className="container-premium py-6">
                 <div className="grid grid-cols-2 gap-3">
                   {navigation.map((item) => {

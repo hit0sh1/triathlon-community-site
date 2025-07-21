@@ -62,6 +62,14 @@ export async function getGearReviews(categoryId?: string): Promise<GearReviewWit
     query = query.eq('category_id', categoryId)
   }
 
+  // deleted_atカラムが存在する場合のみフィルタリング
+  try {
+    query = query.is('deleted_at', null)
+  } catch (error) {
+    // deleted_atカラムが存在しない場合は無視
+    console.log('deleted_at column not found, skipping filter')
+  }
+
   const { data, error } = await query
 
   if (error) {
@@ -74,7 +82,8 @@ export async function getGearReviews(categoryId?: string): Promise<GearReviewWit
 
 export async function getGearReviewById(id: string): Promise<GearReviewWithDetails | null> {
   const supabase = createClient()
-  const { data, error } = await supabase
+  
+  let query = supabase
     .from('gear_reviews')
     .select(`
       *,
@@ -98,7 +107,16 @@ export async function getGearReviewById(id: string): Promise<GearReviewWithDetai
       )
     `)
     .eq('id', id)
-    .single()
+
+  // deleted_atカラムが存在する場合のみフィルタリング
+  try {
+    query = query.is('deleted_at', null)
+  } catch (error) {
+    // deleted_atカラムが存在しない場合は無視
+    console.log('deleted_at column not found, skipping filter')
+  }
+
+  const { data, error } = await query.single()
 
   if (error) {
     console.error('Error fetching gear review:', error)
@@ -270,12 +288,94 @@ export async function updateGearReview(
 export async function deleteGearReview(reviewId: string): Promise<boolean> {
   try {
     const supabase = createClient()
+    
+    // 現在のユーザーを取得
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    if (userError || !user) {
+      console.error('User authentication required')
+      return false
+    }
+
+    // ユーザー削除: 論理削除のみ（自分のレビューのみ削除可能）
     const { error } = await supabase
       .from('gear_reviews')
-      .delete()
+      .update({ deleted_at: new Date().toISOString() })
+      .eq('id', reviewId)
+      .eq('user_id', user.id) // 自分のレビューのみ削除可能
+
+    if (error) throw error
+
+    return true
+  } catch (error) {
+    console.error('Error deleting gear review:', error)
+    return false
+  }
+}
+
+export async function deleteGearReviewByAdmin(reviewId: string, deletionReason: string): Promise<boolean> {
+  try {
+    const supabase = createClient()
+    
+    // 現在のユーザー（管理者）を取得
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    if (userError || !user) {
+      console.error('User authentication required')
+      return false
+    }
+
+    if (!deletionReason) {
+      console.error('Deletion reason is required for admin deletion')
+      return false
+    }
+
+    // レビューの詳細を取得（通知用）
+    const { data: reviewToDelete, error: fetchError } = await supabase
+      .from('gear_reviews')
+      .select('product_name, user_id')
+      .eq('id', reviewId)
+      .single()
+
+    if (fetchError || !reviewToDelete) {
+      console.error('Gear review not found')
+      return false
+    }
+
+    // 管理者削除: 論理削除 + 削除理由記録
+    const { error } = await supabase
+      .from('gear_reviews')
+      .update({ 
+        deleted_at: new Date().toISOString(),
+        deletion_reason: deletionReason,
+        deleted_by: user.id
+      })
       .eq('id', reviewId)
 
     if (error) throw error
+
+    // 投稿者が削除者と異なる場合のみ通知を送信
+    if (reviewToDelete.user_id !== user.id) {
+      try {
+        const { notifyAdminDeletion } = await import('./notifications')
+        
+        // 管理者情報を取得
+        const { data: adminProfile } = await supabase
+          .from('profiles')
+          .select('display_name')
+          .eq('id', user.id)
+          .single()
+
+        await notifyAdminDeletion(
+          reviewToDelete.user_id,
+          'gear_review',
+          reviewToDelete.product_name,
+          adminProfile?.display_name || '管理者',
+          deletionReason
+        )
+      } catch (notificationError) {
+        console.error('Error sending deletion notification:', notificationError)
+        // 通知エラーは削除処理を失敗させない
+      }
+    }
 
     return true
   } catch (error) {

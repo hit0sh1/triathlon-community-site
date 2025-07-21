@@ -5,6 +5,7 @@ import { Calendar, MapPin, Users, Trophy, ArrowRight, Plus, Grid, CalendarDays }
 import { useState, useEffect } from 'react'
 import { getEvents, getEventTypes, EventWithDetails } from '@/lib/events'
 import EventCalendar from '@/components/events/EventCalendar'
+import { isAdmin } from '@/lib/admin'
 
 const getStatusColor = (status: string) => {
   switch (status) {
@@ -26,6 +27,7 @@ export default function EventsPage() {
   const [events, setEvents] = useState<EventWithDetails[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [userIsAdmin, setUserIsAdmin] = useState(false)
   
   const eventTypes = ['全て', ...getEventTypes()]
   const regions = [
@@ -35,11 +37,15 @@ export default function EventsPage() {
   ]
 
   useEffect(() => {
-    const fetchEvents = async () => {
+    const fetchData = async () => {
       try {
         setLoading(true)
-        const eventsData = await getEvents()
+        const [eventsData, adminStatus] = await Promise.all([
+          getEvents(),
+          isAdmin()
+        ])
         setEvents(eventsData)
+        setUserIsAdmin(adminStatus)
       } catch (err) {
         setError(err instanceof Error ? err.message : 'データの取得に失敗しました')
       } finally {
@@ -47,7 +53,7 @@ export default function EventsPage() {
       }
     }
 
-    fetchEvents()
+    fetchData()
   }, [])
 
   const filteredEvents = events.filter((event) => {
@@ -107,13 +113,15 @@ export default function EventsPage() {
                   </button>
                 </div>
               </div>
-              <Link
-                href="/events/new"
-                className="bg-black dark:bg-white text-white dark:text-black px-6 py-3 rounded-lg font-medium hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors flex items-center gap-2"
-              >
-                <Plus size={20} />
-                <span>大会を投稿</span>
-              </Link>
+              {userIsAdmin && (
+                <Link
+                  href="/events/new"
+                  className="bg-black dark:bg-white text-white dark:text-black px-6 py-3 rounded-lg font-medium hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors flex items-center gap-2"
+                >
+                  <Plus size={20} />
+                  <span>大会を投稿</span>
+                </Link>
+              )}
             </div>
 
             {/* モバイル表示：縦並び */}
@@ -145,13 +153,15 @@ export default function EventsPage() {
                   </button>
                 </div>
               </div>
-              <Link
-                href="/events/new"
-                className="w-full bg-black dark:bg-white text-white dark:text-black px-6 py-3 rounded-lg font-medium hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors flex items-center justify-center gap-2"
-              >
-                <Plus size={20} />
-                <span>大会を投稿</span>
-              </Link>
+              {userIsAdmin && (
+                <Link
+                  href="/events/new"
+                  className="w-full bg-black dark:bg-white text-white dark:text-black px-6 py-3 rounded-lg font-medium hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors flex items-center justify-center gap-2"
+                >
+                  <Plus size={20} />
+                  <span>大会を投稿</span>
+                </Link>
+              )}
             </div>
           </div>
 

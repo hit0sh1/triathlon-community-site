@@ -19,11 +19,13 @@ export default function RootLayout({
   return (
     <html lang="ja" className="bg-white dark:bg-black">
       <head>
-        <meta name="theme-color" content="#ffffff" />
+        <meta name="theme-color" content="#2563eb" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+        <link rel="manifest" href="/manifest.json" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.svg" />
         <GoogleMapsScript />
       </head>
       <body className="antialiased min-h-screen flex flex-col bg-white dark:bg-black" suppressHydrationWarning>

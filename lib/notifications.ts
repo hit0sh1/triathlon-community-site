@@ -205,3 +205,66 @@ export async function notifyNewComment(
     link: `/board/${postId}`
   })
 }
+
+/**
+ * コンテンツ削除通知
+ */
+export async function notifyContentDeletion(
+  userId: string,
+  contentType: 'cafe' | 'course' | 'gallery' | 'gear_review',
+  contentTitle: string,
+  deletedBy: string,
+  reason: string,
+  contentId?: string
+) {
+  const typeNameMap = {
+    cafe: 'カフェ投稿',
+    course: 'コース',
+    gallery: 'ギャラリー写真',
+    gear_review: 'ギアレビュー'
+  }
+
+  const typeMap = {
+    cafe: 'cafe',
+    course: 'courses',
+    gallery: 'gallery',
+    gear_review: 'gear'
+  }
+
+  const title = `${typeNameMap[contentType]}が削除されました`
+  const message = `あなたの${typeNameMap[contentType]}「${contentTitle}」が削除されました。\n理由: ${reason}`
+  
+  return sendNotificationToUser(userId, {
+    title,
+    message,
+    type: 'warning',
+    link: contentId ? `/${typeMap[contentType]}` : undefined
+  })
+}
+
+/**
+ * 管理者による削除通知
+ */
+export async function notifyAdminDeletion(
+  userId: string,
+  contentType: 'cafe' | 'course' | 'gallery' | 'gear_review',
+  contentTitle: string,
+  adminName: string,
+  reason: string
+) {
+  const typeNameMap = {
+    cafe: 'カフェ投稿',
+    course: 'コース',
+    gallery: 'ギャラリー写真',
+    gear_review: 'ギアレビュー'
+  }
+
+  const title = `${typeNameMap[contentType]}が管理者により削除されました`
+  const message = `管理者（${adminName}）によりあなたの${typeNameMap[contentType]}「${contentTitle}」が削除されました。\n理由: ${reason}`
+  
+  return sendNotificationToUser(userId, {
+    title,
+    message,
+    type: 'error'
+  })
+}

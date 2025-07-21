@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/client'
 import { Database } from '@/types/database'
+import { logContentAction, sendDeletionNotification, DeleteContentOptions } from '@/lib/content-actions'
 
 export type Column = Database['public']['Tables']['columns']['Row']
 export type ColumnComment = Database['public']['Tables']['column_comments']['Row']
@@ -47,6 +48,7 @@ export async function getColumns(): Promise<ColumnWithDetails[]> {
       )
     `)
     .eq('is_published', true)
+    .is('deleted_at', null)
     .order('created_at', { ascending: false })
   
   if (error) {
@@ -54,7 +56,13 @@ export async function getColumns(): Promise<ColumnWithDetails[]> {
     throw error
   }
   
-  return data || []
+  // 削除されていないコメントのみフィルタリング
+  const filteredData = (data || []).map(column => ({
+    ...column,
+    column_comments: column.column_comments?.filter(comment => !comment.deleted_at) || []
+  }))
+  
+  return filteredData
 }
 
 // 特定のコラムを取得
@@ -73,6 +81,7 @@ export async function getColumn(columnId: string): Promise<ColumnWithDetails | n
       )
     `)
     .eq('id', columnId)
+    .is('deleted_at', null)
     .single()
   
   if (error) {
@@ -83,7 +92,13 @@ export async function getColumn(columnId: string): Promise<ColumnWithDetails | n
     throw error
   }
   
-  return data
+  // 削除されていないコメントのみフィルタリング
+  const filteredData = {
+    ...data,
+    column_comments: data?.column_comments?.filter(comment => !comment.deleted_at) || []
+  }
+  
+  return filteredData
 }
 
 // 新しいコラムを作成
@@ -126,19 +141,156 @@ export async function updateColumn(columnId: string, updates: ColumnUpdate): Pro
   return data
 }
 
-// コラムを削除
-export async function deleteColumn(columnId: string): Promise<void> {
+// ユーザーによるコラム自己削除
+export async function deleteColumnByUser(columnId: string): Promise<void> {
   const supabase = createClient()
+  
+  console.log('User attempting to delete own column:', columnId)
+  
+  // 現在のユーザーを取得
+  const { data: { user }, error: userError } = await supabase.auth.getUser()
+  if (userError || !user) {
+    throw new Error('ログインが必要です')
+  }
+  
+  // まずコラムが存在し、削除されていないか確認
+  const { data: existingColumn, error: fetchError } = await supabase
+    .from('columns')
+    .select('id, created_by, title, deleted_at')
+    .eq('id', columnId)
+    .is('deleted_at', null)
+    .single()
+  
+  if (fetchError) {
+    console.error('Error fetching column for deletion:', fetchError)
+    if (fetchError.code === 'PGRST116') {
+      throw new Error('削除対象のコラムが見つからないか、既に削除されています')
+    }
+    throw new Error('削除対象のコラムが見つかりません')
+  }
+  
+  // 削除権限をチェック（自分のコラムのみ）
+  if (existingColumn.created_by !== user.id) {
+    throw new Error('削除権限がありません。自分のコラムのみ削除できます。')
+  }
+  
+  // シンプルな論理削除実行
+  const { error } = await supabase
+    .from('columns')
+    .update({ 
+      deleted_at: new Date().toISOString(),
+      deleted_by_id: user.id,
+      deletion_reason_id: await getSelfDeleteReasonId()
+    })
+    .eq('id', columnId)
+    .eq('created_by', existingColumn.created_by)
+    .is('deleted_at', null)
+  
+  if (error) {
+    console.error('Error soft deleting column:', error)
+    throw error
+  }
+  
+  // 簡単なログ記録（通知なし）
+  try {
+    await logContentAction({
+      actionType: 'delete',
+      contentType: 'column',
+      contentId: columnId,
+      contentTitle: existingColumn.title,
+      contentAuthorId: existingColumn.created_by,
+      deletionReasonId: await getSelfDeleteReasonId()
+    })
+  } catch (logError) {
+    console.error('Error logging user deletion:', logError)
+  }
+  
+  console.log('User self-deletion completed successfully')
+}
+
+// 管理者によるコラム削除（削除理由・通知付き）
+export async function deleteColumnByAdmin(columnId: string, options: DeleteContentOptions): Promise<void> {
+  const supabase = createClient()
+  
+  console.log('Admin attempting to delete column:', columnId)
+  
+  // 現在のユーザーを取得
+  const { data: { user }, error: userError } = await supabase.auth.getUser()
+  if (userError || !user) {
+    throw new Error('ログインが必要です')
+  }
+  
+  // 管理者権限をチェック
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single()
+  
+  if (profile?.role !== 'admin') {
+    throw new Error('管理者権限が必要です')
+  }
+  
+  // まずコラムが存在し、削除されていないか確認
+  const { data: existingColumn, error: fetchError } = await supabase
+    .from('columns')
+    .select('id, created_by, title, deleted_at')
+    .eq('id', columnId)
+    .is('deleted_at', null)
+    .single()
+  
+  if (fetchError) {
+    console.error('Error fetching column for deletion:', fetchError)
+    if (fetchError.code === 'PGRST116') {
+      throw new Error('削除対象のコラムが見つからないか、既に削除されています')
+    }
+    throw new Error('削除対象のコラムが見つかりません')
+  }
+  
+  // 管理者による論理削除実行（削除理由付き）
+  const updateData: any = {
+    deleted_at: new Date().toISOString(),
+    deleted_by_id: user.id
+  }
+  
+  if (options.reasonId) {
+    updateData.deletion_reason_id = options.reasonId
+  }
+  if (options.customReason) {
+    updateData.deletion_custom_reason = options.customReason
+  }
   
   const { error } = await supabase
     .from('columns')
-    .delete()
+    .update(updateData)
     .eq('id', columnId)
+    .is('deleted_at', null)
   
   if (error) {
-    console.error('Error deleting column:', error)
+    console.error('Error admin deleting column:', error)
     throw error
   }
+  
+  // 詳細なアクションログを記録
+  const actionLog = await logContentAction({
+    actionType: 'delete',
+    contentType: 'column',
+    contentId: columnId,
+    contentTitle: existingColumn.title,
+    contentAuthorId: existingColumn.created_by,
+    deletionReasonId: options.reasonId,
+    customReason: options.customReason,
+    adminNotes: options.adminNotes
+  })
+  
+  // ユーザーに通知を送信
+  await sendDeletionNotification(
+    existingColumn.created_by,
+    actionLog,
+    existingColumn.title
+  )
+  
+  console.log('Admin deletion completed successfully')
 }
 
 // 閲覧数を増加
@@ -197,19 +349,168 @@ export async function addComment(columnId: string, content: string): Promise<Col
   return data
 }
 
-// コメントを削除
-export async function deleteComment(commentId: string): Promise<void> {
+// ユーザーによるコメント自己削除
+export async function deleteCommentByUser(commentId: string): Promise<void> {
   const supabase = createClient()
+  
+  console.log('User attempting to delete own comment:', commentId)
+  
+  // 現在のユーザーを取得
+  const { data: { user }, error: userError } = await supabase.auth.getUser()
+  if (userError || !user) {
+    throw new Error('ログインが必要です')
+  }
+  
+  // まずコメントが存在し、削除されていないか確認
+  const { data: existingComment, error: fetchError } = await supabase
+    .from('column_comments')
+    .select('id, user_id, content, deleted_at')
+    .eq('id', commentId)
+    .is('deleted_at', null)
+    .single()
+  
+  if (fetchError) {
+    console.error('Error fetching comment for deletion:', fetchError)
+    if (fetchError.code === 'PGRST116') {
+      throw new Error('削除対象のコメントが見つからないか、既に削除されています')
+    }
+    throw new Error('削除対象のコメントが見つかりません')
+  }
+  
+  // 削除権限をチェック（自分のコメントのみ）
+  if (existingComment.user_id !== user.id) {
+    throw new Error('削除権限がありません。自分のコメントのみ削除できます。')
+  }
+  
+  // シンプルな論理削除実行
+  const { error } = await supabase
+    .from('column_comments')
+    .update({ 
+      deleted_at: new Date().toISOString(),
+      deleted_by_id: user.id,
+      deletion_reason_id: await getSelfDeleteReasonId()
+    })
+    .eq('id', commentId)
+    .eq('user_id', existingComment.user_id)
+    .is('deleted_at', null)
+  
+  if (error) {
+    console.error('Error soft deleting comment:', error)
+    throw error
+  }
+  
+  // 簡単なログ記録（通知なし）
+  try {
+    await logContentAction({
+      actionType: 'delete',
+      contentType: 'column_comment',
+      contentId: commentId,
+      contentTitle: existingComment.content?.substring(0, 50) + '...',
+      contentAuthorId: existingComment.user_id,
+      deletionReasonId: await getSelfDeleteReasonId()
+    })
+  } catch (logError) {
+    console.error('Error logging user deletion:', logError)
+  }
+  
+  console.log('User self-deletion completed successfully')
+}
+
+// 管理者によるコメント削除（削除理由・通知付き）
+export async function deleteCommentByAdmin(commentId: string, options: DeleteContentOptions): Promise<void> {
+  const supabase = createClient()
+  
+  console.log('Admin attempting to delete comment:', commentId)
+  
+  // 現在のユーザーを取得
+  const { data: { user }, error: userError } = await supabase.auth.getUser()
+  if (userError || !user) {
+    throw new Error('ログインが必要です')
+  }
+  
+  // 管理者権限をチェック
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single()
+  
+  if (profile?.role !== 'admin') {
+    throw new Error('管理者権限が必要です')
+  }
+  
+  // まずコメントが存在し、削除されていないか確認
+  const { data: existingComment, error: fetchError } = await supabase
+    .from('column_comments')
+    .select('id, user_id, content, deleted_at')
+    .eq('id', commentId)
+    .is('deleted_at', null)
+    .single()
+  
+  if (fetchError) {
+    console.error('Error fetching comment for deletion:', fetchError)
+    if (fetchError.code === 'PGRST116') {
+      throw new Error('削除対象のコメントが見つからないか、既に削除されています')
+    }
+    throw new Error('削除対象のコメントが見つかりません')
+  }
+  
+  // 管理者による論理削除実行（削除理由付き）
+  const updateData: any = {
+    deleted_at: new Date().toISOString(),
+    deleted_by_id: user.id
+  }
+  
+  if (options.reasonId) {
+    updateData.deletion_reason_id = options.reasonId
+  }
+  if (options.customReason) {
+    updateData.deletion_custom_reason = options.customReason
+  }
   
   const { error } = await supabase
     .from('column_comments')
-    .delete()
+    .update(updateData)
     .eq('id', commentId)
+    .is('deleted_at', null)
   
   if (error) {
-    console.error('Error deleting comment:', error)
+    console.error('Error admin deleting comment:', error)
     throw error
   }
+  
+  // 詳細なアクションログを記録
+  const actionLog = await logContentAction({
+    actionType: 'delete',
+    contentType: 'column_comment',
+    contentId: commentId,
+    contentTitle: existingComment.content?.substring(0, 50) + '...',
+    contentAuthorId: existingComment.user_id,
+    deletionReasonId: options.reasonId,
+    customReason: options.customReason,
+    adminNotes: options.adminNotes
+  })
+  
+  // ユーザーに通知を送信
+  await sendDeletionNotification(
+    existingComment.user_id,
+    actionLog,
+    existingComment.content?.substring(0, 50) + '...' || 'コメント'
+  )
+  
+  console.log('Admin deletion completed successfully')
+}
+
+// 自己削除用の理由IDを取得
+async function getSelfDeleteReasonId(): Promise<string> {
+  const supabase = createClient()
+  const { data } = await supabase
+    .from('deletion_reasons')
+    .select('id')
+    .eq('name', '自己削除')
+    .single()
+  
+  return data?.id || ''
 }
 
 // 注目コラムを取得
@@ -229,6 +530,7 @@ export async function getFeaturedColumns(limit: number = 3): Promise<ColumnWithD
     `)
     .eq('is_published', true)
     .eq('is_featured', true)
+    .is('deleted_at', null)
     .order('created_at', { ascending: false })
     .limit(limit)
   
@@ -237,7 +539,13 @@ export async function getFeaturedColumns(limit: number = 3): Promise<ColumnWithD
     throw error
   }
   
-  return data || []
+  // 削除されていないコメントのみフィルタリング
+  const filteredData = (data || []).map(column => ({
+    ...column,
+    column_comments: column.column_comments?.filter(comment => !comment.deleted_at) || []
+  }))
+  
+  return filteredData
 }
 
 // 人気コラムを取得（閲覧数順）
@@ -256,6 +564,7 @@ export async function getPopularColumns(limit: number = 3): Promise<ColumnWithDe
       )
     `)
     .eq('is_published', true)
+    .is('deleted_at', null)
     .order('view_count', { ascending: false })
     .limit(limit)
   
@@ -264,7 +573,13 @@ export async function getPopularColumns(limit: number = 3): Promise<ColumnWithDe
     throw error
   }
   
-  return data || []
+  // 削除されていないコメントのみフィルタリング
+  const filteredData = (data || []).map(column => ({
+    ...column,
+    column_comments: column.column_comments?.filter(comment => !comment.deleted_at) || []
+  }))
+  
+  return filteredData
 }
 
 // カテゴリ別コラムを取得
@@ -284,6 +599,7 @@ export async function getColumnsByCategory(category: string, limit?: number): Pr
     `)
     .eq('is_published', true)
     .eq('category', category)
+    .is('deleted_at', null)
     .order('created_at', { ascending: false })
   
   if (limit) {
@@ -297,7 +613,13 @@ export async function getColumnsByCategory(category: string, limit?: number): Pr
     throw error
   }
   
-  return data || []
+  // 削除されていないコメントのみフィルタリング
+  const filteredData = (data || []).map(column => ({
+    ...column,
+    column_comments: column.column_comments?.filter(comment => !comment.deleted_at) || []
+  }))
+  
+  return filteredData
 }
 
 // 自分のコラムを取得（下書き含む）
@@ -321,6 +643,7 @@ export async function getMyColumns(): Promise<ColumnWithDetails[]> {
       )
     `)
     .eq('created_by', user.id)
+    .is('deleted_at', null)
     .order('created_at', { ascending: false })
   
   if (error) {
@@ -328,7 +651,13 @@ export async function getMyColumns(): Promise<ColumnWithDetails[]> {
     throw error
   }
   
-  return data || []
+  // 削除されていないコメントのみフィルタリング
+  const filteredData = (data || []).map(column => ({
+    ...column,
+    column_comments: column.column_comments?.filter(comment => !comment.deleted_at) || []
+  }))
+  
+  return filteredData
 }
 
 // コラムカテゴリ一覧を取得

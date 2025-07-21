@@ -1,46 +1,9 @@
 import { getPopularPosts, PopularPost } from "@/lib/board-popular";
-import { FeaturedCourse, getFeaturedCourses, getRecommendedCourses } from "@/lib/courses-featured";
-import { fetchSiteStats, formatStatsForDisplay } from "@/lib/stats";
-import { ArrowRight, BookOpen, Calendar, Star, TrendingUp, Trophy, Users } from "lucide-react";
+import { ArrowRight, BookOpen, Calendar, Users } from "lucide-react";
 import Link from "next/link";
 import NotificationSectionWrapper from "@/components/home/NotificationSectionWrapper";
 
-const getTypeIcon = (type: string) => {
-  switch (type) {
-    case "ラン":
-      return "🏃‍♂️";
-    case "バイク":
-      return "🚴‍♂️";
-    case "スイム":
-      return "🏊‍♂️";
-    default:
-      return "🏃‍♂️";
-  }
-};
-
-const getDifficultyColor = (difficulty: number) => {
-  if (difficulty <= 2) return "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300";
-  if (difficulty <= 3) return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300";
-  return "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300";
-};
-
-const getGradientForType = (type: string) => {
-  switch (type) {
-    case "ラン":
-      return "from-orange-500 to-red-500";
-    case "バイク":
-      return "from-blue-500 to-cyan-500";
-    case "スイム":
-      return "from-green-500 to-emerald-500";
-    default:
-      return "from-blue-500 to-cyan-500";
-  }
-};
-
 export default async function Home() {
-  // 実際のデータベースから統計データを取得
-  const statsData = await fetchSiteStats();
-  const stats = formatStatsForDisplay(statsData, { Users, TrendingUp, Trophy, Star });
 
   // 人気の掲示板投稿を取得
   let popularPosts: PopularPost[] = [];
@@ -51,21 +14,6 @@ export default async function Home() {
     // エラーの場合は空配列のまま進む
   }
 
-  // おすすめコースを取得
-  let featuredCourses: FeaturedCourse[] = [];
-  try {
-    // まずis_featured=trueのコースを取得
-    featuredCourses = await getFeaturedCourses(3);
-
-    // フィーチャードコースが不足の場合、推奨コースで補完
-    if (featuredCourses.length < 3) {
-      const recommendedCourses = await getRecommendedCourses(3 - featuredCourses.length);
-      featuredCourses = [...featuredCourses, ...recommendedCourses];
-    }
-  } catch (error) {
-    console.error("Error fetching featured courses:", error);
-    // エラーの場合は空配列のまま進む
-  }
   return (
     <div className="min-h-screen bg-white dark:bg-black">
       {/* Hero Section with Advanced Design */}

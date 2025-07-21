@@ -46,7 +46,7 @@ export interface CourseUpdate {
 export async function getCourses(): Promise<CourseWithDetails[]> {
   const supabase = createClient()
   
-  const { data, error } = await supabase
+  let query = supabase
     .from('courses')
     .select(`
       *,
@@ -74,6 +74,15 @@ export async function getCourses(): Promise<CourseWithDetails[]> {
       )
     `)
     .order('created_at', { ascending: false })
+
+  // deleted_atカラムが存在する場合のみフィルタリング
+  try {
+    query = query.is('deleted_at', null)
+  } catch (error) {
+    console.log('deleted_at column not found, skipping filter')
+  }
+
+  const { data, error } = await query
   
   if (error) {
     console.error('Error fetching courses:', error)
@@ -87,7 +96,7 @@ export async function getCourses(): Promise<CourseWithDetails[]> {
 export async function getCourse(courseId: string): Promise<CourseWithDetails | null> {
   const supabase = createClient()
   
-  const { data, error } = await supabase
+  let query = supabase
     .from('courses')
     .select(`
       *,
@@ -115,7 +124,15 @@ export async function getCourse(courseId: string): Promise<CourseWithDetails | n
       )
     `)
     .eq('id', courseId)
-    .single()
+
+  // deleted_atカラムが存在する場合のみフィルタリング
+  try {
+    query = query.is('deleted_at', null)
+  } catch (error) {
+    console.log('deleted_at column not found, skipping filter')
+  }
+
+  const { data, error } = await query.single()
   
   if (error) {
     if (error.code === 'PGRST116') {
@@ -200,11 +217,11 @@ export async function updateCourse(courseId: string, updates: CourseUpdate): Pro
   return data
 }
 
-// コースを削除
+// ユーザーが自分のコースを削除
 export async function deleteCourse(courseId: string): Promise<void> {
   const supabase = createClient()
   
-  console.log('Attempting to delete course:', courseId)
+  console.log('User attempting to delete own course:', courseId)
   
   // 現在のユーザーを取得
   const { data: { user }, error: userError } = await supabase.auth.getUser()
@@ -212,7 +229,46 @@ export async function deleteCourse(courseId: string): Promise<void> {
     throw new Error('ログインが必要です')
   }
   
-  console.log('Current user:', user.id)
+  // ユーザー削除: 論理削除のみ（自分の投稿のみ削除可能）
+  const { error, count } = await supabase
+    .from('courses')
+    .update({ deleted_at: new Date().toISOString() })
+    .eq('id', courseId)
+    .eq('created_by', user.id) // 自分の投稿のみ削除可能
+  
+  if (error) {
+    console.error('Error deleting course:', error)
+    throw new Error('コースの削除に失敗しました: ' + error.message)
+  }
+  
+  if (count === 0) {
+    throw new Error('削除権限がないか、コースが見つかりません。')
+  }
+  
+  console.log('Course successfully deleted by user')
+}
+
+// 管理者がコースを削除
+export async function deleteCourseByAdmin(courseId: string, deletionReason: string): Promise<void> {
+  const supabase = createClient()
+  
+  console.log('Admin attempting to delete course:', courseId)
+  
+  // 現在のユーザー（管理者）を取得
+  const { data: { user }, error: userError } = await supabase.auth.getUser()
+  if (userError || !user) {
+    throw new Error('ログインが必要です')
+  }
+  
+  // 管理者権限をチェック
+  const hasAdminPermission = await canManageContent('')
+  if (!hasAdminPermission) {
+    throw new Error('管理者権限が必要です')
+  }
+  
+  if (!deletionReason) {
+    throw new Error('管理者削除には削除理由が必要です')
+  }
   
   // まずコースが存在するか確認
   const { data: existingCourse, error: fetchError } = await supabase
@@ -226,66 +282,51 @@ export async function deleteCourse(courseId: string): Promise<void> {
     throw new Error('削除対象のコースが見つかりません')
   }
   
-  console.log('Course to delete:', existingCourse)
-  
-  // 削除権限をチェック（管理者または投稿者）
-  const hasPermission = await canManageContent(existingCourse.created_by || '')
-  if (!hasPermission) {
-    throw new Error('削除権限がありません。管理者または投稿者のみ削除できます。')
-  }
-  
-  // 削除実行 - 投稿者の条件も含めて削除
+  // 管理者削除: 論理削除 + 削除理由記録
   const { error, count } = await supabase
     .from('courses')
-    .delete()
+    .update({ 
+      deleted_at: new Date().toISOString(),
+      deletion_reason: deletionReason,
+      deleted_by: user.id
+    })
     .eq('id', courseId)
-    .eq('created_by', existingCourse.created_by) // 追加の安全性チェック
   
   if (error) {
     console.error('Error deleting course:', error)
-    console.error('Error code:', error.code)
-    console.error('Error details:', error.details)
-    
-    if (error.code === 'PGRST301') {
-      throw new Error('削除権限がありません。管理者または投稿者のみ削除できます。')
-    }
-    
     throw new Error('コースの削除に失敗しました: ' + error.message)
   }
   
-  console.log('Delete operation completed, affected rows:', count)
-  
-  // countが0の場合は削除が失敗している
   if (count === 0) {
-    console.error('No rows were deleted, possibly due to RLS or conditions not met')
-    throw new Error('削除に失敗しました。削除権限がないか、コースが見つかりません。')
+    throw new Error('削除に失敗しました。')
+  }
+
+  // 投稿者が削除者と異なる場合のみ通知を送信
+  if (existingCourse.created_by !== user.id) {
+    try {
+      const { notifyAdminDeletion } = await import('./notifications')
+      
+      // 管理者情報を取得
+      const { data: adminProfile } = await supabase
+        .from('profiles')
+        .select('display_name')
+        .eq('id', user.id)
+        .single()
+
+      await notifyAdminDeletion(
+        existingCourse.created_by,
+        'course',
+        existingCourse.name,
+        adminProfile?.display_name || '管理者',
+        deletionReason
+      )
+    } catch (notificationError) {
+      console.error('Error sending deletion notification:', notificationError)
+      // 通知エラーは削除処理を失敗させない
+    }
   }
   
-  // 削除後に再度確認（RLSが無効化されている場合のみ）
-  try {
-    const { data: checkCourses, error: checkError } = await supabase
-      .from('courses')
-      .select('id')
-      .eq('id', courseId)
-    
-    if (checkError) {
-      console.error('Error checking deletion:', checkError)
-      // RLSエラーの場合は削除が成功したと見なす
-      if (checkError.code === 'PGRST301' || checkError.code === '42501') {
-        console.log('Course deleted - RLS prevents verification but deletion likely succeeded')
-        return
-      }
-    } else if (checkCourses && checkCourses.length === 0) {
-      console.log('Course successfully deleted - no longer exists in database')
-    } else {
-      console.error('Course still exists after deletion:', checkCourses)
-      // countが正常でも存在する場合は、RLSが原因の可能性
-      console.log('Deletion reported success but course still visible, possibly due to RLS')
-    }
-  } catch (verifyError) {
-    console.error('Error verifying deletion:', verifyError)
-    // 検証エラーは無視して削除成功とみなす
-  }
+  console.log('Course successfully deleted by admin with notification sent')
 }
 
 // コースの種類一覧を取得

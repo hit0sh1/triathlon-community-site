@@ -96,41 +96,67 @@ export default function GearPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="mb-8">
-          <div className="flex items-center gap-4 mb-4">
-            <Filter size={20} className="text-gray-700 dark:text-gray-300" />
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">カテゴリー</h2>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <button
-              onClick={() => setSelectedCategory('')}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                selectedCategory === ''
-                  ? 'bg-blue-600 text-white shadow-md'
-                  : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600'
-              }`}
-            >
-              全て
-            </button>
-            {categories.map((category) => (
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
+          <div className="flex-1">
+            <div className="flex items-center gap-4 mb-4">
+              <Filter size={20} className="text-gray-700 dark:text-gray-300" />
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">カテゴリー</h2>
+            </div>
+            <div className="flex flex-wrap gap-2">
               <button
-                key={category.id}
-                onClick={() => setSelectedCategory(category.id)}
+                onClick={() => setSelectedCategory('')}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                  category.id === selectedCategory
+                  selectedCategory === ''
                     ? 'bg-blue-600 text-white shadow-md'
                     : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600'
                 }`}
               >
-                {category.name}
+                全て
               </button>
-            ))}
+              {categories.map((category) => (
+                <button
+                  key={category.id}
+                  onClick={() => setSelectedCategory(category.id)}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                    category.id === selectedCategory
+                      ? 'bg-blue-600 text-white shadow-md'
+                      : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600'
+                  }`}
+                >
+                  {category.name}
+                </button>
+              ))}
+            </div>
           </div>
+          
+          {user && (
+            <div className="flex-shrink-0">
+              <button
+                onClick={() => {
+                  setEditingReview(null)
+                  setIsModalOpen(true)
+                }}
+                className="bg-blue-600 text-white px-6 py-2.5 rounded-full font-medium hover:bg-blue-700 transition-colors inline-flex items-center gap-2 shadow-lg hover:shadow-xl"
+              >
+                <Plus size={18} />
+                レビューを投稿
+              </button>
+            </div>
+          )}
         </div>
 
         {reviews.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-gray-600 dark:text-gray-400 text-lg">レビューがありません</p>
+            <div className="max-w-md mx-auto">
+              <p className="text-gray-600 dark:text-gray-400 text-lg mb-4">
+                {selectedCategory ? `${getCategoryName(selectedCategory)}のレビューがありません` : 'レビューがありません'}
+              </p>
+              {user && (
+                <p className="text-gray-500 dark:text-gray-500 text-sm">
+                  最初のレビューを投稿してみませんか？
+                </p>
+              )}
+            </div>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -145,28 +171,19 @@ export default function GearPage() {
           </div>
         )}
 
-        <div className="mt-12 text-center">
-          <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">あなたのレビューを投稿しよう</h2>
-          <p className="text-gray-700 dark:text-gray-300 mb-6">
-            使用したギアのレビューを投稿して、コミュニティに貢献しましょう
-          </p>
-          {user ? (
-            <button
-              onClick={() => {
-                setEditingReview(null)
-                setIsModalOpen(true)
-              }}
-              className="bg-blue-600 text-white px-8 py-3 rounded-full font-medium hover:bg-blue-700 transition-colors inline-flex items-center gap-2 shadow-lg hover:shadow-xl"
+        {!user && (
+          <div className="mt-8 text-center py-6 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-700">
+            <p className="text-blue-700 dark:text-blue-300 mb-2">
+              レビューを投稿するにはログインが必要です
+            </p>
+            <a 
+              href="/auth/login" 
+              className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
             >
-              <Plus size={20} />
-              レビューを投稿する
-            </button>
-          ) : (
-            <div className="text-sm text-gray-600 dark:text-gray-400">
-              レビューを投稿するには<a href="/auth/signin" className="text-blue-600 dark:text-blue-400 hover:underline font-medium">ログイン</a>が必要です
-            </div>
-          )}
-        </div>
+              ログインはこちら
+            </a>
+          </div>
+        )}
       </div>
 
       <GearReviewForm
