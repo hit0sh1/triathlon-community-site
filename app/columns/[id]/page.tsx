@@ -4,7 +4,7 @@ import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, Calendar, Eye, User, Edit, Trash2, MessageSquare, BookOpen, Tag, Share2 } from 'lucide-react'
 import { useState, useEffect } from 'react'
-import { getColumn, ColumnWithDetails, incrementViewCount, deleteColumn, addComment, deleteComment } from '@/lib/columns'
+import { getColumn, ColumnWithDetails, incrementViewCount, addComment } from '@/lib/columns'
 import { useAuth } from '@/contexts/AuthContext'
 import { toast } from 'react-hot-toast'
 

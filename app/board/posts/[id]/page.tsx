@@ -6,7 +6,7 @@ import { ArrowLeft, MessageSquare, Clock, User, Reply, Heart, Trash2 } from 'luc
 import { useState, useEffect, useMemo } from 'react'
 import { Database } from '@/types/database'
 import { createClient } from '@/lib/supabase/client'
-import { incrementViewCount, createBoardReply, deleteBoardReply, deleteBoardPost, likeBoardReply, unlikeBoardReply, checkUserLikedReply, checkLikeTableExists } from '@/lib/board'
+import { incrementViewCount, createBoardReply, likeBoardReply, unlikeBoardReply, checkUserLikedReply, checkLikeTableExists } from '@/lib/board'
 import { useAuth } from '@/contexts/AuthContext'
 import { ensureProfileExists } from '@/lib/profile'
 

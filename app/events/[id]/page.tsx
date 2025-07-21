@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { Calendar, MapPin, Users, Trophy, ArrowLeft, ExternalLink, Clock, Trash2, Edit } from 'lucide-react'
-import { getEvent, EventWithDetails, deleteEvent } from '@/lib/events'
+import { getEvent, EventWithDetails } from '@/lib/events'
 import { createClient } from '@/lib/supabase/client'
 import { isAdmin } from '@/lib/admin'
 import Link from 'next/link'

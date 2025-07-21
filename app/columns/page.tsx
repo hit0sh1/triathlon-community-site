@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Plus, BookOpen, Calendar, Eye, User, Edit, Trash2, Search, Filter, Star } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
-import { getColumns, deleteColumn, Column } from '@/lib/columns'
+import { getColumns, deleteColumnByUser, Column } from '@/lib/columns'
 import { toast } from 'react-hot-toast'
 
 export default function ColumnsPage() {
@@ -35,7 +35,7 @@ export default function ColumnsPage() {
     if (!confirm('このコラムを削除してもよろしいですか？')) return
 
     try {
-      await deleteColumn(columnId)
+      await deleteColumnByUser(columnId)
       setColumns(columns.filter(column => column.id !== columnId))
       toast.success('コラムを削除しました')
     } catch (error) {
