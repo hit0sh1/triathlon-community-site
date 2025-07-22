@@ -24,13 +24,25 @@ export async function GET(request: Request) {
         console.log('Auth callback - isLocalEnv:', isLocalEnv)
         console.log('Auth callback - forwardedHost:', forwardedHost)
         
-        if (isLocalEnv) {
-          return NextResponse.redirect(`${origin}${next}`)
-        } else if (forwardedHost) {
-          return NextResponse.redirect(`https://${forwardedHost}${next}`)
-        } else {
-          return NextResponse.redirect(`${origin}${next}`)
+        // 認証状態を確実に反映させるためのレスポンスを作成
+        const redirectUrl = isLocalEnv 
+          ? `${origin}${next}`
+          : forwardedHost 
+            ? `https://${forwardedHost}${next}`
+            : `${origin}${next}`
+        
+        const response = NextResponse.redirect(redirectUrl)
+        
+        // Supabaseのクッキーを確実に設定
+        const supabase = await createClient()
+        const { data: { session } } = await supabase.auth.getSession()
+        
+        if (session) {
+          // セッションが存在することを確認してからリダイレクト
+          return response
         }
+        
+        return response
       } else {
         console.error('Auth callback - exchange error:', error)
         return NextResponse.redirect(`${origin}/auth/auth-code-error?error=${encodeURIComponent(error.message)}`)

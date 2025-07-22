@@ -2,7 +2,7 @@
 
 import { useAuth } from "@/contexts/AuthContext";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 export default function LoginPage() {
@@ -12,6 +12,8 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const { signInWithEmail, signInWithGoogle } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirect") || "/";
 
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,7 +26,13 @@ export default function LoginPage() {
       setLoading(true);
       setError("");
       await signInWithEmail(email, password);
-      router.push("/");
+      
+      // セッションが確立されるまで少し待機
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      // ログイン成功後、ページをリフレッシュして元のページへリダイレクト
+      router.refresh();
+      router.push(redirectTo);
     } catch (error: any) {
       setError(error.message || "ログインに失敗しました");
     } finally {
