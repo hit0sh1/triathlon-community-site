@@ -10,14 +10,14 @@ const XIcon = ({ size = 24, className = "" }) => (
 
 const navigation = {
   main: [
-    { name: "コース", href: "/courses" },
+    { name: "ホーム", href: "/" },
     { name: "掲示板", href: "/board" },
-    { name: "カフェ", href: "/cafes" },
     { name: "大会情報", href: "/events" },
+    { name: "コラム", href: "/columns" },
+    { name: "カフェ", href: "/cafes" },
+    { name: "コース", href: "/courses" },
     { name: "ギャラリー", href: "/gallery" },
-    { name: "トレーニング", href: "/training" },
     { name: "ギアレビュー", href: "/gear" },
-    { name: "プロフィール", href: "/profile" },
   ],
   social: [
     {
@@ -78,29 +78,12 @@ export default function Footer() {
 
               {/* Right Column - Navigation Grid */}
               <div>
-                <div className="grid grid-cols-3 gap-12">
-                  {/* Navigation Links */}
+                <div className="grid grid-cols-2 gap-12">
+                  {/* Main Navigation */}
                   <div>
-                    <h4 className="text-xl font-bold text-white mb-8 japanese-text">ナビゲーション</h4>
+                    <h4 className="text-xl font-bold text-white mb-8 japanese-text">メインナビゲーション</h4>
                     <ul className="space-y-4">
-                      {navigation.main.slice(0, 4).map((item) => (
-                        <li key={item.name}>
-                          <Link
-                            href={item.href}
-                            className="text-white hover:text-blue-400 transition-all duration-300 hover:translate-x-2 inline-block japanese-text font-medium"
-                          >
-                            {item.name}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  {/* Services */}
-                  <div>
-                    <h4 className="text-xl font-bold text-white mb-8 japanese-text">サービス</h4>
-                    <ul className="space-y-4">
-                      {navigation.main.slice(4).map((item) => (
+                      {navigation.main.map((item) => (
                         <li key={item.name}>
                           <Link
                             href={item.href}
@@ -161,25 +144,11 @@ export default function Footer() {
 
               {/* Navigation Grid */}
               <div className="grid grid-cols-2 gap-8">
-                {/* Navigation & Services */}
+                {/* Main Navigation */}
                 <div>
-                  <h4 className="text-lg font-bold text-white mb-6 japanese-text">ナビゲーション</h4>
-                  <ul className="space-y-3 mb-8">
-                    {navigation.main.slice(0, 4).map((item) => (
-                      <li key={item.name}>
-                        <Link
-                          href={item.href}
-                          className="text-white hover:text-blue-400 transition-all duration-300 inline-block japanese-text font-medium text-sm"
-                        >
-                          {item.name}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <h4 className="text-lg font-bold text-white mb-6 japanese-text">サービス</h4>
+                  <h4 className="text-lg font-bold text-white mb-6 japanese-text">メインナビゲーション</h4>
                   <ul className="space-y-3">
-                    {navigation.main.slice(4).map((item) => (
+                    {navigation.main.map((item) => (
                       <li key={item.name}>
                         <Link
                           href={item.href}

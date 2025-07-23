@@ -1,18 +1,11 @@
-import { getPopularPosts, PopularPost } from "@/lib/board-popular";
 import { ArrowRight, BookOpen, Calendar, Users } from "lucide-react";
 import Link from "next/link";
 import NotificationSectionWrapper from "@/components/home/NotificationSectionWrapper";
 
 export default async function Home() {
 
-  // 人気の掲示板投稿を取得
-  let popularPosts: PopularPost[] = [];
-  try {
-    popularPosts = await getPopularPosts(3);
-  } catch (error) {
-    console.error("Error fetching popular posts:", error);
-    // エラーの場合は空配列のまま進む
-  }
+  // 人気の掲示板投稿を取得（現在は空配列）
+  const popularPosts: any[] = [];
 
   return (
     <div className="min-h-screen bg-white dark:bg-black">

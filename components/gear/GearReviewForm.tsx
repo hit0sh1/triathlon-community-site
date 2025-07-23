@@ -102,11 +102,43 @@ export default function GearReviewForm({ isOpen, onClose, onSubmit, editingRevie
     }
   }, [editingReview, categories])
 
+  // ESCキーでモーダルを閉じる
+  useEffect(() => {
+    const handleEscapeKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && isOpen) {
+        handleClose()
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscapeKey)
+      // モーダルが開いている間はbodyのスクロールを無効にする
+      document.body.style.overflow = 'hidden'
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscapeKey)
+      document.body.style.overflow = 'unset'
+    }
+  }, [isOpen])
+
   const handleInputChange = (field: keyof FormData, value: any) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }))
+    // 価格フィールドの場合、数字のみを許可して3桁区切りでフォーマット
+    if (field === 'price') {
+      // 数字のみ抽出
+      const numericOnly = value.replace(/[^\d]/g, '')
+      // 3桁区切りでフォーマット（空文字の場合はそのまま）
+      const formattedValue = numericOnly ? parseInt(numericOnly).toLocaleString() : ''
+      setFormData(prev => ({
+        ...prev,
+        [field]: formattedValue
+      }))
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [field]: value
+      }))
+    }
   }
 
   const handleArrayChange = (field: 'pros' | 'cons', index: number, value: string) => {
@@ -201,7 +233,7 @@ export default function GearReviewForm({ isOpen, onClose, onSubmit, editingRevie
         productName: formData.productName.trim(),
         brand: formData.brand.trim() || undefined,
         rating: formData.rating,
-        price: formData.price.trim() || undefined,
+        price: formData.price.trim() ? formData.price.trim().replace(/[^\d,]/g, '') : undefined,
         imageUrl: formData.imageUrl || undefined,
         summary: formData.summary.trim() || undefined,
         detailedReview: formData.detailedReview.trim() || undefined,
@@ -253,7 +285,10 @@ export default function GearReviewForm({ isOpen, onClose, onSubmit, editingRevie
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+    <div 
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+      onClick={handleClose}
+    >
       <Toaster 
         position="top-right"
         toastOptions={{
@@ -264,7 +299,10 @@ export default function GearReviewForm({ isOpen, onClose, onSubmit, editingRevie
           },
         }}
       />
-      <div className="bg-white dark:bg-gray-800 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+      <div 
+        className="bg-white dark:bg-gray-800 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
             {editingReview ? 'レビューを編集' : 'レビューを投稿'}
@@ -338,13 +376,18 @@ export default function GearReviewForm({ isOpen, onClose, onSubmit, editingRevie
 
           <div>
             <label className="block text-sm font-medium mb-2 text-gray-900 dark:text-white">価格</label>
-            <Input
-              type="text"
-              value={formData.price}
-              onChange={(e) => handleInputChange('price', e.target.value)}
-              placeholder="例: 25,000円"
-              className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
-            />
+            <div className="relative">
+              <Input
+                type="text"
+                value={formData.price}
+                onChange={(e) => handleInputChange('price', e.target.value)}
+                placeholder="例: 25,000"
+                className="bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 pr-8"
+              />
+              <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 text-sm">
+                円
+              </span>
+            </div>
           </div>
 
           <div>

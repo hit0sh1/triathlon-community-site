@@ -80,7 +80,8 @@
     "miyagawa",
     "hitoshi",
     "okinawa",
-    "japan"
+    "japan",
+    "beforeinstallprompt"
   ],
   "cSpell.enableFiletypes": [
     "typescript",

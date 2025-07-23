@@ -1,24 +1,57 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 沖縄トライアスロンコミュニティサイト
 
-## Getting Started
+このプロジェクトは[Next.js](https://nextjs.org)で構築された沖縄のトライアスロンコミュニティのためのWebアプリケーションです。
 
-First, run the development server:
+## セットアップ
+
+### 1. 依存関係のインストール
+
+```bash
+npm install
+```
+
+### 2. 環境変数の設定
+
+`.env.local.example`をコピーして`.env.local`を作成し、必要な環境変数を設定してください：
+
+```bash
+cp .env.local.example .env.local
+```
+
+### 3. 開発サーバーの起動
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+[http://localhost:3000](http://localhost:3000) でアプリケーションにアクセスできます。
+
+## 重要な機能
+
+### Google Maps統合
+
+カフェページでGoogle Mapsを表示するには、`NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`環境変数の設定が必要です。
+
+**注意**: コンテンツブロッカー（AdBlock、uBlock Originなど）を使用している場合、Google Maps APIの一部のリクエスト（`gen_204`エンドポイント）がブロックされることがありますが、これは正常な動作で、マップ機能には影響しません。
+
+#### 代替地図サービス
+
+Google Mapsが利用できない場合でも、以下の代替サービスが自動的に提供されます：
+- OpenStreetMap
+- Yahoo!マップ
+- Google Maps（外部リンク）
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 掲示板システム
+
+Slack-likeなリアルタイム掲示板システムが実装されています：
+- リアルタイムメッセージング
+- スレッド機能
+- 絵文字リアクション
+- メンション機能
+- 全文検索
+- チャンネル管理
 
 ## Learn More
 

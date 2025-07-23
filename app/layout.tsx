@@ -4,8 +4,8 @@ import Navigation from "@/components/layout/Navigation";
 import Footer from "@/components/layout/Footer";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { Toaster } from 'react-hot-toast';
-import { GoogleMapsScript } from '@/components/cafes/CafeMap';
 import PWAInstaller from '@/components/PWAInstaller';
+import GoogleMapsErrorHandler from '@/components/GoogleMapsErrorHandler';
 
 export const metadata: Metadata = {
   title: "沖縄トライアスロンコミュニティ",
@@ -27,10 +27,10 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
         <link rel="manifest" href="/manifest.json" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <GoogleMapsScript />
       </head>
       <body className="antialiased min-h-screen flex flex-col bg-white dark:bg-black" suppressHydrationWarning>
         <AuthProvider>
+          <GoogleMapsErrorHandler />
           <Toaster />
           <Navigation />
           <main className="flex-grow bg-white dark:bg-black">

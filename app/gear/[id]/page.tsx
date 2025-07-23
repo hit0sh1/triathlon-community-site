@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Star, ArrowLeft, Edit, Trash2, User, Calendar, Package, Tag, DollarSign } from 'lucide-react'
+import { Star, ArrowLeft, Edit, Trash2, User, Calendar, Package, Tag } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/contexts/AuthContext'
 import { getGearReviewById, deleteGearReview } from '@/lib/gear'
@@ -12,6 +12,16 @@ import { formatDistanceToNow } from 'date-fns'
 import { ja } from 'date-fns/locale'
 
 const defaultImage = 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&auto=format&fit=crop'
+
+// 価格を3桁区切りでフォーマット
+const formatPrice = (price: string | null | undefined): string => {
+  if (!price) return ''
+  // 既存のカンマを削除してから数字のみ抽出
+  const numericPrice = price.replace(/[^\d]/g, '')
+  if (!numericPrice) return price
+  // 3桁区切りでカンマを追加
+  return parseInt(numericPrice).toLocaleString()
+}
 
 export default function GearReviewDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { user } = useAuth()
@@ -204,9 +214,8 @@ export default function GearReviewDetailPage({ params }: { params: Promise<{ id:
                   
                   {review.price && (
                     <div className="flex items-center gap-2">
-                      <DollarSign size={16} className="text-gray-500" />
                       <span className="text-lg font-bold text-blue-600 dark:text-blue-400">
-                        {review.price}
+                        {formatPrice(review.price)}円
                       </span>
                     </div>
                   )}

@@ -7,16 +7,14 @@ export default function PWAInstaller() {
   const [showInstallButton, setShowInstallButton] = useState(false)
 
   useEffect(() => {
-    // Service Worker の登録
+    // 既存のService Workerを登録解除
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-          .then((registration) => {
-            console.log('SW registered: ', registration);
-          })
-          .catch((registrationError) => {
-            console.log('SW registration failed: ', registrationError);
+      navigator.serviceWorker.getRegistrations().then((registrations) => {
+        for (let registration of registrations) {
+          registration.unregister().then(() => {
+            console.log('Service Worker unregistered');
           });
+        }
       });
     }
 

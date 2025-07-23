@@ -208,7 +208,11 @@ export default function Navigation() {
                           <div className="bg-white dark:bg-black p-2 border border-gray-200 dark:border-gray-800 rounded-lg shadow-lg">
                             <Link
                               href="/profile"
-                              onClick={() => setUserMenuOpen(false)}
+                              onClick={(e) => {
+                                e.preventDefault()
+                                setUserMenuOpen(false)
+                                router.push('/profile')
+                              }}
                               className="flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium text-black dark:text-white hover:text-blue-600 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200"
                             >
                               <User size={16} />
@@ -271,7 +275,13 @@ export default function Navigation() {
                       <Link
                         key={item.name}
                         href={item.href}
-                        onClick={() => setMobileMenuOpen(false)}
+                        onClick={() => {
+                          try {
+                            setMobileMenuOpen(false)
+                          } catch (error) {
+                            console.error('Error closing mobile menu:', error)
+                          }
+                        }}
                         className={`group flex items-center space-x-3 px-4 py-4 rounded-xl text-sm font-medium transition-all duration-300 ${
                           isActive
                             ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg'
@@ -290,12 +300,20 @@ export default function Navigation() {
                   <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
                     {user ? (
                       <div className="space-y-3">
-                        <div className="flex items-center space-x-3 px-4 py-3 bg-gray-100 dark:bg-gray-800 rounded-xl">
+                        <Link
+                          href="/profile"
+                          onClick={(e) => {
+                            e.preventDefault()
+                            setMobileMenuOpen(false)
+                            router.push('/profile')
+                          }}
+                          className="flex items-center space-x-3 px-4 py-3 bg-gray-100 dark:bg-gray-800 rounded-xl text-black dark:text-white hover:text-blue-600 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-300"
+                        >
                           <UserCircle size={20} className="text-blue-600" />
-                          <span className="text-sm font-medium text-black dark:text-white">
+                          <span className="text-sm font-medium">
                             {user.user_metadata?.full_name || user.email?.split('@')[0]}
                           </span>
-                        </div>
+                        </Link>
                         <button
                           onClick={handleSignOut}
                           className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl bg-gray-100 dark:bg-gray-800 text-black dark:text-white hover:text-blue-600 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-300"
@@ -308,7 +326,13 @@ export default function Navigation() {
                       <div className="space-y-3">
                         <Link
                           href="/auth/login"
-                          onClick={() => setMobileMenuOpen(false)}
+                          onClick={() => {
+                            try {
+                              setMobileMenuOpen(false)
+                            } catch (error) {
+                              console.error('Error closing mobile menu:', error)
+                            }
+                          }}
                           className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl bg-gray-100 dark:bg-gray-800 text-black dark:text-white hover:text-blue-600 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-300"
                         >
                           <LogIn size={18} />
@@ -316,7 +340,13 @@ export default function Navigation() {
                         </Link>
                         <Link
                           href="/auth/signup"
-                          onClick={() => setMobileMenuOpen(false)}
+                          onClick={() => {
+                            try {
+                              setMobileMenuOpen(false)
+                            } catch (error) {
+                              console.error('Error closing mobile menu:', error)
+                            }
+                          }}
                           className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 text-white font-medium text-sm shadow-lg transition-all duration-300"
                         >
                           <UserCircle size={18} />

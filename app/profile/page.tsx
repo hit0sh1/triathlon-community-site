@@ -1,28 +1,17 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Calendar, MapPin, Trophy, MessageCircle, FileText, Activity, Edit, Save, X, TrendingUp, Target, Clock, Award } from 'lucide-react'
+import { Calendar, MapPin, MessageCircle, Activity, Edit, Save, X, TrendingUp } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { createClient } from '@/lib/supabase/client'
 import { Database } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import toast, { Toaster } from 'react-hot-toast'
 import StravaSection from '@/components/StravaSection'
-import { getAvailableAchievements, addAchievement, deleteAchievement, checkAndGrantAchievements, AchievementTemplate, getUserAchievements, getUserStats, cleanupDuplicateAchievements } from '@/lib/achievements'
 
 type Profile = Database['public']['Tables']['profiles']['Row']
-type UserAchievement = Database['public']['Tables']['user_achievements']['Row']
 type TrainingLog = Database['public']['Tables']['training_logs']['Row']
-type BoardPost = Database['public']['Tables']['board_posts']['Row'] & {
-  board_categories: {
-    name: string
-  }
-}
-type BoardReply = Database['public']['Tables']['board_replies']['Row'] & {
-  board_posts: {
-    title: string
-  }
-}
+// 旧掲示板の型定義は削除済み
 
 export default function ProfilePage() {
   const { user } = useAuth()
@@ -31,11 +20,7 @@ export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false)
   const [loading, setLoading] = useState(true)
   const [profile, setProfile] = useState<Profile | null>(null)
-  const [achievements, setAchievements] = useState<any[]>([])
-  const [availableAchievements, setAvailableAchievements] = useState<AchievementTemplate[]>([])
-  const [userStats, setUserStats] = useState<any>(null)
-  const [posts, setPosts] = useState<BoardPost[]>([])
-  const [replies, setReplies] = useState<BoardReply[]>([])
+  // 旧掲示板のstate削除済み
   const [trainingData, setTrainingData] = useState<{
     thisMonth: { swim: number; bike: number; run: number }
     lastMonth: { swim: number; bike: number; run: number }
@@ -90,75 +75,9 @@ export default function ProfilePage() {
         })
       }
 
-      // 重複と英語の実績を削除
-      await cleanupDuplicateAchievements(user.id)
 
-      // 実績を取得
-      const achievementsData = await getUserAchievements(user.id)
-      setAchievements(achievementsData)
-
-      // 自動的に新しい実績をチェックして付与
-      try {
-        const newAchievements = await checkAndGrantAchievements(user.id)
-        if (newAchievements.length > 0) {
-          // 新しい実績が付与された場合、実績リストを更新
-          const updatedAchievements = await getUserAchievements(user.id)
-          setAchievements(updatedAchievements)
-          
-          // 新しい実績の通知
-          newAchievements.forEach(achievement => {
-            toast.success(`🏆 新しい実績を獲得: ${achievement.title}`, {
-              duration: 5000
-            })
-          })
-        }
-      } catch (error) {
-        console.error('Error checking achievements:', error)
-      }
-
-      // ユーザー統計を取得
-      const stats = await getUserStats(user.id)
-      setUserStats(stats)
-
-      // 利用可能な実績テンプレートを取得
-      const allAchievements = getAvailableAchievements()
-      const earnedTitles = new Set(achievementsData.map(a => a.title))
-      const availableTemplates = allAchievements.filter(template => !earnedTitles.has(template.title))
-      setAvailableAchievements(availableTemplates)
-
-      // 投稿履歴を取得
-      const { data: postsData, error: postsError } = await supabase
-        .from('board_posts')
-        .select(`
-          *,
-          board_categories (name)
-        `)
-        .eq('author_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(10)
-
-      if (postsError) {
-        console.error('Error fetching posts:', postsError)
-      } else {
-        setPosts(postsData || [])
-      }
-
-      // コメント履歴を取得
-      const { data: repliesData, error: repliesError } = await supabase
-        .from('board_replies')
-        .select(`
-          *,
-          board_posts (title)
-        `)
-        .eq('author_id', user.id)
-        .order('created_at', { ascending: false })
-        .limit(10)
-
-      if (repliesError) {
-        console.error('Error fetching replies:', repliesError)
-      } else {
-        setReplies(repliesData || [])
-      }
+      // 旧掲示板の投稿履歴取得は削除済み
+      // 新しい掲示板システムのメッセージ履歴取得機能は必要に応じて後で実装
 
       // トレーニングデータを取得
       await fetchTrainingData()
@@ -364,61 +283,7 @@ export default function ProfilePage() {
 
   const renderTabContent = () => {
     switch (activeTab) {
-      case 'posts':
-        return (
-          <div className="space-y-4">
-            {posts.length === 0 ? (
-              <div className="text-center text-gray-500 dark:text-gray-400 py-8">
-                まだ投稿がありません
-              </div>
-            ) : (
-              posts.map((post) => (
-                <div key={post.id} className="border-b border-gray-200 dark:border-gray-700 pb-4 last:border-b-0">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="text-sm text-primary mb-1">{post.board_categories?.name}</div>
-                      <h3 className="font-medium mb-2 text-gray-900 dark:text-white">{post.title}</h3>
-                      <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
-                        <span>{new Date(post.created_at).toLocaleDateString('ja-JP')}</span>
-                        <div className="flex items-center gap-1">
-                          <span>❤️ {post.like_count}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <MessageCircle size={14} />
-                          <span>{post.view_count}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        )
-      case 'comments':
-        return (
-          <div className="space-y-4">
-            {replies.length === 0 ? (
-              <div className="text-center text-gray-500 dark:text-gray-400 py-8">
-                まだコメントがありません
-              </div>
-            ) : (
-              replies.map((reply) => (
-                <div key={reply.id} className="border-b border-gray-200 dark:border-gray-700 pb-4 last:border-b-0">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="text-sm text-primary mb-1">投稿: {reply.board_posts?.title}</div>
-                      <p className="text-gray-600 dark:text-gray-400 mb-2">{reply.content}</p>
-                      <div className="text-sm text-gray-500 dark:text-gray-500">
-                        {new Date(reply.created_at).toLocaleDateString('ja-JP')}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        )
+      // 旧掲示板のタブは削除済み
       case 'training':
         return (
           <TrainingContent trainingData={trainingData} user={user} />
@@ -446,36 +311,6 @@ export default function ProfilePage() {
 
   const totalDistance = trainingData.thisMonth.swim + trainingData.thisMonth.bike + trainingData.thisMonth.run
 
-  const getProgressForAchievement = (template: AchievementTemplate) => {
-    if (!userStats || !template.threshold) return null
-    
-    let current = 0
-    switch (template.category) {
-      case 'posts':
-        current = userStats.postCount
-        break
-      case 'comments':
-        current = userStats.commentCount
-        break
-      case 'training':
-        current = userStats.totalDistance
-        break
-      case 'races':
-        current = userStats.raceCount
-        break
-      case 'community':
-        current = userStats.membershipMonths
-        break
-      default:
-        return null
-    }
-    
-    return {
-      current,
-      target: template.threshold,
-      percentage: Math.min((current / template.threshold) * 100, 100)
-    }
-  }
 
   return (
     <div className="bg-white dark:bg-gray-900 min-h-screen">
@@ -618,7 +453,7 @@ export default function ProfilePage() {
               ) : (
                 <p className="text-gray-600 dark:text-gray-400 mb-6">{profile.bio || '自己紹介が設定されていません'}</p>
               )}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-primary">{profile.post_count}</div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">投稿</div>
@@ -628,10 +463,6 @@ export default function ProfilePage() {
                   <div className="text-sm text-gray-600 dark:text-gray-400">コメント</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-primary">{profile.achievement_count}</div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">実績</div>
-                </div>
-                <div className="text-center">
                   <div className="text-2xl font-bold text-primary">{totalDistance.toFixed(1)}km</div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">今月の距離</div>
                 </div>
@@ -639,42 +470,11 @@ export default function ProfilePage() {
             </div>
 
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg mb-6">
-              <div className="border-b border-gray-200 dark:border-gray-700">
-                <nav className="flex space-x-8 px-6">
-                  <button
-                    onClick={() => setActiveTab('posts')}
-                    className={`py-4 px-2 border-b-2 font-medium transition-colors ${
-                      activeTab === 'posts'
-                        ? 'border-primary text-primary'
-                        : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-                    }`}
-                  >
-                    投稿履歴
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('comments')}
-                    className={`py-4 px-2 border-b-2 font-medium transition-colors ${
-                      activeTab === 'comments'
-                        ? 'border-primary text-primary'
-                        : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-                    }`}
-                  >
-                    コメント履歴
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('training')}
-                    className={`py-4 px-2 border-b-2 font-medium transition-colors ${
-                      activeTab === 'training'
-                        ? 'border-primary text-primary'
-                        : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-                    }`}
-                  >
-                    記録データ
-                  </button>
-                </nav>
+              <div className="border-b border-gray-200 dark:border-gray-700 p-6">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">トレーニング記録</h2>
               </div>
               <div className="p-6">
-                {renderTabContent()}
+                <TrainingContent trainingData={trainingData} user={user} />
               </div>
             </div>
           </div>
@@ -722,77 +522,6 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 mb-6">
-              <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">実績</h3>
-              <div className="space-y-3">
-                {achievements.length === 0 ? (
-                  <div className="text-center text-gray-500 dark:text-gray-400 py-4">
-                    まだ実績がありません
-                  </div>
-                ) : (
-                  achievements.map((achievement) => (
-                    <div key={achievement.id} className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                      <div className="text-2xl">{achievement.icon || '🏆'}</div>
-                      <div className="flex-1">
-                        <div className="font-medium text-sm text-gray-900 dark:text-white">{achievement.title}</div>
-                        <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">
-                          {achievement.description}
-                        </div>
-                        <div className="text-xs text-gray-500 dark:text-gray-500">
-                          {new Date(achievement.achievement_date).toLocaleDateString('ja-JP')}
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
-
-            {availableAchievements.length > 0 && (
-              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 mb-6">
-                <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">利用可能な実績</h3>
-                <div className="space-y-3">
-                  {availableAchievements.slice(0, 5).map((template, index) => {
-                    const progress = getProgressForAchievement(template)
-                    return (
-                      <div key={index} className="flex items-start gap-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg opacity-75">
-                        <div className="text-2xl grayscale">{template.icon}</div>
-                        <div className="flex-1">
-                          <div className="font-medium text-sm text-gray-700 dark:text-gray-300">{template.title}</div>
-                          <div className="text-xs text-gray-500 dark:text-gray-500 mb-1">
-                            {template.description}
-                          </div>
-                          {progress && (
-                            <div className="mt-2">
-                              <div className="flex items-center justify-between text-xs text-gray-400 dark:text-gray-600 mb-1">
-                                <span>進捗: {progress.current}/{progress.target}</span>
-                                <span>{Math.round(progress.percentage)}%</span>
-                              </div>
-                              <div className="w-full bg-gray-300 dark:bg-gray-600 rounded-full h-1.5">
-                                <div
-                                  className="bg-blue-500 h-1.5 rounded-full transition-all duration-300"
-                                  style={{ width: `${progress.percentage}%` }}
-                                ></div>
-                              </div>
-                            </div>
-                          )}
-                          {template.threshold && !progress && (
-                            <div className="text-xs text-gray-400 dark:text-gray-600">
-                              目標: {template.threshold} {template.category === 'training' ? 'km' : '回'}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )
-                  })}
-                  {availableAchievements.length > 5 && (
-                    <div className="text-center text-sm text-gray-500 dark:text-gray-400 py-2">
-                      他に{availableAchievements.length - 5}個の実績があります
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
 
             {/* Strava Section */}
             <StravaSection userId={user.id} />

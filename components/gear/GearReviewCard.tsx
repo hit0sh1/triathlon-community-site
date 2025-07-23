@@ -17,6 +17,16 @@ interface GearReviewCardProps {
 
 const defaultImage = 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&auto=format&fit=crop'
 
+// 価格を3桁区切りでフォーマット
+const formatPrice = (price: string | null | undefined): string => {
+  if (!price) return ''
+  // 既存のカンマを削除してから数字のみ抽出
+  const numericPrice = price.replace(/[^\d]/g, '')
+  if (!numericPrice) return price
+  // 3桁区切りでカンマを追加
+  return parseInt(numericPrice).toLocaleString()
+}
+
 export default function GearReviewCard({ review, onEdit, onDelete }: GearReviewCardProps) {
   const { user } = useAuth()
   const [showMenu, setShowMenu] = useState(false)
@@ -110,7 +120,7 @@ export default function GearReviewCard({ review, onEdit, onDelete }: GearReviewC
           </div>
           {review.price && (
             <span className="text-sm font-bold text-blue-600 dark:text-blue-400 ml-auto">
-              {review.price}
+              {formatPrice(review.price)}円
             </span>
           )}
         </div>
