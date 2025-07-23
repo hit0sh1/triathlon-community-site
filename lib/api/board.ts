@@ -367,3 +367,12 @@ export async function searchBoard(params: {
   }
   return response.json()
 }
+
+// Home page API
+export async function fetchPopularMessages(limit = 5): Promise<{ messages: MessageWithDetails[] }> {
+  const response = await fetch(`/api/board/messages?popular=true&limit=${limit}`)
+  if (!response.ok) {
+    throw new Error('Failed to fetch popular messages')
+  }
+  return response.json()
+}

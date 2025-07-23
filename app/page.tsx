@@ -1,11 +1,78 @@
 import { ArrowRight, BookOpen, Calendar, Users } from "lucide-react";
 import Link from "next/link";
 import NotificationSectionWrapper from "@/components/home/NotificationSectionWrapper";
+import { createClient } from "@/lib/supabase/server";
 
 export default async function Home() {
+  
+  // 人気の掲示板投稿を取得
+  let popularPosts: any[] = [];
+  try {
+    const supabase = await createClient();
+    
+    const { data: messages, error } = await supabase
+      .from('messages')
+      .select(`
+        id,
+        channel_id,
+        thread_id,
+        content,
+        message_type,
+        like_count,
+        created_at,
+        updated_at,
+        author:profiles!messages_author_id_fkey (
+          id,
+          username,
+          display_name,
+          avatar_url,
+          role
+        ),
+        channel:channels!messages_channel_id_fkey (
+          id,
+          name,
+          category:board_categories!channels_category_id_fkey (
+            id,
+            name,
+            color
+          )
+        ),
+        reactions (
+          id,
+          emoji_code,
+          user_id,
+          created_at
+        ),
+        mentions (
+          id,
+          mentioned_user_id
+        )
+      `)
+      .is('thread_id', null) // チャンネル直接投稿のみ
+      .is('deleted_at', null)
+      .order('created_at', { ascending: false })
+      .limit(5);
 
-  // 人気の掲示板投稿を取得（現在は空配列）
-  const popularPosts: any[] = [];
+    if (!error && messages) {
+      // スレッド返信数を追加
+      for (const message of messages) {
+        const { count } = await supabase
+          .from('messages')
+          .select('*', { count: 'exact', head: true })
+          .eq('thread_id', message.id)
+          .is('deleted_at', null);
+
+        (message as any).thread_reply_count = count || 0;
+        (message as any).is_thread_starter = true;
+        (message as any).thread_replies = [];
+      }
+      
+      popularPosts = messages;
+    }
+  } catch (error) {
+    console.error('Failed to fetch popular posts:', error);
+    popularPosts = [];
+  }
 
   return (
     <div className="min-h-screen bg-white dark:bg-black">
@@ -66,7 +133,7 @@ export default async function Home() {
       <section className="pt-16 lg:pt-24 pb-16 lg:pb-24 bg-gray-50 dark:bg-gray-900">
         <div className="container-premium">
           <div className="max-w-4xl mx-auto">
-            <NotificationSectionWrapper limit={5} showTitle={true} />
+            <NotificationSectionWrapper limit={3} showTitle={true} />
           </div>
         </div>
       </section>
@@ -131,39 +198,39 @@ export default async function Home() {
                   {popularPosts.map((post, index) => (
                     <Link
                       key={post.id}
-                      href={`/board/posts/${post.id}`}
+                      href={`/board?channel=${post.channel_id}&message=${post.id}`}
                       className="block animate-fade-in-up"
                       style={{ animationDelay: `${index * 0.1}s` }}
                     >
                       <div className="p-6 bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-lg group hover:shadow-lg transition-all duration-300">
                         <div className="flex items-start gap-4">
-                          <img
-                            src={
-                              post.profiles.avatar_url ||
-                              "https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=40&h=40&fit=crop&crop=face"
-                            }
-                            alt={post.profiles.display_name}
-                            className="w-12 h-12 rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-700"
-                          />
+                          <div className="w-12 h-12 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center flex-shrink-0">
+                            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                              {post.author?.display_name?.[0] || post.author?.username?.[0] || '?'}
+                            </span>
+                          </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-3 mb-2">
-                              <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/20 text-blue-600 rounded-full text-xs font-semibold">
-                                {post.board_categories.name}
+                              <span 
+                                className="px-3 py-1 text-white rounded-full text-xs font-semibold"
+                                style={{ backgroundColor: post.channel?.category?.color || '#3B82F6' }}
+                              >
+                                {post.channel?.category?.name || 'チャンネル'}
                               </span>
                               <span className="text-black dark:text-white text-xs font-medium">
                                 {new Date(post.created_at || "").toLocaleDateString("ja-JP")}
                               </span>
                             </div>
-                            <h3 className="text-lg font-bold mb-2 japanese-text text-black dark:text-white group-hover:text-blue-600 transition-colors">
-                              {post.title}
+                            <h3 className="text-lg font-bold mb-2 japanese-text text-black dark:text-white group-hover:text-blue-600 transition-colors line-clamp-2">
+                              {post.content.length > 80 ? post.content.substring(0, 80) + '...' : post.content}
                             </h3>
                             <div className="flex items-center gap-6 text-sm text-black dark:text-white">
                               <span className="font-semibold text-black dark:text-white">
-                                {post.profiles.display_name}
+                                {post.author?.display_name || post.author?.username || 'ユーザー'}
                               </span>
                               <div className="flex items-center gap-4">
-                                <span className="font-medium">{post.reply_count} 返信</span>
-                                <span className="font-medium">{post.view_count || 0} 閲覧</span>
+                                <span className="font-medium">{post.thread_reply_count || 0} 返信</span>
+                                <span className="font-medium">{post.reactions?.length || 0} リアクション</span>
                               </div>
                             </div>
                           </div>
@@ -200,37 +267,39 @@ export default async function Home() {
               {popularPosts.map((post, index) => (
                 <Link
                   key={post.id}
-                  href={`/board/posts/${post.id}`}
+                  href={`/board?channel=${post.channel_id}&message=${post.id}`}
                   className="block animate-fade-in-up"
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
                   <div className="p-6 bg-white dark:bg-black border border-gray-200 dark:border-gray-800 rounded-lg group hover:shadow-lg transition-all duration-300">
                     <div className="flex items-start gap-4">
-                      <img
-                        src={
-                          post.profiles.avatar_url ||
-                          "https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=40&h=40&fit=crop&crop=face"
-                        }
-                        alt={post.profiles.display_name}
-                        className="w-12 h-12 rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-700"
-                      />
+                      <div className="w-12 h-12 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center flex-shrink-0">
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                          {post.author?.display_name?.[0] || post.author?.username?.[0] || '?'}
+                        </span>
+                      </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-3 mb-2">
-                          <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/20 text-blue-600 rounded-full text-xs font-semibold">
-                            {post.board_categories.name}
+                          <span 
+                            className="px-3 py-1 text-white rounded-full text-xs font-semibold"
+                            style={{ backgroundColor: post.channel?.category?.color || '#3B82F6' }}
+                          >
+                            {post.channel?.category?.name || 'チャンネル'}
                           </span>
                           <span className="text-black dark:text-white text-xs font-medium">
                             {new Date(post.created_at || "").toLocaleDateString("ja-JP")}
                           </span>
                         </div>
-                        <h3 className="text-lg font-bold mb-2 japanese-text text-black dark:text-white group-hover:text-blue-600 transition-colors">
-                          {post.title}
+                        <h3 className="text-lg font-bold mb-2 japanese-text text-black dark:text-white group-hover:text-blue-600 transition-colors line-clamp-2">
+                          {post.content.length > 80 ? post.content.substring(0, 80) + '...' : post.content}
                         </h3>
                         <div className="flex items-center gap-6 text-sm text-black dark:text-white">
-                          <span className="font-semibold text-black dark:text-white">{post.profiles.display_name}</span>
+                          <span className="font-semibold text-black dark:text-white">
+                            {post.author?.display_name || post.author?.username || 'ユーザー'}
+                          </span>
                           <div className="flex items-center gap-4">
-                            <span className="font-medium">{post.reply_count} 返信</span>
-                            <span className="font-medium">{post.view_count || 0} 閲覧</span>
+                            <span className="font-medium">{post.thread_reply_count || 0} 返信</span>
+                            <span className="font-medium">{post.reactions?.length || 0} リアクション</span>
                           </div>
                         </div>
                       </div>

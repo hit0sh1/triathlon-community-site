@@ -134,15 +134,13 @@ export default function NotificationSection({
                 お知らせ
               </h2>
             </div>
-            {isLoggedIn && (
-              <Link
-                href="/notifications"
-                className="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-200 flex items-center space-x-1"
-              >
-                <span>すべて見る</span>
-                <ChevronRight className="h-4 w-4" />
-              </Link>
-            )}
+            <Link
+              href="/notifications"
+              className="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-200 flex items-center space-x-1"
+            >
+              <span>すべて見る</span>
+              <ChevronRight className="h-4 w-4" />
+            </Link>
           </div>
         </div>
       )}

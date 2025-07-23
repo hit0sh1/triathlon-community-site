@@ -24,6 +24,77 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const channelId = searchParams.get('channel_id')
     const threadId = searchParams.get('thread_id')
+    const popular = searchParams.get('popular') === 'true'
+    const limit = parseInt(searchParams.get('limit') || '10')
+
+    // 人気投稿取得（ホームページ用）
+    if (popular) {
+      const { data: messages, error } = await supabase
+        .from('messages')
+        .select(`
+          id,
+          channel_id,
+          thread_id,
+          content,
+          message_type,
+          like_count,
+          created_at,
+          updated_at,
+          author:profiles!messages_author_id_fkey (
+            id,
+            username,
+            display_name,
+            avatar_url,
+            role
+          ),
+          channel:channels!messages_channel_id_fkey (
+            id,
+            name,
+            category:board_categories!channels_category_id_fkey (
+              id,
+              name,
+              color
+            )
+          ),
+          reactions (
+            id,
+            emoji_code,
+            user_id,
+            created_at
+          ),
+          mentions (
+            id,
+            mentioned_user_id
+          )
+        `)
+        .is('thread_id', null) // チャンネル直接投稿のみ
+        .is('deleted_at', null)
+        .order('created_at', { ascending: false })
+        .limit(limit)
+
+      if (error) {
+        console.error('Popular messages fetch error:', error)
+        return NextResponse.json(
+          { error: 'Failed to fetch popular messages' },
+          { status: 500 }
+        )
+      }
+
+      // スレッド返信数を追加
+      for (const message of messages || []) {
+        const { count } = await supabase
+          .from('messages')
+          .select('*', { count: 'exact', head: true })
+          .eq('thread_id', message.id)
+          .is('deleted_at', null)
+
+        ;(message as any).thread_reply_count = count || 0
+        ;(message as any).is_thread_starter = true
+        ;(message as any).thread_replies = []
+      }
+
+      return NextResponse.json({ messages })
+    }
 
     if (!channelId) {
       return NextResponse.json(

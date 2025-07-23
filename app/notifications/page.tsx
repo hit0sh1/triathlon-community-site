@@ -25,12 +25,8 @@ export default function NotificationsPage() {
   const router = useRouter()
 
   useEffect(() => {
-    if (!user) {
-      router.push('/auth/login')
-      return
-    }
     fetchNotifications()
-  }, [user, router])
+  }, [user])
 
   const fetchNotifications = async () => {
     try {
@@ -47,6 +43,8 @@ export default function NotificationsPage() {
   }
 
   const markAsRead = async (notificationId: string) => {
+    if (!user) return
+    
     try {
       const response = await fetch(`/api/notifications/${notificationId}/read`, {
         method: 'PATCH'
@@ -80,7 +78,7 @@ export default function NotificationsPage() {
   }
 
   const handleNotificationClick = (notification: Notification) => {
-    if (!notification.is_read) {
+    if (user && !notification.is_read) {
       markAsRead(notification.id)
     }
   }
@@ -107,14 +105,14 @@ export default function NotificationsPage() {
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
                   通知
                 </h1>
-                {unreadCount > 0 && (
+                {user && unreadCount > 0 && (
                   <span className="px-3 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 text-sm font-semibold rounded-full">
                     {unreadCount}件の未読
                   </span>
                 )}
               </div>
               
-              {unreadCount > 0 && (
+              {user && unreadCount > 0 && (
                 <button
                   onClick={markAllAsRead}
                   className="px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-200"
@@ -141,7 +139,7 @@ export default function NotificationsPage() {
                 <div
                   key={notification.id}
                   className={`bg-white dark:bg-gray-800 rounded-lg shadow-sm hover:shadow-md transition-shadow ${
-                    !notification.is_read ? 'border-l-4 border-blue-500' : ''
+                    user && !notification.is_read ? 'border-l-4 border-blue-500' : ''
                   }`}
                 >
                   {notification.link ? (
@@ -150,14 +148,14 @@ export default function NotificationsPage() {
                       onClick={() => handleNotificationClick(notification)}
                       className="block p-6"
                     >
-                      <NotificationContent notification={notification} getIcon={getIcon} />
+                      <NotificationContent notification={notification} getIcon={getIcon} isLoggedIn={!!user} />
                     </Link>
                   ) : (
                     <div
                       onClick={() => handleNotificationClick(notification)}
                       className="p-6 cursor-pointer"
                     >
-                      <NotificationContent notification={notification} getIcon={getIcon} />
+                      <NotificationContent notification={notification} getIcon={getIcon} isLoggedIn={!!user} />
                     </div>
                   )}
                 </div>
@@ -172,10 +170,12 @@ export default function NotificationsPage() {
 
 function NotificationContent({ 
   notification, 
-  getIcon 
+  getIcon,
+  isLoggedIn
 }: { 
   notification: Notification
-  getIcon: (type: string) => React.ReactElement 
+  getIcon: (type: string) => React.ReactElement
+  isLoggedIn: boolean
 }) {
   return (
     <div className="flex items-start">
@@ -198,7 +198,7 @@ function NotificationContent({
               })}
             </p>
           </div>
-          {!notification.is_read && (
+          {isLoggedIn && !notification.is_read && (
             <div className="flex-shrink-0 ml-4">
               <div className="h-3 w-3 bg-blue-500 rounded-full"></div>
             </div>
