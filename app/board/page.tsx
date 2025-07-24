@@ -640,11 +640,16 @@ export default function SlackBoardPage() {
       if (showChannelActions && !target.closest('[data-channel-actions]')) {
         setShowChannelActions(null)
       }
+      
+      // Close message actions menu if clicking outside
+      if (showMessageActions && !target.closest('[data-message-actions]')) {
+        setShowMessageActions(null)
+      }
     }
 
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [showEmojiPicker, showSearchResults, isMobileSidebarOpen, showCategoryActions, showChannelActions])
+  }, [showEmojiPicker, showSearchResults, isMobileSidebarOpen, showCategoryActions, showChannelActions, showMessageActions])
 
   const handleCreateChannel = async () => {
     if (!newChannelName.trim() || !showCreateChannelModal) return
@@ -1714,7 +1719,7 @@ export default function SlackBoardPage() {
 
               {/* Message Actions Menu */}
               {user && message.author.id === user.id && (
-                <div className="md:opacity-0 md:group-hover:opacity-100 opacity-100 absolute top-2 right-2">
+                <div className="md:opacity-0 md:group-hover:opacity-100 opacity-100 absolute top-2 right-2" data-message-actions>
                   <div className="relative">
                     <button
                       onClick={() => setShowMessageActions(showMessageActions === message.id ? null : message.id)}

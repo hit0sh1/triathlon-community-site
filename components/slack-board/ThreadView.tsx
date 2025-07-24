@@ -383,6 +383,19 @@ export default function ThreadView({ threadMessage, onClose, onSendReply, onAddR
     const [editContent, setEditContent] = useState(message.content)
     const [showActions, setShowActions] = useState(false)
     
+    // Close actions menu when clicking outside
+    useEffect(() => {
+      const handleClickOutside = (event: MouseEvent) => {
+        const target = event.target as Element
+        if (showActions && !target.closest('[data-thread-message-actions]')) {
+          setShowActions(false)
+        }
+      }
+
+      document.addEventListener('mousedown', handleClickOutside)
+      return () => document.removeEventListener('mousedown', handleClickOutside)
+    }, [showActions])
+    
     const handleLocalReactionClick = async (messageId: string, emojiCode: string) => {
       if (!user) return
       
@@ -601,7 +614,7 @@ export default function ThreadView({ threadMessage, onClose, onSendReply, onAddR
 
         {/* Message Actions */}
         {user && message.author.id === user.id && !isEditing && (
-          <div className="md:opacity-0 md:group-hover:opacity-100 opacity-100 relative">
+          <div className="md:opacity-0 md:group-hover:opacity-100 opacity-100 relative" data-thread-message-actions>
             <button
               onClick={() => setShowActions(!showActions)}
               className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded"
