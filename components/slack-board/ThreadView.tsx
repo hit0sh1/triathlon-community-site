@@ -34,6 +34,7 @@ export default function ThreadView({ threadMessage, onClose, onSendReply, onAddR
   const [mentionQuery, setMentionQuery] = useState('')
   const [mentionPosition, setMentionPosition] = useState({ top: 0, left: 0 })
   const [selectedMentionIndex, setSelectedMentionIndex] = useState(0)
+  const [showMessageActions, setShowMessageActions] = useState<string | null>(null)
   const emojiPickerRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const threadMessagesRef = useRef<HTMLDivElement>(null)
@@ -77,20 +78,26 @@ export default function ThreadView({ threadMessage, onClose, onSendReply, onAddR
     }
   }
 
-  // Close emoji picker and mention suggestions when clicking outside
+  // Close emoji picker, mention suggestions, and message actions when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element
+      
       if (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target as Node)) {
         setShowEmojiPicker(null)
       }
       
       // Close mention suggestions if clicking outside the textarea or dropdown
-      const target = event.target as Element
       const isTextarea = textareaRef.current?.contains(target)
       const isMentionDropdown = target.closest('.mention-dropdown')
       
       if (!isTextarea && !isMentionDropdown) {
         setShowMentionSuggestions(false)
+      }
+      
+      // Close message actions menu if clicking outside
+      if (showMessageActions && !target.closest('[data-thread-message-actions]')) {
+        setShowMessageActions(null)
       }
     }
 
@@ -98,7 +105,7 @@ export default function ThreadView({ threadMessage, onClose, onSendReply, onAddR
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
-  }, [])
+  }, [showMessageActions])
 
   // Auto-resize textarea
   useEffect(() => {
@@ -381,20 +388,8 @@ export default function ThreadView({ threadMessage, onClose, onSendReply, onAddR
     const [localReactions, setLocalReactions] = useState(message.reactions)
     const [isEditing, setIsEditing] = useState(false)
     const [editContent, setEditContent] = useState(message.content)
-    const [showActions, setShowActions] = useState(false)
     
-    // Close actions menu when clicking outside
-    useEffect(() => {
-      const handleClickOutside = (event: MouseEvent) => {
-        const target = event.target as Element
-        if (showActions && !target.closest('[data-thread-message-actions]')) {
-          setShowActions(false)
-        }
-      }
-
-      document.addEventListener('mousedown', handleClickOutside)
-      return () => document.removeEventListener('mousedown', handleClickOutside)
-    }, [showActions])
+    const isActionsOpen = showMessageActions === message.id
     
     const handleLocalReactionClick = async (messageId: string, emojiCode: string) => {
       if (!user) return
@@ -616,18 +611,18 @@ export default function ThreadView({ threadMessage, onClose, onSendReply, onAddR
         {user && message.author.id === user.id && !isEditing && (
           <div className="md:opacity-0 md:group-hover:opacity-100 opacity-100 relative" data-thread-message-actions>
             <button
-              onClick={() => setShowActions(!showActions)}
+              onClick={() => setShowMessageActions(isActionsOpen ? null : message.id)}
               className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded"
             >
               <MoreVertical size={16} />
             </button>
             
-            {showActions && (
+            {isActionsOpen && (
               <div className="absolute right-0 top-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50">
                 <button
                   onClick={() => {
                     setIsEditing(true)
-                    setShowActions(false)
+                    setShowMessageActions(null)
                   }}
                   className="flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
@@ -637,7 +632,7 @@ export default function ThreadView({ threadMessage, onClose, onSendReply, onAddR
                 <button
                   onClick={() => {
                     handleDelete()
-                    setShowActions(false)
+                    setShowMessageActions(null)
                   }}
                   className="flex items-center gap-2 w-full px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
