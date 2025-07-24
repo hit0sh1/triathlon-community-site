@@ -35,7 +35,9 @@ export default function SlackBoardPage() {
   const [newChannelName, setNewChannelName] = useState('')
   const [newChannelDescription, setNewChannelDescription] = useState('')
   const [editingMessage, setEditingMessage] = useState<string | null>(null)
-  const [editContent, setEditContent] = useState('')
+  const [editContent, setEditContent] = useState<{[key: string]: string}>({})
+  const [cursorPositions, setCursorPositions] = useState<{[key: string]: number}>({})
+  const editTextareaRefs = useRef<{[key: string]: HTMLTextAreaElement}>({})
   const [showMentionSuggestions, setShowMentionSuggestions] = useState(false)
   const [mentionQuery, setMentionQuery] = useState('')
   const [mentionPosition, setMentionPosition] = useState({ top: 0, left: 0 })
@@ -651,6 +653,27 @@ export default function SlackBoardPage() {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [showEmojiPicker, showSearchResults, isMobileSidebarOpen, showCategoryActions, showChannelActions, showMessageActions])
 
+  // カーソル位置を復元するuseEffect
+  useEffect(() => {
+    if (editingMessage && editTextareaRefs.current[editingMessage]) {
+      const textarea = editTextareaRefs.current[editingMessage]
+      const savedPosition = cursorPositions[editingMessage]
+      
+      if (savedPosition !== undefined && savedPosition >= 0) {
+        // 複数のタイミングで復元を試行
+        const restore = () => {
+          if (textarea && textarea.selectionStart !== savedPosition) {
+            textarea.setSelectionRange(savedPosition, savedPosition)
+            console.log(`Restored cursor position for ${editingMessage}:`, savedPosition)
+          }
+        }
+        
+        setTimeout(restore, 0)
+        requestAnimationFrame(restore)
+      }
+    }
+  }, [editContent, editingMessage, cursorPositions])
+
   const handleCreateChannel = async () => {
     if (!newChannelName.trim() || !showCreateChannelModal) return
     
@@ -989,11 +1012,12 @@ export default function SlackBoardPage() {
 
 
   const handleSaveEdit = async (messageId: string) => {
-    if (!editContent.trim()) return
+    const currentContent = editContent[messageId] ?? ''
+    if (!currentContent.trim()) return
     
     try {
       const { message: updatedMessage } = await boardApi.updateMessage(messageId, {
-        content: editContent.trim()
+        content: currentContent.trim()
       })
       
       // Update message in state
@@ -1002,7 +1026,11 @@ export default function SlackBoardPage() {
       ))
       
       setEditingMessage(null)
-      setEditContent('')
+      setEditContent(prev => {
+        const updated = { ...prev }
+        delete updated[messageId]
+        return updated
+      })
     } catch (error) {
       console.error('Failed to update message:', error)
     }
@@ -1010,13 +1038,24 @@ export default function SlackBoardPage() {
 
 
   const handleCancelEdit = () => {
+    if (editingMessage) {
+      setEditContent(prev => {
+        const updated = { ...prev }
+        delete updated[editingMessage]
+        return updated
+      })
+      setCursorPositions(prev => {
+        const updated = { ...prev }
+        delete updated[editingMessage]
+        return updated
+      })
+    }
     setEditingMessage(null)
-    setEditContent('')
   }
 
   const handleEditMessage = (message: MessageWithDetails) => {
     setEditingMessage(message.id)
-    setEditContent(message.content)
+    setEditContent(prev => ({ ...prev, [message.id]: message.content }))
     setShowMessageActions(null)
   }
 
@@ -1033,9 +1072,9 @@ export default function SlackBoardPage() {
     }
   }
 
-  const handleMentionInput = (e: React.ChangeEvent<HTMLTextAreaElement>, isEdit: boolean = false) => {
+  const handleMentionInput = (e: React.ChangeEvent<HTMLTextAreaElement>, isEdit: boolean = false, messageId?: string) => {
     const value = e.target.value
-    const cursorPosition = e.target.selectionStart
+    const cursorPosition = e.target.selectionStart || 0
     const textBeforeCursor = value.slice(0, cursorPosition)
     const mentionMatch = textBeforeCursor.match(/@(\w*)$/)
     
@@ -1059,26 +1098,64 @@ export default function SlackBoardPage() {
       setSelectedMentionIndex(0)
     }
     
-    if (isEdit) {
-      setEditContent(value)
+    if (isEdit && messageId) {
+      // カーソル位置を保存
+      setCursorPositions(prev => ({ ...prev, [messageId]: cursorPosition }))
+      
+      // 編集内容を更新
+      setEditContent(prev => {
+        const updated = { ...prev, [messageId]: value }
+        
+        // 状態更新後すぐにカーソル位置を復元
+        setTimeout(() => {
+          const textarea = editTextareaRefs.current[messageId]
+          if (textarea) {
+            textarea.setSelectionRange(cursorPosition, cursorPosition)
+            console.log(`Restored cursor immediately for ${messageId}:`, cursorPosition)
+          }
+        }, 0)
+        
+        return updated
+      })
     } else {
       setNewMessage(value)
     }
   }
 
-  const insertMention = (mentionUser: MentionUser, isEdit: boolean = false) => {
-    const currentValue = isEdit ? editContent : newMessage
-    const cursorPosition = isEdit ? editContent.length : newMessage.length
-    const textBeforeCursor = currentValue.slice(0, cursorPosition)
-    const textAfterCursor = currentValue.slice(cursorPosition)
-    
-    // Replace @query with @display_name
-    const beforeMention = textBeforeCursor.replace(/@[^\s@]*$/, '')
-    const newValue = beforeMention + `@${mentionUser.display_name} ` + textAfterCursor
-    
-    if (isEdit) {
-      setEditContent(newValue)
+  const insertMention = (mentionUser: MentionUser, isEdit: boolean = false, messageId?: string) => {
+    if (isEdit && messageId) {
+      const currentValue = editContent[messageId] ?? ''
+      const cursorPosition = cursorPositions[messageId] ?? currentValue.length
+      const textBeforeCursor = currentValue.slice(0, cursorPosition)
+      const textAfterCursor = currentValue.slice(cursorPosition)
+      
+      // Replace @query with @display_name
+      const beforeMention = textBeforeCursor.replace(/@[^\s@]*$/, '')
+      const newValue = beforeMention + `@${mentionUser.display_name} ` + textAfterCursor
+      
+      setEditContent(prev => ({ ...prev, [messageId]: newValue }))
+      
+      // Set cursor position after the inserted mention
+      const newCursorPosition = beforeMention.length + mentionUser.display_name.length + 2
+      setCursorPositions(prev => ({ ...prev, [messageId]: newCursorPosition }))
+      
+      setTimeout(() => {
+        const textarea = editTextareaRefs.current[messageId]
+        if (textarea) {
+          textarea.setSelectionRange(newCursorPosition, newCursorPosition)
+          textarea.focus()
+        }
+      }, 0)
     } else {
+      const currentValue = newMessage
+      const cursorPosition = newMessage.length
+      const textBeforeCursor = currentValue.slice(0, cursorPosition)
+      const textAfterCursor = currentValue.slice(cursorPosition)
+      
+      // Replace @query with @display_name
+      const beforeMention = textBeforeCursor.replace(/@[^\s@]*$/, '')
+      const newValue = beforeMention + `@${mentionUser.display_name} ` + textAfterCursor
+      
       setNewMessage(newValue)
     }
     
@@ -1175,10 +1252,6 @@ export default function SlackBoardPage() {
 
   return (
     <div className="flex h-screen bg-white dark:bg-gray-900">
-      {/* Mobile Sidebar Overlay */}
-      {isMobileSidebarOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden" />
-      )}
       
       {/* Left Sidebar - Categories and Channels */}
       <div 
@@ -1188,6 +1261,7 @@ export default function SlackBoardPage() {
           fixed lg:static 
           inset-y-0 left-0 
           w-64 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 
+          lg:border-r lg:rounded-none rounded-r-lg shadow-lg lg:shadow-none
           flex flex-col 
           transition-transform duration-300 ease-in-out 
           z-50 lg:z-auto
@@ -1516,23 +1590,19 @@ export default function SlackBoardPage() {
                 {/* Message Text */}
                 {editingMessage === message.id ? (
                   <div className="mb-2">
-                    <div className="relative">
-                      {/* Highlighted text overlay for edit */}
-                      <div 
-                        className="absolute inset-0 px-3 py-2 text-gray-900 dark:text-white pointer-events-none whitespace-pre-wrap break-words overflow-hidden rounded-lg text-sm"
-                        style={{ 
-                          font: 'inherit',
-                          fontSize: 'inherit',
-                          lineHeight: 'inherit',
-                          fontFamily: 'inherit',
-                          fontWeight: 'inherit'
-                        }}
-                      >
-                        {renderMessageWithMentions(editContent)}
-                      </div>
                       <textarea
-                        value={editContent}
-                        onChange={(e) => handleMentionInput(e, true)}
+                        ref={(el) => {
+                          if (el) {
+                            editTextareaRefs.current[message.id] = el
+                          }
+                        }}
+                        value={editContent[message.id] ?? message.content}
+                        onChange={(e) => handleMentionInput(e, true, message.id)}
+                        onSelect={(e) => {
+                          // テキスト選択やカーソル移動時にも位置を保存
+                          const cursorPosition = e.currentTarget.selectionStart || 0
+                          setCursorPositions(prev => ({ ...prev, [message.id]: cursorPosition }))
+                        }}
                         onKeyDown={(e) => {
                           if (showMentionSuggestions && editingMessage === message.id) {
                             const filteredUsers = getFilteredMentionUsers()
@@ -1562,7 +1632,7 @@ export default function SlackBoardPage() {
                             if (e.key === 'Enter') {
                               e.preventDefault()
                               if (filteredUsers[selectedMentionIndex]) {
-                                insertMention(filteredUsers[selectedMentionIndex], true)
+                                insertMention(filteredUsers[selectedMentionIndex], true, message.id)
                               }
                               return
                             }
@@ -1576,7 +1646,7 @@ export default function SlackBoardPage() {
                             handleCancelEdit()
                           }
                         }}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-transparent text-transparent caret-gray-900 dark:caret-white resize-none text-sm relative z-10"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white resize-none text-sm relative z-10"
                         rows={3}
                         autoFocus
                       />
@@ -1587,7 +1657,7 @@ export default function SlackBoardPage() {
                           {getFilteredMentionUsers().map((mentionUser, index) => (
                             <button
                               key={mentionUser.id}
-                              onClick={() => insertMention(mentionUser, true)}
+                              onClick={() => insertMention(mentionUser, true, message.id)}
                               onMouseEnter={() => setSelectedMentionIndex(index)}
                               className={`w-full text-left px-3 py-2 transition-colors flex items-center space-x-2 ${
                                 index === selectedMentionIndex 
@@ -1606,7 +1676,6 @@ export default function SlackBoardPage() {
                           ))}
                         </div>
                       )}
-                    </div>
                     <div className="flex items-center space-x-2 mt-2">
                       <button
                         onClick={() => handleSaveEdit(message.id)}
