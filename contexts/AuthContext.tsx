@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { User } from '@supabase/supabase-js'
 import { createClient } from '@/lib/supabase/client'
+import { clearSupabaseCookies } from '@/lib/utils/cookies'
 
 type AuthContextType = {
   user: User | null
@@ -23,9 +24,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // Get initial session
     const getSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      setUser(session?.user ?? null)
-      setLoading(false)
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession()
+        
+        if (error) {
+          console.error('Session error:', error)
+          // クッキー関連のエラーの場合、クッキーをクリア
+          if (error.message?.includes('cookie') || 
+              error.message?.includes('JSON') || 
+              error.message?.includes('base64')) {
+            console.warn('Cookie parsing error detected, clearing Supabase cookies')
+            clearSupabaseCookies()
+            // ページをリロードして新しいセッションを開始
+            setTimeout(() => window.location.reload(), 1000)
+            return
+          }
+        }
+        
+        setUser(session?.user ?? null)
+        setLoading(false)
+      } catch (error) {
+        console.error('Failed to get session:', error)
+        // セッション取得に失敗した場合もクッキーをクリア
+        clearSupabaseCookies()
+        setUser(null)
+        setLoading(false)
+      }
     }
 
     getSession()

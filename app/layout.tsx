@@ -6,6 +6,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { Toaster } from 'react-hot-toast';
 import PWAInstaller from '@/components/PWAInstaller';
 import GoogleMapsErrorHandler from '@/components/GoogleMapsErrorHandler';
+import ErrorHandler from '@/components/ErrorHandler';
 
 export const metadata: Metadata = {
   title: "沖縄トライアスロンコミュニティ",
@@ -30,6 +31,7 @@ export default function RootLayout({
       </head>
       <body className="antialiased min-h-screen flex flex-col bg-white dark:bg-black" suppressHydrationWarning>
         <AuthProvider>
+          <ErrorHandler />
           <GoogleMapsErrorHandler />
           <Toaster />
           <Navigation />
