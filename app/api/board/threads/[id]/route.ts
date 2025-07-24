@@ -36,6 +36,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<Pa
         channel_id,
         thread_id,
         content,
+        image_url,
+        image_urls,
         message_type,
         like_count,
         created_at,
@@ -87,6 +89,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<Pa
         channel_id,
         thread_id,
         content,
+        image_url,
+        image_urls,
         message_type,
         like_count,
         created_at,
@@ -131,14 +135,23 @@ export async function GET(request: NextRequest, { params }: { params: Promise<Pa
       )
     }
 
-    // データを整形
-    ;(threadMessage as any).thread_reply_count = replies?.length || 0
-    ;(threadMessage as any).is_thread_starter = true
-    ;(threadMessage as any).thread_replies = replies || []
+    // Parse image_urls from JSONB to array
+    const parsedThreadMessage = {
+      ...threadMessage,
+      image_urls: threadMessage.image_urls ? (typeof threadMessage.image_urls === 'string' ? JSON.parse(threadMessage.image_urls) : threadMessage.image_urls) : [],
+      thread_reply_count: replies?.length || 0,
+      is_thread_starter: true,
+      thread_replies: replies || []
+    }
+
+    const parsedReplies = replies?.map(reply => ({
+      ...reply,
+      image_urls: reply.image_urls ? (typeof reply.image_urls === 'string' ? JSON.parse(reply.image_urls) : reply.image_urls) : []
+    })) || []
 
     return NextResponse.json({ 
-      thread_message: threadMessage,
-      replies: replies || []
+      thread_message: parsedThreadMessage,
+      replies: parsedReplies
     })
 
   } catch (error) {
@@ -258,6 +271,8 @@ export async function POST(request: NextRequest, { params }: { params: Promise<P
         channel_id,
         thread_id,
         content,
+        image_url,
+        image_urls,
         message_type,
         like_count,
         created_at,

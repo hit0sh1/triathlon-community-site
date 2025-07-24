@@ -1,7 +1,9 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback, memo } from 'react'
-import { X, Send, Smile, MoreVertical, MessageSquare, Edit, Trash2 } from 'lucide-react'
+import React, { useState, useEffect, useRef, useCallback, memo } from 'react'
+import { X, Send, Smile, MoreVertical, MessageSquare, Edit, Trash2, Image as ImageIcon } from 'lucide-react'
+import Link from 'next/link'
+import Image from 'next/image'
 import { EMOJI_REACTIONS } from '@/lib/types/slack-board'
 import * as boardApi from '@/lib/api/board'
 import type { MessageWithDetails } from '@/lib/api/board'
@@ -42,6 +44,7 @@ interface MessageComponentProps {
   showEmojiPicker: string | null
   emojiPickerRef: React.RefObject<HTMLDivElement | null>
   boardApi: any
+  setEnlargedImage: (url: string | null) => void
 }
 
 // 外部のMessageComponentを定義してコンポーネントの再作成を防ぐ
@@ -65,7 +68,8 @@ const ExternalMessageComponent = memo(({
   setShowEmojiPicker,
   showEmojiPicker,
   emojiPickerRef,
-  boardApi
+  boardApi,
+  setEnlargedImage
 }: MessageComponentProps) => {
   // For thread modal, we need to track reactions separately
   const [localReactions, setLocalReactions] = useState(message.reactions)
@@ -182,20 +186,22 @@ const ExternalMessageComponent = memo(({
     <div className={`group flex items-start space-x-3 hover:bg-gray-50 dark:hover:bg-gray-800 -mx-4 px-4 py-3 rounded-lg ${isThreadStarter ? 'bg-blue-50 dark:bg-blue-900/20' : ''}`}>
       {/* Avatar */}
       <div className="flex-shrink-0">
-        <div className="w-10 h-10 bg-gray-300 dark:bg-gray-600 rounded-lg flex items-center justify-center">
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-            {message.author.display_name?.[0] || message.author.username?.[0] || '?'}
-          </span>
-        </div>
+        <Link href={`/user/${message.author.username}`}>
+          <div className="w-10 h-10 bg-gray-300 dark:bg-gray-600 rounded-lg flex items-center justify-center hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors cursor-pointer">
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              {message.author.display_name?.[0] || message.author.username?.[0] || '?'}
+            </span>
+          </div>
+        </Link>
       </div>
 
       {/* Message Content */}
       <div className="flex-1 min-w-0">
         {/* Author and Timestamp */}
         <div className="flex items-center space-x-2 mb-1">
-          <span className="font-medium text-sm text-gray-900 dark:text-white">
+          <Link href={`/user/${message.author.username}`} className="font-medium text-sm text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
             {message.author.display_name || message.author.username}
-          </span>
+          </Link>
           <span className="text-xs text-gray-500 dark:text-gray-400">
             {formatTime(message.created_at)}
           </span>
@@ -280,12 +286,58 @@ const ExternalMessageComponent = memo(({
             </div>
           </div>
         ) : (
-          <div className="text-sm text-gray-900 dark:text-white mb-2">
-            {renderMessageWithMentions(message.content)}
-            {message.updated_at !== message.created_at && (
-              <span className="text-xs text-gray-400 ml-2">(編集済み)</span>
+          <>
+            {message.content && (
+              <div className="text-sm text-gray-900 dark:text-white mb-2">
+                {renderMessageWithMentions(message.content)}
+                {message.updated_at !== message.created_at && (
+                  <span className="text-xs text-gray-400 ml-2">(編集済み)</span>
+                )}
+              </div>
             )}
-          </div>
+            
+            {/* Message Image */}
+            {/* Display multiple images */}
+            {(message.image_urls && message.image_urls.length > 0) ? (
+              <div className="mb-2">
+                <div className={`grid gap-2 ${
+                  message.image_urls.length === 1 ? 'grid-cols-1' :
+                  message.image_urls.length === 2 ? 'grid-cols-2' :
+                  message.image_urls.length === 3 ? 'grid-cols-3' :
+                  'grid-cols-2'
+                } max-w-md`}>
+                  {message.image_urls.slice(0, 4).map((imageUrl, index) => (
+                    <div key={index} className="relative">
+                      <Image 
+                        src={imageUrl} 
+                        alt={`Attached image ${index + 1}`}
+                        width={100}
+                        height={100}
+                        className="rounded-lg border border-gray-200 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity object-cover w-24 h-24"
+                        onClick={() => setEnlargedImage(imageUrl)}
+                      />
+                      {index === 3 && message.image_urls.length > 4 && (
+                        <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg flex items-center justify-center cursor-pointer" onClick={() => setEnlargedImage(imageUrl)}>
+                          <span className="text-white font-semibold">+{message.image_urls.length - 4}</span>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : message.image_url && (
+              <div className="mb-2">
+                <Image 
+                  src={message.image_url} 
+                  alt="Attached image"
+                  width={100}
+                  height={100}
+                  className="rounded-lg border border-gray-200 dark:border-gray-700 cursor-pointer hover:opacity-90 transition-opacity object-cover w-24 h-24"
+                  onClick={() => setEnlargedImage(message.image_url)}
+                />
+              </div>
+            )}
+          </>
         )}
 
         {/* Reactions */}
@@ -422,10 +474,15 @@ export default function ThreadView({ threadMessage, onClose, onSendReply, onAddR
   const [editContent, setEditContent] = useState<{[key: string]: string}>({})
   const [cursorPositions, setCursorPositions] = useState<{[key: string]: number}>({})
   const [isComposing, setIsComposing] = useState<{[key: string]: boolean}>({})
+  const [selectedImages, setSelectedImages] = useState<File[]>([])
+  const [imagePreviewUrls, setImagePreviewUrls] = useState<string[]>([])
+  const [uploadingImage, setUploadingImage] = useState(false)
+  const [enlargedImage, setEnlargedImage] = useState<string | null>(null)
   const emojiPickerRef = useRef<HTMLDivElement>(null)
   const textareaRefs = useRef<{[key: string]: HTMLTextAreaElement}>({})
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const threadMessagesRef = useRef<HTMLDivElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Load thread replies and mention users on mount
   useEffect(() => {
@@ -678,36 +735,43 @@ export default function ThreadView({ threadMessage, onClose, onSendReply, onAddR
   }
 
   const handleSendReply = async () => {
-    if (!replyContent.trim()) return
+    if ((!replyContent.trim() && selectedImages.length === 0) || !user) return
     
     console.log('Thread reply attempt:', {
       threadId: threadMessage.id,
       content: replyContent.trim().substring(0, 50) + '...',
-      hasContent: !!replyContent.trim()
+      hasContent: !!replyContent.trim(),
+      hasImages: selectedImages.length
     })
     
     try {
-      const result = await boardApi.createThreadReply(threadMessage.id, {
-        content: replyContent.trim()
+      // 画像をアップロード（選択されている場合）
+      let imageUrls: string[] = []
+      if (selectedImages.length > 0) {
+        imageUrls = await handleImageUpload()
+        if (imageUrls.length === 0 && !replyContent.trim()) {
+          // 画像アップロードに失敗し、テキストもない場合は送信をキャンセル
+          return
+        }
+      }
+
+      const result = await boardApi.createMessage({
+        channel_id: threadMessage.channel_id,
+        thread_id: threadMessage.id,
+        content: replyContent.trim(),
+        image_urls: imageUrls
       })
       
       console.log('Thread reply success:', result)
       
-      // リアルタイム購読のフォールバックとして手動で追加（重複チェック付き）
-      if (result.reply) {
-        setReplies(prev => {
-          // 重複チェック
-          if (prev.find(reply => reply.id === result.reply.id)) {
-            return prev
-          }
-          return [...prev, result.reply]
-        })
-      }
+      // メッセージ送信後はスレッドをリロードして最新状態を取得
+      await loadThreadReplies()
       
-      // Also call parent handler
+      // 親に通知（ログ用）
       onSendReply(replyContent)
       
       setReplyContent('')
+      clearSelectedImages()
       
       // textareaの高さをリセット
       if (textareaRef.current) {
@@ -717,6 +781,90 @@ export default function ThreadView({ threadMessage, onClose, onSendReply, onAddR
       console.error('Failed to send reply:', error)
     }
   }
+
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || [])
+    if (files.length === 0) return
+
+    // 最大5枚まで
+    if (selectedImages.length + files.length > 5) {
+      alert('画像は最大5枚まで選択できます')
+      return
+    }
+
+    const validFiles: File[] = []
+    const newPreviewUrls: string[] = []
+
+    for (const file of files) {
+      // ファイルサイズチェック（10MB）
+      if (file.size > 10 * 1024 * 1024) {
+        alert(`${file.name}: 画像サイズは10MB以下にしてください`)
+        continue
+      }
+
+      // ファイルタイプチェック
+      if (!file.type.startsWith('image/')) {
+        alert(`${file.name}: 画像ファイルを選択してください`)
+        continue
+      }
+
+      validFiles.push(file)
+      newPreviewUrls.push(URL.createObjectURL(file))
+    }
+
+    setSelectedImages(prev => [...prev, ...validFiles])
+    setImagePreviewUrls(prev => [...prev, ...newPreviewUrls])
+  }
+
+  const handleImageUpload = async (): Promise<string[]> => {
+    if (selectedImages.length === 0 || !user) return []
+
+    setUploadingImage(true)
+    try {
+      const uploadPromises = selectedImages.map(async (file) => {
+        const formData = new FormData()
+        formData.append('file', file)
+        formData.append('userId', user.id)
+
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        })
+
+        if (!response.ok) {
+          throw new Error(`Upload failed for ${file.name}`)
+        }
+
+        const data = await response.json()
+        return data.url
+      })
+
+      const uploadedUrls = await Promise.all(uploadPromises)
+      return uploadedUrls
+    } catch (error) {
+      console.error('Image upload error:', error)
+      alert('画像のアップロードに失敗しました')
+      return []
+    } finally {
+      setUploadingImage(false)
+    }
+  }
+
+  const clearSelectedImages = () => {
+    setSelectedImages([])
+    imagePreviewUrls.forEach(url => URL.revokeObjectURL(url))
+    setImagePreviewUrls([])
+  }
+
+  const removeSelectedImage = (index: number) => {
+    const urlToRevoke = imagePreviewUrls[index]
+    if (urlToRevoke) {
+      URL.revokeObjectURL(urlToRevoke)
+    }
+    setSelectedImages(prev => prev.filter((_, i) => i !== index))
+    setImagePreviewUrls(prev => prev.filter((_, i) => i !== index))
+  }
+
 
   const handleReactionClick = async (messageId: string, emojiCode: string) => {
     try {
@@ -746,8 +894,15 @@ export default function ThreadView({ threadMessage, onClose, onSendReply, onAddR
             @{part}
           </span>
         )
+      } else {
+        // 改行を<br>タグに変換
+        return part.split('\n').map((line, lineIndex) => (
+          <React.Fragment key={`${index}-${lineIndex}`}>
+            {line}
+            {lineIndex < part.split('\n').length - 1 && <br />}
+          </React.Fragment>
+        ))
       }
-      return part
     })
   }
 
@@ -820,6 +975,7 @@ export default function ThreadView({ threadMessage, onClose, onSendReply, onAddR
             showEmojiPicker={showEmojiPicker}
             emojiPickerRef={emojiPickerRef}
             boardApi={boardApi}
+            setEnlargedImage={setEnlargedImage}
           />
           
           {/* Thread Replies */}
@@ -853,6 +1009,7 @@ export default function ThreadView({ threadMessage, onClose, onSendReply, onAddR
                 showEmojiPicker={showEmojiPicker}
                 emojiPickerRef={emojiPickerRef}
                 boardApi={boardApi}
+                setEnlargedImage={setEnlargedImage}
               />
             ))
           )}
@@ -860,7 +1017,49 @@ export default function ThreadView({ threadMessage, onClose, onSendReply, onAddR
 
         {/* Reply Input - moved to bottom */}
         <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+          {/* Image Preview */}
+          {imagePreviewUrls.length > 0 && (
+            <div className="mb-3">
+              <div className="flex flex-wrap gap-2">
+                {imagePreviewUrls.map((url, index) => (
+                  <div key={index} className="relative inline-block">
+                    <img 
+                      src={url} 
+                      alt={`Preview ${index + 1}`} 
+                      className="w-20 h-20 object-cover rounded-lg border border-gray-200 dark:border-gray-700"
+                    />
+                    <button
+                      onClick={() => removeSelectedImage(index)}
+                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-colors"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+              {selectedImages.length < 5 && (
+                <p className="text-xs text-gray-500 mt-1">
+                  {selectedImages.length}/5枚 選択中（最大5枚まで）
+                </p>
+              )}
+            </div>
+          )}
+
           <div className="flex items-center space-x-3">
+            {/* Image Upload Button */}
+            <div className="relative">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleImageSelect}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+              />
+              <button className="p-2 text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                <ImageIcon size={20} />
+              </button>
+            </div>
             <div className="flex-1">
               <div className="relative">
                 {/* Highlighted text overlay */}
@@ -982,14 +1181,43 @@ export default function ThreadView({ threadMessage, onClose, onSendReply, onAddR
             </div>
             <button
               onClick={handleSendReply}
-              disabled={!replyContent.trim()}
+              disabled={(!replyContent.trim() && selectedImages.length === 0) || uploadingImage}
               className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
             >
-              <Send size={16} />
+              {uploadingImage ? (
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+              ) : (
+                <Send size={16} />
+              )}
             </button>
           </div>
         </div>
       </div>
+
+      {/* Image Enlargement Modal */}
+      {enlargedImage && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4"
+          onClick={() => setEnlargedImage(null)}
+        >
+          <div className="relative max-w-4xl max-h-full">
+            <button
+              onClick={() => setEnlargedImage(null)}
+              className="absolute -top-10 right-0 text-white hover:text-gray-300 text-2xl font-bold"
+            >
+              ×
+            </button>
+            <Image
+              src={enlargedImage}
+              alt="Enlarged image"
+              width={800}
+              height={600}
+              className="max-w-full max-h-full object-contain rounded-lg"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+        </div>
+      )}
     </div>
   )
 }

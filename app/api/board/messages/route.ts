@@ -36,6 +36,8 @@ export async function GET(request: NextRequest) {
           channel_id,
           thread_id,
           content,
+          image_url,
+          image_urls,
           message_type,
           like_count,
           created_at,
@@ -93,7 +95,13 @@ export async function GET(request: NextRequest) {
         ;(message as any).thread_replies = []
       }
 
-      return NextResponse.json({ messages })
+      // Parse image_urls from JSONB to array for popular messages
+      const parsedMessages = messages?.map(message => ({
+        ...message,
+        image_urls: message.image_urls ? (typeof message.image_urls === 'string' ? JSON.parse(message.image_urls) : message.image_urls) : []
+      })) || []
+
+      return NextResponse.json({ messages: parsedMessages })
     }
 
     if (!channelId) {
@@ -110,6 +118,8 @@ export async function GET(request: NextRequest) {
         channel_id,
         thread_id,
         content,
+        image_url,
+        image_urls,
         message_type,
         like_count,
         created_at,
@@ -157,9 +167,17 @@ export async function GET(request: NextRequest) {
       .order('created_at', { ascending: true })
 
     if (error) {
-      console.error('Messages fetch error:', error)
+      console.error('Messages fetch error details:', {
+        error,
+        code: error.code,
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        channelId,
+        threadId
+      })
       return NextResponse.json(
-        { error: 'Failed to fetch messages' },
+        { error: 'Failed to fetch messages', details: error.message },
         { status: 500 }
       )
     }
@@ -179,12 +197,23 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    return NextResponse.json({ messages })
+    // Parse image_urls from JSONB to array
+    const parsedMessages = messages?.map(message => ({
+      ...message,
+      image_urls: message.image_urls ? (typeof message.image_urls === 'string' ? JSON.parse(message.image_urls) : message.image_urls) : []
+    })) || []
+
+    return NextResponse.json({ messages: parsedMessages })
 
   } catch (error) {
-    console.error('API error:', error)
+    console.error('GET API error details:', {
+      error,
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+      type: typeof error
+    })
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Internal server error', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     )
   }
@@ -230,11 +259,14 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { channel_id, thread_id, content } = body
+    const { channel_id, thread_id, content, image_url, image_urls } = body
 
-    if (!content || !content.trim()) {
+    // Support both single image (image_url) and multiple images (image_urls)
+    const finalImageUrls = image_urls || (image_url ? [image_url] : [])
+
+    if ((!content || !content.trim()) && (!finalImageUrls || finalImageUrls.length === 0)) {
       return NextResponse.json(
-        { error: 'Message content is required' },
+        { error: 'Message content or images are required' },
         { status: 400 }
       )
     }
@@ -291,7 +323,9 @@ export async function POST(request: NextRequest) {
         channel_id,
         thread_id: thread_id || null,
         author_id: user.id,
-        content: content.trim(),
+        content: content?.trim() || '',
+        image_url: finalImageUrls.length > 0 ? finalImageUrls[0] : null, // For backward compatibility
+        image_urls: finalImageUrls.length > 0 ? JSON.stringify(finalImageUrls) : null,
         message_type: messageType
       })
       .select(`
@@ -299,6 +333,8 @@ export async function POST(request: NextRequest) {
         channel_id,
         thread_id,
         content,
+        image_url,
+        image_urls,
         message_type,
         like_count,
         created_at,

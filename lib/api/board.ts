@@ -27,6 +27,8 @@ export interface MessageWithDetails {
   channel_id: string
   thread_id: string | null
   content: string
+  image_url: string | null // Keep for backward compatibility
+  image_urls: string[] // New field for multiple images
   message_type: 'channel' | 'thread_reply'
   like_count: number
   created_at: string
@@ -117,17 +119,31 @@ export async function createChannel(data: {
 
 // Messages API
 export async function fetchMessages(channelId: string): Promise<{ messages: MessageWithDetails[] }> {
-  const response = await fetch(`/api/board/messages?channel_id=${channelId}`)
-  if (!response.ok) {
-    throw new Error('Failed to fetch messages')
+  try {
+    const response = await fetch(`/api/board/messages?channel_id=${channelId}`)
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error('Fetch messages error:', {
+        status: response.status,
+        statusText: response.statusText,
+        errorText,
+        url: `/api/board/messages?channel_id=${channelId}`
+      })
+      throw new Error(`Failed to fetch messages: ${response.status} ${response.statusText}`)
+    }
+    return response.json()
+  } catch (error) {
+    console.error('Network error in fetchMessages:', error)
+    throw new Error(`Network error: ${error instanceof Error ? error.message : 'Unknown error'}`)
   }
-  return response.json()
 }
 
 export async function createMessage(data: {
   channel_id: string
   thread_id?: string
   content: string
+  image_url?: string | null // Keep for backward compatibility
+  image_urls?: string[] // New field for multiple images
 }): Promise<{ message: MessageWithDetails }> {
   const response = await fetch('/api/board/messages', {
     method: 'POST',

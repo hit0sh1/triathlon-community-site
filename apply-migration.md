@@ -24,8 +24,30 @@ npx supabase db push
 1. Supabase Dashboard にアクセス
 2. 「SQL Editor」を選択
 3. 以下のファイルの内容をコピー&ペースト:
-   - `/supabase/migrations/20250721_add_soft_delete_to_content_tables.sql`
+   - **最新**: `/supabase/migrations/20250125_add_image_url_to_messages.sql`
+   - 過去のマイグレーション: `/supabase/migrations/20250721_add_soft_delete_to_content_tables.sql`
 4. 「Run」ボタンをクリック
+
+### 画像添付機能のためのマイグレーション（緊急）
+**現在エラーが発生しているため、以下のSQLを最優先で実行してください:**
+
+```sql
+-- Add image_url column to messages table
+ALTER TABLE messages ADD COLUMN image_url TEXT;
+
+-- Add index for performance
+CREATE INDEX idx_messages_image_url ON messages(image_url) WHERE image_url IS NOT NULL;
+
+-- Update constraint to allow messages with only images
+ALTER TABLE messages ALTER COLUMN content DROP NOT NULL;
+
+-- Add check constraint to ensure either content or image_url is provided
+ALTER TABLE messages ADD CONSTRAINT check_content_or_image 
+  CHECK (
+    (content IS NOT NULL AND content != '') OR 
+    (image_url IS NOT NULL AND image_url != '')
+  );
+```
 
 ## 3. 実行されるSQL内容
 

@@ -13,6 +13,16 @@ if (!URL.canParse) {
 }
 
 const nextConfig: NextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'glkltvfyvgtfwjzlfjin.supabase.co',
+        port: '',
+        pathname: '/storage/v1/object/public/**',
+      },
+    ],
+  },
   async headers() {
     return [
       {

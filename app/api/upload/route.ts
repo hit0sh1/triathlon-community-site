@@ -38,20 +38,28 @@ export async function POST(request: Request) {
 
     // Supabase Storageにアップロード
     const { data, error } = await supabase.storage
-      .from('cafe-images')
+      .from('board-images')
       .upload(fileName, file, {
         cacheControl: '3600',
         upsert: false
       })
 
     if (error) {
-      console.error('Upload error:', error)
-      return NextResponse.json({ error: 'Upload failed' }, { status: 500 })
+      console.error('Upload error details:', {
+        error,
+        message: error.message,
+        fileName,
+        userId
+      })
+      return NextResponse.json({ 
+        error: 'Upload failed', 
+        details: error.message 
+      }, { status: 500 })
     }
 
     // 公開URLを取得
     const { data: { publicUrl } } = supabase.storage
-      .from('cafe-images')
+      .from('board-images')
       .getPublicUrl(fileName)
 
     return NextResponse.json({
@@ -59,7 +67,14 @@ export async function POST(request: Request) {
       path: fileName
     })
   } catch (error) {
-    console.error('Unexpected error:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    console.error('Unexpected upload error:', {
+      error,
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined
+    })
+    return NextResponse.json({ 
+      error: 'Internal server error',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    }, { status: 500 })
   }
 }

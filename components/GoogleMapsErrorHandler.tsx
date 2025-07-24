@@ -15,14 +15,24 @@ export default function GoogleMapsErrorHandler() {
 
     // Google Maps関連の無害なエラーをフィルタリング
     const filterGoogleMapsNoise = (originalMethod: any) => (...args: any[]) => {
-      const message = args.join(' ')
+      // argsの最初の要素が文字列の場合のみフィルタリングを適用
+      const firstArg = args[0]
+      let message = ''
+      
+      if (typeof firstArg === 'string') {
+        message = firstArg
+      } else if (firstArg && typeof firstArg.toString === 'function') {
+        message = firstArg.toString()
+      } else {
+        message = args.join(' ')
+      }
       
       // Google Maps APIの分析エンドポイント(gen_204)エラーを除外
       if (
         message.includes('gen_204') ||
         message.includes('ERR_BLOCKED_BY_CONTENT_BLOCKER') ||
         message.includes('mapsjs/gen_204') ||
-        message.includes('Failed to fetch') && message.includes('googleapis.com')
+        (message.includes('Failed to fetch') && message.includes('googleapis.com'))
       ) {
         // 開発モードでのみ詳細情報を表示
         if (process.env.NODE_ENV === 'development') {
