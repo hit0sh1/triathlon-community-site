@@ -1757,8 +1757,8 @@ export default function SlackBoardPage() {
           </div>
         )}
 
-        {/* Message Input - moved to bottom and fixed */}
-        <div className="sticky bottom-0 z-30 px-4 lg:px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+        {/* Message Input - moved to bottom and fixed - Version 2024 */}
+        <div className="sticky bottom-0 z-30 px-4 lg:px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg">
           <div className="flex items-center space-x-3">
             <div className="flex-1">
               <div className="relative">
@@ -1776,6 +1776,7 @@ export default function SlackBoardPage() {
                   {renderMessageWithMentions(newMessage)}
                 </div>
                 <textarea
+                  id="message-input-bottom-2024"
                   ref={messageInputRef}
                   value={newMessage}
                   onChange={(e) => {
