@@ -1329,7 +1329,7 @@ export default function SlackBoardPage() {
                   </span>
                 </button>
                 {user && (
-                  <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100">
+                  <div className="flex items-center space-x-1 md:opacity-0 md:group-hover:opacity-100 opacity-100">
                     <button
                       onClick={() => setShowCreateChannelModal(category.id)}
                       className="p-1 text-gray-400 hover:text-blue-600 rounded"
@@ -1394,7 +1394,7 @@ export default function SlackBoardPage() {
                         <span className="truncate">{channel.name}</span>
                       </button>
                       {user && (user.id === channel.created_by_id || userProfile?.role === 'admin') && (
-                        <div className="relative opacity-0 group-hover:opacity-100" data-channel-actions>
+                        <div className="relative md:opacity-0 md:group-hover:opacity-100 opacity-100" data-channel-actions>
                           <button
                             onClick={() => setShowChannelActions(showChannelActions === channel.id ? null : channel.id)}
                             className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded mr-1"
@@ -1714,7 +1714,7 @@ export default function SlackBoardPage() {
 
               {/* Message Actions Menu */}
               {user && message.author.id === user.id && (
-                <div className="opacity-0 group-hover:opacity-100 absolute top-2 right-2">
+                <div className="md:opacity-0 md:group-hover:opacity-100 opacity-100 absolute top-2 right-2">
                   <div className="relative">
                     <button
                       onClick={() => setShowMessageActions(showMessageActions === message.id ? null : message.id)}

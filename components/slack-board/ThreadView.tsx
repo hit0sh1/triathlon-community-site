@@ -601,7 +601,7 @@ export default function ThreadView({ threadMessage, onClose, onSendReply, onAddR
 
         {/* Message Actions */}
         {user && message.author.id === user.id && !isEditing && (
-          <div className="opacity-0 group-hover:opacity-100 relative">
+          <div className="md:opacity-0 md:group-hover:opacity-100 opacity-100 relative">
             <button
               onClick={() => setShowActions(!showActions)}
               className="p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded"
