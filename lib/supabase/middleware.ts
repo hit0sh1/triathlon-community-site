@@ -4,15 +4,33 @@ import { NextResponse, type NextRequest } from "next/server";
 export async function updateSession(request: NextRequest) {
   // Skip authentication for static files and PWA assets
   const pathname = request.nextUrl.pathname;
-  if (
-    pathname.startsWith('/_next/') ||
-    pathname === '/favicon.ico' ||
-    pathname === '/manifest.json' ||
-    pathname === '/sw.js' ||
-    pathname.startsWith('/icon-') ||
-    pathname === '/apple-touch-icon.png' ||
-    /\.(svg|png|jpg|jpeg|gif|webp)$/.test(pathname)
-  ) {
+  
+  // List of paths that should bypass authentication
+  const publicPaths = [
+    '/_next/',
+    '/favicon.ico',
+    '/manifest.json',
+    '/sw.js',
+    '/apple-touch-icon.png',
+    '/icon-192.png',
+    '/icon-512.png',
+    '/apple-touch-icon.svg',
+    '/icon-192.svg',
+    '/icon-512.svg',
+    '/logo.svg',
+    '/next.svg',
+    '/vercel.svg',
+    '/file.svg',
+    '/globe.svg',
+    '/window.svg'
+  ];
+
+  // Check if path should be public
+  const isPublicPath = publicPaths.some(path => 
+    pathname.startsWith(path) || pathname === path
+  ) || /\.(svg|png|jpg|jpeg|gif|webp|ico|json|js)$/.test(pathname);
+
+  if (isPublicPath) {
     return NextResponse.next();
   }
 
