@@ -33,14 +33,28 @@ export default function ThreadView({ threadMessage, onClose, onSendReply, onAddR
   const [showMentionSuggestions, setShowMentionSuggestions] = useState(false)
   const [mentionQuery, setMentionQuery] = useState('')
   const [mentionPosition, setMentionPosition] = useState({ top: 0, left: 0 })
+  const [selectedMentionIndex, setSelectedMentionIndex] = useState(0)
   const emojiPickerRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const threadMessagesRef = useRef<HTMLDivElement>(null)
 
   // Load thread replies and mention users on mount
   useEffect(() => {
     loadThreadReplies()
     loadMentionUsers()
   }, [threadMessage.id])
+
+  // 返信が追加された時に最新メッセージまでスクロール
+  useEffect(() => {
+    if (replies.length > 0 && threadMessagesRef.current) {
+      setTimeout(() => {
+        threadMessagesRef.current?.scrollTo({
+          top: threadMessagesRef.current.scrollHeight,
+          behavior: 'smooth'
+        })
+      }, 100)
+    }
+  }, [replies.length])
 
   const loadMentionUsers = async () => {
     try {
@@ -215,6 +229,7 @@ export default function ThreadView({ threadMessage, onClose, onSendReply, onAddR
         const query = textAfterAt.toLowerCase()
         setMentionQuery(query)
         setShowMentionSuggestions(true)
+        setSelectedMentionIndex(0)
         
         // Calculate position for dropdown
         const textarea = event.target
@@ -225,12 +240,21 @@ export default function ThreadView({ threadMessage, onClose, onSendReply, onAddR
         })
       } else {
         setShowMentionSuggestions(false)
+        setSelectedMentionIndex(0)
       }
     } else {
       setShowMentionSuggestions(false)
+      setSelectedMentionIndex(0)
     }
   }
   
+  const getFilteredMentionUsers = () => {
+    return mentionUsers.filter(user => 
+      user.username.toLowerCase().includes(mentionQuery.toLowerCase()) ||
+      user.display_name.toLowerCase().includes(mentionQuery.toLowerCase())
+    ).slice(0, 8)
+  }
+
   const insertMention = (user: MentionUser) => {
     const textarea = textareaRef.current
     if (!textarea) return
@@ -242,12 +266,12 @@ export default function ThreadView({ threadMessage, onClose, onSendReply, onAddR
     
     if (lastAtIndex !== -1) {
       const beforeAt = replyContent.substring(0, lastAtIndex)
-      const newContent = beforeAt + `@${user.username} ` + textAfterCursor
+      const newContent = beforeAt + `@${user.display_name} ` + textAfterCursor
       setReplyContent(newContent)
       
       // Set cursor position after the inserted mention
       setTimeout(() => {
-        const newCursorPosition = beforeAt.length + user.username.length + 2
+        const newCursorPosition = beforeAt.length + user.display_name.length + 2
         textarea.setSelectionRange(newCursorPosition, newCursorPosition)
         textarea.focus()
       }, 0)
@@ -255,6 +279,7 @@ export default function ThreadView({ threadMessage, onClose, onSendReply, onAddR
     
     setShowMentionSuggestions(false)
     setMentionQuery('')
+    setSelectedMentionIndex(0)
   }
 
   const handleSendReply = async () => {
@@ -273,13 +298,26 @@ export default function ThreadView({ threadMessage, onClose, onSendReply, onAddR
       
       console.log('Thread reply success:', result)
       
-      // Add reply to local state
-      setReplies(prev => [...prev, result.reply])
+      // リアルタイム購読のフォールバックとして手動で追加（重複チェック付き）
+      if (result.reply) {
+        setReplies(prev => {
+          // 重複チェック
+          if (prev.find(reply => reply.id === result.reply.id)) {
+            return prev
+          }
+          return [...prev, result.reply]
+        })
+      }
       
       // Also call parent handler
       onSendReply(replyContent)
       
       setReplyContent('')
+      
+      // textareaの高さをリセット
+      if (textareaRef.current) {
+        textareaRef.current.style.height = '40px'
+      }
     } catch (error) {
       console.error('Failed to send reply:', error)
     }
@@ -294,6 +332,28 @@ export default function ThreadView({ threadMessage, onClose, onSendReply, onAddR
     } catch (error) {
       console.error('Failed to add reaction:', error)
     }
+  }
+
+  const renderMessageWithMentions = (content: string) => {
+    // @usernameの形式のメンションを検出してスタイリング
+    // \w+ではなく[^\s@]+を使用して、空白と@以外の文字をすべてキャプチャ
+    const mentionRegex = /@([^\s@]+)/g
+    const parts = content.split(mentionRegex)
+    
+    return parts.map((part, index) => {
+      // 奇数インデックスはメンションされたユーザー名
+      if (index % 2 === 1) {
+        return (
+          <span
+            key={index}
+            className="text-blue-600 dark:text-blue-400 font-medium"
+          >
+            @{part}
+          </span>
+        )
+      }
+      return part
+    })
   }
 
   const formatTime = (dateString: string) => {
@@ -465,7 +525,10 @@ export default function ThreadView({ threadMessage, onClose, onSendReply, onAddR
             </div>
           ) : (
             <div className="text-sm text-gray-900 dark:text-white mb-2">
-              {message.content}
+              {renderMessageWithMentions(message.content)}
+              {message.updated_at !== message.created_at && (
+                <span className="text-xs text-gray-400 ml-2">(編集済み)</span>
+              )}
             </div>
           )}
 
@@ -590,9 +653,6 @@ export default function ThreadView({ threadMessage, onClose, onSendReply, onAddR
           <div className="flex items-center space-x-2">
             <MessageSquare size={20} className="text-gray-500" />
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">スレッド</h3>
-            <span className="text-sm text-gray-500 dark:text-gray-400">
-              {replies.length + 1} 件の返信
-            </span>
           </div>
           <button
             onClick={onClose}
@@ -602,23 +662,79 @@ export default function ThreadView({ threadMessage, onClose, onSendReply, onAddR
           </button>
         </div>
 
-        {/* Reply Input - moved to top */}
-        <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+        {/* Thread Messages */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-4" ref={threadMessagesRef}>
+          {/* Original Message (Thread Starter) */}
+          <MessageComponent message={threadMessage} isThreadStarter={true} />
+          
+          {/* Thread Replies */}
+          {loading ? (
+            <div className="flex items-center justify-center py-8">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto mb-2"></div>
+                <p className="text-gray-500 dark:text-gray-400 text-sm">返信を読み込み中...</p>
+              </div>
+            </div>
+          ) : (
+            replies.map((reply) => (
+              <MessageComponent key={reply.id} message={reply} />
+            ))
+          )}
+        </div>
+
+        {/* Reply Input - moved to bottom */}
+        <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
           <div className="flex items-center space-x-3">
             <div className="flex-1">
               <div className="relative">
+                {/* Highlighted text overlay */}
+                <div 
+                  className="absolute inset-0 px-3 py-2 text-gray-900 dark:text-white pointer-events-none whitespace-pre-wrap break-words overflow-hidden rounded-lg"
+                  style={{ 
+                    font: 'inherit',
+                    fontSize: 'inherit',
+                    lineHeight: 'inherit',
+                    fontFamily: 'inherit',
+                    fontWeight: 'inherit'
+                  }}
+                >
+                  {renderMessageWithMentions(replyContent)}
+                </div>
                 <textarea
                   ref={textareaRef}
                   value={replyContent}
                   onChange={handleMentionInput}
                   onKeyDown={(e) => {
                     if (showMentionSuggestions) {
+                      const filteredUsers = getFilteredMentionUsers()
+                      
                       if (e.key === 'Escape') {
                         setShowMentionSuggestions(false)
+                        setSelectedMentionIndex(0)
                         return
                       }
-                      if (e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'Enter') {
+                      
+                      if (e.key === 'ArrowDown') {
                         e.preventDefault()
+                        setSelectedMentionIndex(prev => 
+                          prev < filteredUsers.length - 1 ? prev + 1 : 0
+                        )
+                        return
+                      }
+                      
+                      if (e.key === 'ArrowUp') {
+                        e.preventDefault()
+                        setSelectedMentionIndex(prev => 
+                          prev > 0 ? prev - 1 : filteredUsers.length - 1
+                        )
+                        return
+                      }
+                      
+                      if (e.key === 'Enter') {
+                        e.preventDefault()
+                        if (filteredUsers[selectedMentionIndex]) {
+                          insertMention(filteredUsers[selectedMentionIndex])
+                        }
                         return
                       }
                     }
@@ -628,21 +744,24 @@ export default function ThreadView({ threadMessage, onClose, onSendReply, onAddR
                       handleSendReply()
                     }
                   }}
-                  placeholder={`スレッドに返信... (@でメンション、${typeof window !== 'undefined' && window.navigator?.platform?.includes('Mac') ? 'Cmd' : 'Ctrl'}+Enterで送信)`}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 min-h-[40px] max-h-[120px] overflow-y-auto"
+                  onInput={(e) => {
+                    const target = e.target as HTMLTextAreaElement
+                    target.style.height = '40px'
+                    target.style.height = `${Math.min(target.scrollHeight, 120)}px`
+                  }}
+                  placeholder={
+                    typeof window !== 'undefined' && (window.innerWidth < 768 || 'ontouchstart' in window)
+                      ? 'スレッドに返信...'
+                      : `スレッドに返信... (${window.navigator?.platform?.includes('Mac') ? 'Cmd' : 'Ctrl'}+Enterで送信)`
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 bg-transparent text-transparent caret-gray-900 dark:caret-white placeholder-gray-500 dark:placeholder-gray-400 min-h-[40px] max-h-[120px] leading-normal relative z-10"
                   rows={1}
                 />
                 
                 {/* Mention Suggestions Dropdown */}
                 {showMentionSuggestions && (
-                  <div className="mention-dropdown absolute z-50 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-48 overflow-y-auto mt-1">
-                    {mentionUsers
-                      .filter(user => 
-                        user.username.toLowerCase().includes(mentionQuery) ||
-                        user.display_name.toLowerCase().includes(mentionQuery)
-                      )
-                      .slice(0, 8)
-                      .map(user => (
+                  <div className="mention-dropdown absolute bottom-full left-0 mb-1 w-64 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto">
+                    {getFilteredMentionUsers().map((user, index) => (
                         <button
                           key={user.id}
                           onClick={(e) => {
@@ -653,7 +772,12 @@ export default function ThreadView({ threadMessage, onClose, onSendReply, onAddR
                           onMouseDown={(e) => {
                             e.preventDefault()
                           }}
-                          className="w-full px-3 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2 min-w-[200px]"
+                          onMouseEnter={() => setSelectedMentionIndex(index)}
+                          className={`w-full px-3 py-2 text-left flex items-center space-x-2 min-w-[200px] ${
+                            index === selectedMentionIndex 
+                              ? 'bg-blue-100 dark:bg-blue-900' 
+                              : 'hover:bg-gray-100 dark:hover:bg-gray-700'
+                          }`}
                         >
                           <div className="w-6 h-6 bg-gray-300 dark:bg-gray-600 rounded flex items-center justify-center flex-shrink-0">
                             <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
@@ -671,10 +795,7 @@ export default function ThreadView({ threadMessage, onClose, onSendReply, onAddR
                         </button>
                       ))
                     }
-                    {mentionUsers.filter(user => 
-                      user.username.toLowerCase().includes(mentionQuery) ||
-                      user.display_name.toLowerCase().includes(mentionQuery)
-                    ).length === 0 && (
+                    {getFilteredMentionUsers().length === 0 && (
                       <div className="px-3 py-2 text-sm text-gray-500 dark:text-gray-400">
                         該当するユーザーが見つかりません
                       </div>
@@ -691,26 +812,6 @@ export default function ThreadView({ threadMessage, onClose, onSendReply, onAddR
               <Send size={16} />
             </button>
           </div>
-        </div>
-
-        {/* Thread Messages */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {/* Original Message (Thread Starter) */}
-          <MessageComponent message={threadMessage} isThreadStarter={true} />
-          
-          {/* Thread Replies */}
-          {loading ? (
-            <div className="flex items-center justify-center py-8">
-              <div className="text-center">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto mb-2"></div>
-                <p className="text-gray-500 dark:text-gray-400 text-sm">返信を読み込み中...</p>
-              </div>
-            </div>
-          ) : (
-            replies.map((reply) => (
-              <MessageComponent key={reply.id} message={reply} />
-            ))
-          )}
         </div>
       </div>
     </div>

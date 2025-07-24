@@ -81,7 +81,7 @@ export default function Footer() {
                 <div className="grid grid-cols-2 gap-12">
                   {/* Main Navigation */}
                   <div>
-                    <h4 className="text-xl font-bold text-white mb-8 japanese-text">メインナビゲーション</h4>
+                    <h4 className="text-xl font-bold text-white mb-8 japanese-text">メニュー</h4>
                     <ul className="space-y-4">
                       {navigation.main.map((item) => (
                         <li key={item.name}>
@@ -146,7 +146,7 @@ export default function Footer() {
               <div className="grid grid-cols-2 gap-8">
                 {/* Main Navigation */}
                 <div>
-                  <h4 className="text-lg font-bold text-white mb-6 japanese-text">メインナビゲーション</h4>
+                  <h4 className="text-lg font-bold text-white mb-6 japanese-text">メニュー</h4>
                   <ul className="space-y-3">
                     {navigation.main.map((item) => (
                       <li key={item.name}>

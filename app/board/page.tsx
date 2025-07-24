@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Hash, Plus, ChevronDown, ChevronRight, Search, Send, Smile, MessageSquare, X, Bell, Menu, MoreVertical, Edit, Trash2, Settings } from 'lucide-react'
 import { EMOJI_REACTIONS } from '@/lib/types/slack-board'
 import { useAuth } from '@/contexts/AuthContext'
@@ -39,6 +39,7 @@ export default function SlackBoardPage() {
   const [showMentionSuggestions, setShowMentionSuggestions] = useState(false)
   const [mentionQuery, setMentionQuery] = useState('')
   const [mentionPosition, setMentionPosition] = useState({ top: 0, left: 0 })
+  const [selectedMentionIndex, setSelectedMentionIndex] = useState(0)
   const [showCreateCategoryModal, setShowCreateCategoryModal] = useState(false)
   const [newCategoryName, setNewCategoryName] = useState('')
   const [newCategoryDescription, setNewCategoryDescription] = useState('')
@@ -53,6 +54,8 @@ export default function SlackBoardPage() {
   const [typingTimeout, setTypingTimeout] = useState<NodeJS.Timeout | null>(null)
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
   const [showMessageActions, setShowMessageActions] = useState<string | null>(null)
+  const messagesContainerRef = useRef<HTMLDivElement>(null)
+  const messageInputRef = useRef<HTMLTextAreaElement>(null)
   const [showCategoryActions, setShowCategoryActions] = useState<string | null>(null)
   const [showChannelActions, setShowChannelActions] = useState<string | null>(null)
   const [editingCategory, setEditingCategory] = useState<BoardCategory | null>(null)
@@ -355,6 +358,19 @@ export default function SlackBoardPage() {
       loadMessages(selectedChannelId)
     }
   }, [selectedChannelId])
+
+  // メッセージが読み込まれたら最新のメッセージまでスクロール
+  useEffect(() => {
+    if (messages.length > 0 && messagesContainerRef.current) {
+      // 少し遅延を入れてDOMが更新されてからスクロール
+      setTimeout(() => {
+        messagesContainerRef.current?.scrollTo({
+          top: messagesContainerRef.current.scrollHeight,
+          behavior: 'smooth'
+        })
+      }, 100)
+    }
+  }, [messages, selectedChannelId])
 
   // Set up real-time subscriptions
   useEffect(() => {
@@ -871,6 +887,11 @@ export default function SlackBoardPage() {
       }
       
       setNewMessage('')
+      
+      // textareaの高さをリセット
+      if (messageInputRef.current) {
+        messageInputRef.current.style.height = '40px'
+      }
     } catch (error) {
       console.error('Failed to send message:', error)
       // エラーの場合はメッセージをリセットしない
@@ -1017,6 +1038,7 @@ export default function SlackBoardPage() {
       const query = mentionMatch[1]
       setMentionQuery(query)
       setShowMentionSuggestions(true)
+      setSelectedMentionIndex(0)
       
       // Calculate position for mention dropdown
       const rect = e.target.getBoundingClientRect()
@@ -1029,6 +1051,7 @@ export default function SlackBoardPage() {
     } else {
       setShowMentionSuggestions(false)
       setMentionQuery('')
+      setSelectedMentionIndex(0)
     }
     
     if (isEdit) {
@@ -1044,9 +1067,9 @@ export default function SlackBoardPage() {
     const textBeforeCursor = currentValue.slice(0, cursorPosition)
     const textAfterCursor = currentValue.slice(cursorPosition)
     
-    // Replace @query with @username
-    const beforeMention = textBeforeCursor.replace(/@\w*$/, '')
-    const newValue = beforeMention + `@${mentionUser.username} ` + textAfterCursor
+    // Replace @query with @display_name
+    const beforeMention = textBeforeCursor.replace(/@[^\s@]*$/, '')
+    const newValue = beforeMention + `@${mentionUser.display_name} ` + textAfterCursor
     
     if (isEdit) {
       setEditContent(newValue)
@@ -1056,6 +1079,7 @@ export default function SlackBoardPage() {
     
     setShowMentionSuggestions(false)
     setMentionQuery('')
+    setSelectedMentionIndex(0)
   }
 
   const handleSearch = (query: string) => {
@@ -1104,10 +1128,34 @@ export default function SlackBoardPage() {
     }
   }, [searchTimeout])
 
-  const filteredUsers = mentionUsers.filter(mentionUser => 
-    mentionUser.username.toLowerCase().includes(mentionQuery.toLowerCase()) ||
-    mentionUser.display_name.toLowerCase().includes(mentionQuery.toLowerCase())
-  ).slice(0, 5)
+  const renderMessageWithMentions = (content: string) => {
+    // @usernameの形式のメンションを検出してスタイリング
+    // \w+ではなく[^\s@]+を使用して、空白と@以外の文字をすべてキャプチャ
+    const mentionRegex = /@([^\s@]+)/g
+    const parts = content.split(mentionRegex)
+    
+    return parts.map((part, index) => {
+      // 奇数インデックスはメンションされたユーザー名
+      if (index % 2 === 1) {
+        return (
+          <span
+            key={index}
+            className="text-blue-600 dark:text-blue-400 font-medium"
+          >
+            @{part}
+          </span>
+        )
+      }
+      return part
+    })
+  }
+
+  const getFilteredMentionUsers = () => {
+    return mentionUsers.filter(mentionUser => 
+      mentionUser.username.toLowerCase().includes(mentionQuery.toLowerCase()) ||
+      mentionUser.display_name.toLowerCase().includes(mentionQuery.toLowerCase())
+    ).slice(0, 5)
+  }
 
   if (loading) {
     return (
@@ -1206,12 +1254,20 @@ export default function SlackBoardPage() {
                 setShowSearchResults(false)
                 setSearchQuery('')
                 setSearchResults(null)
+                // モバイル版ではサイドバーを閉じる
+                if (window.innerWidth < 1024) {
+                  setIsMobileSidebarOpen(false)
+                }
               }}
               onSelectMessage={(message) => {
                 setSelectedChannelId(message.channel.id)
                 setShowSearchResults(false)
                 setSearchQuery('')
                 setSearchResults(null)
+                // モバイル版ではサイドバーを閉じる
+                if (window.innerWidth < 1024) {
+                  setIsMobileSidebarOpen(false)
+                }
                 // Scroll to message after a brief delay to allow channel to load
                 setTimeout(() => {
                   const messageElement = document.getElementById(`message-${message.id}`)
@@ -1226,6 +1282,10 @@ export default function SlackBoardPage() {
                 if (category && category.channels && category.channels.length > 0) {
                   setExpandedCategories(prev => new Set([...prev, categoryId]))
                   setSelectedChannelId(category.channels[0].id)
+                  // モバイル版ではサイドバーを閉じる
+                  if (window.innerWidth < 1024) {
+                    setIsMobileSidebarOpen(false)
+                  }
                 }
                 setShowSearchResults(false)
                 setSearchQuery('')
@@ -1317,7 +1377,13 @@ export default function SlackBoardPage() {
                   {category.channels.map((channel) => (
                     <div key={channel.id} className="group flex items-center">
                       <button
-                        onClick={() => setSelectedChannelId(channel.id)}
+                        onClick={() => {
+                          setSelectedChannelId(channel.id)
+                          // モバイル版ではサイドバーを閉じる
+                          if (window.innerWidth < 1024) {
+                            setIsMobileSidebarOpen(false)
+                          }
+                        }}
                         className={`flex-1 px-3 py-1.5 mb-0.5 flex items-center text-sm rounded-md transition-colors ${
                           selectedChannelId === channel.id
                             ? 'bg-blue-100 dark:bg-blue-900 text-blue-900 dark:text-blue-100'
@@ -1326,11 +1392,6 @@ export default function SlackBoardPage() {
                       >
                         <Hash size={14} className="mr-2 flex-shrink-0" />
                         <span className="truncate">{channel.name}</span>
-                        {channel._count && channel._count.messages > 0 && (
-                          <span className="ml-auto text-xs bg-gray-200 dark:bg-gray-600 px-1.5 py-0.5 rounded-full">
-                            {channel._count.messages}
-                          </span>
-                        )}
                       </button>
                       {user && (user.id === channel.created_by_id || userProfile?.role === 'admin') && (
                         <div className="relative opacity-0 group-hover:opacity-100" data-channel-actions>
@@ -1373,8 +1434,8 @@ export default function SlackBoardPage() {
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col lg:ml-0">
-        {/* Channel Header */}
-        <div className="px-4 lg:px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+        {/* Channel Header - Fixed */}
+        <div className="sticky top-0 z-30 px-4 lg:px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
           <div className="flex items-center">
             {/* Mobile menu button */}
             <button
@@ -1404,67 +1465,8 @@ export default function SlackBoardPage() {
           </div>
         </div>
 
-        {/* Message Input - moved to top */}
-        <div className="px-4 lg:px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
-          <div className="flex items-center space-x-3">
-            <div className="flex-1">
-              <div className="relative">
-                <textarea
-                  value={newMessage}
-                  onChange={(e) => {
-                  handleMentionInput(e, false)
-                  handleTyping()
-                }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
-                      e.preventDefault()
-                      handleSendMessage()
-                    }
-                  }}
-                  placeholder={`#${selectedChannel?.name} にメッセージを送信... (${typeof window !== 'undefined' && window.navigator?.platform?.includes('Mac') ? 'Cmd' : 'Ctrl'}+Enterで送信)`}
-                  className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 min-h-[40px] max-h-[120px] leading-normal"
-                  rows={1}
-                  onInput={(e) => {
-                    const target = e.target as HTMLTextAreaElement
-                    target.style.height = '40px'
-                    target.style.height = `${Math.min(target.scrollHeight, 120)}px`
-                  }}
-                />
-                
-                {/* Mention Suggestions */}
-                {showMentionSuggestions && !editingMessage && filteredUsers.length > 0 && (
-                  <div className="absolute top-full left-0 mt-1 w-64 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 max-h-40 overflow-y-auto">
-                    {filteredUsers.map((mentionUser) => (
-                      <button
-                        key={mentionUser.id}
-                        onClick={() => insertMention(mentionUser, false)}
-                        className="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center space-x-2"
-                      >
-                        <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
-                          {mentionUser.display_name[0]}
-                        </div>
-                        <div>
-                          <div className="text-sm font-medium text-gray-900 dark:text-white">{mentionUser.display_name}</div>
-                          <div className="text-xs text-gray-500 dark:text-gray-400">@{mentionUser.username}</div>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-            <button
-              onClick={handleSendMessage}
-              disabled={!newMessage.trim()}
-              className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
-            >
-              <Send size={16} />
-            </button>
-          </div>
-        </div>
-
         {/* Messages Area */}
-        <div className="flex-1 overflow-y-auto px-4 lg:px-6 py-4 space-y-4">
+        <div className="flex-1 overflow-y-auto px-4 lg:px-6 py-4 space-y-4 scroll-smooth" ref={messagesContainerRef}>
           {messagesLoading ? (
             <div className="flex items-center justify-center h-full">
               <div className="text-center">
@@ -1510,31 +1512,83 @@ export default function SlackBoardPage() {
                 {editingMessage === message.id ? (
                   <div className="mb-2">
                     <div className="relative">
+                      {/* Highlighted text overlay for edit */}
+                      <div 
+                        className="absolute inset-0 px-3 py-2 text-gray-900 dark:text-white pointer-events-none whitespace-pre-wrap break-words overflow-hidden rounded-lg text-sm"
+                        style={{ 
+                          font: 'inherit',
+                          fontSize: 'inherit',
+                          lineHeight: 'inherit',
+                          fontFamily: 'inherit',
+                          fontWeight: 'inherit'
+                        }}
+                      >
+                        {renderMessageWithMentions(editContent)}
+                      </div>
                       <textarea
                         value={editContent}
                         onChange={(e) => handleMentionInput(e, true)}
                         onKeyDown={(e) => {
+                          if (showMentionSuggestions && editingMessage === message.id) {
+                            const filteredUsers = getFilteredMentionUsers()
+                            
+                            if (e.key === 'Escape') {
+                              setShowMentionSuggestions(false)
+                              setSelectedMentionIndex(0)
+                              return
+                            }
+                            
+                            if (e.key === 'ArrowDown') {
+                              e.preventDefault()
+                              setSelectedMentionIndex(prev => 
+                                prev < filteredUsers.length - 1 ? prev + 1 : 0
+                              )
+                              return
+                            }
+                            
+                            if (e.key === 'ArrowUp') {
+                              e.preventDefault()
+                              setSelectedMentionIndex(prev => 
+                                prev > 0 ? prev - 1 : filteredUsers.length - 1
+                              )
+                              return
+                            }
+                            
+                            if (e.key === 'Enter') {
+                              e.preventDefault()
+                              if (filteredUsers[selectedMentionIndex]) {
+                                insertMention(filteredUsers[selectedMentionIndex], true)
+                              }
+                              return
+                            }
+                          }
+                          
                           if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
                             e.preventDefault()
                             handleSaveEdit(message.id)
                           }
-                          if (e.key === 'Escape') {
+                          if (e.key === 'Escape' && !showMentionSuggestions) {
                             handleCancelEdit()
                           }
                         }}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white resize-none text-sm"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-transparent text-transparent caret-gray-900 dark:caret-white resize-none text-sm relative z-10"
                         rows={3}
                         autoFocus
                       />
                       
                       {/* Mention Suggestions for Edit */}
-                      {showMentionSuggestions && editingMessage === message.id && filteredUsers.length > 0 && (
+                      {showMentionSuggestions && editingMessage === message.id && getFilteredMentionUsers().length > 0 && (
                         <div className="absolute top-full left-0 mt-1 w-64 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 max-h-40 overflow-y-auto">
-                          {filteredUsers.map((mentionUser) => (
+                          {getFilteredMentionUsers().map((mentionUser, index) => (
                             <button
                               key={mentionUser.id}
                               onClick={() => insertMention(mentionUser, true)}
-                              className="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center space-x-2"
+                              onMouseEnter={() => setSelectedMentionIndex(index)}
+                              className={`w-full text-left px-3 py-2 transition-colors flex items-center space-x-2 ${
+                                index === selectedMentionIndex 
+                                  ? 'bg-blue-100 dark:bg-blue-900' 
+                                  : 'hover:bg-gray-100 dark:hover:bg-gray-700'
+                              }`}
                             >
                               <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
                                 {mentionUser.display_name[0]}
@@ -1565,7 +1619,7 @@ export default function SlackBoardPage() {
                   </div>
                 ) : (
                   <div className="text-sm text-gray-900 dark:text-white mb-2">
-                    {message.content}
+                    {renderMessageWithMentions(message.content)}
                     {message.updated_at !== message.created_at && (
                       <span className="text-xs text-gray-400 ml-2">(編集済み)</span>
                     )}
@@ -1702,6 +1756,122 @@ export default function SlackBoardPage() {
             {Array.from(typingUsers).slice(0, 3).join(', ')} が入力中...
           </div>
         )}
+
+        {/* Message Input - moved to bottom and fixed */}
+        <div className="sticky bottom-0 z-30 px-4 lg:px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+          <div className="flex items-center space-x-3">
+            <div className="flex-1">
+              <div className="relative">
+                {/* Highlighted text overlay */}
+                <div 
+                  className="absolute inset-0 px-3 py-2.5 text-gray-900 dark:text-white pointer-events-none whitespace-pre-wrap break-words overflow-hidden rounded-lg min-h-[40px] max-h-[120px] leading-normal"
+                  style={{ 
+                    font: 'inherit',
+                    fontSize: 'inherit',
+                    lineHeight: 'inherit',
+                    fontFamily: 'inherit',
+                    fontWeight: 'inherit'
+                  }}
+                >
+                  {renderMessageWithMentions(newMessage)}
+                </div>
+                <textarea
+                  ref={messageInputRef}
+                  value={newMessage}
+                  onChange={(e) => {
+                  handleMentionInput(e, false)
+                  handleTyping()
+                }}
+                  onKeyDown={(e) => {
+                    if (showMentionSuggestions) {
+                      const filteredUsers = getFilteredMentionUsers()
+                      
+                      if (e.key === 'Escape') {
+                        setShowMentionSuggestions(false)
+                        setSelectedMentionIndex(0)
+                        return
+                      }
+                      
+                      if (e.key === 'ArrowDown') {
+                        e.preventDefault()
+                        setSelectedMentionIndex(prev => 
+                          prev < filteredUsers.length - 1 ? prev + 1 : 0
+                        )
+                        return
+                      }
+                      
+                      if (e.key === 'ArrowUp') {
+                        e.preventDefault()
+                        setSelectedMentionIndex(prev => 
+                          prev > 0 ? prev - 1 : filteredUsers.length - 1
+                        )
+                        return
+                      }
+                      
+                      if (e.key === 'Enter') {
+                        e.preventDefault()
+                        if (filteredUsers[selectedMentionIndex]) {
+                          insertMention(filteredUsers[selectedMentionIndex], false)
+                        }
+                        return
+                      }
+                    }
+                    
+                    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+                      e.preventDefault()
+                      handleSendMessage()
+                    }
+                  }}
+                  placeholder={
+                    typeof window !== 'undefined' && (window.innerWidth < 768 || 'ontouchstart' in window)
+                      ? `#${selectedChannel?.name} にメッセージを送信...`
+                      : `#${selectedChannel?.name} にメッセージを送信... (${window.navigator?.platform?.includes('Mac') ? 'Cmd' : 'Ctrl'}+Enterで送信)`
+                  }
+                  className="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 bg-transparent text-transparent caret-gray-900 dark:caret-white placeholder-gray-500 dark:placeholder-gray-400 min-h-[40px] max-h-[120px] leading-normal relative z-10"
+                  rows={1}
+                  onInput={(e) => {
+                    const target = e.target as HTMLTextAreaElement
+                    target.style.height = '40px'
+                    target.style.height = `${Math.min(target.scrollHeight, 120)}px`
+                  }}
+                />
+                
+                {/* Mention Suggestions */}
+                {showMentionSuggestions && !editingMessage && getFilteredMentionUsers().length > 0 && (
+                  <div className="absolute bottom-full left-0 mb-1 w-64 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 max-h-40 overflow-y-auto">
+                    {getFilteredMentionUsers().map((mentionUser, index) => (
+                      <button
+                        key={mentionUser.id}
+                        onClick={() => insertMention(mentionUser, false)}
+                        onMouseEnter={() => setSelectedMentionIndex(index)}
+                        className={`w-full text-left px-3 py-2 transition-colors flex items-center space-x-2 ${
+                          index === selectedMentionIndex 
+                            ? 'bg-blue-100 dark:bg-blue-900' 
+                            : 'hover:bg-gray-100 dark:hover:bg-gray-700'
+                        }`}
+                      >
+                        <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                          {mentionUser.display_name[0]}
+                        </div>
+                        <div>
+                          <div className="text-sm font-medium text-gray-900 dark:text-white">{mentionUser.display_name}</div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">@{mentionUser.username}</div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+            <button
+              onClick={handleSendMessage}
+              disabled={!newMessage.trim()}
+              className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
+            >
+              <Send size={16} />
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Thread View Modal */}

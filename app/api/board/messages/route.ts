@@ -280,9 +280,9 @@ export async function POST(request: NextRequest) {
 
     const messageType = thread_id ? 'thread_reply' : 'channel'
 
-    // メンションを解析
-    const mentionMatches = content.match(/@(\w+)/g) || []
-    const mentionUsernames = mentionMatches.map((match: string) => match.substring(1))
+    // メンションを解析 (display_nameに対応するため空白を含む可能性を考慮)
+    const mentionMatches = content.match(/@([^\s@]+(?:\s+[^\s@]+)*)/g) || []
+    const mentionNames = mentionMatches.map((match: string) => match.substring(1).trim())
 
     // メッセージ作成
     const { data: message, error: messageError } = await supabase
@@ -322,12 +322,12 @@ export async function POST(request: NextRequest) {
     }
 
     // メンションの処理
-    if (mentionUsernames.length > 0) {
-      // ユーザー名からIDを取得
+    if (mentionNames.length > 0) {
+      // display_nameまたはusernameからIDを取得
       const { data: mentionedUsers } = await supabase
         .from('profiles')
-        .select('id, username')
-        .in('username', mentionUsernames)
+        .select('id, username, display_name')
+        .or(mentionNames.map((name: string) => `username.eq.${name},display_name.eq.${name}`).join(','))
 
       if (mentionedUsers && mentionedUsers.length > 0) {
         // メンションレコード作成

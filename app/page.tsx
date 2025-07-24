@@ -3,6 +3,28 @@ import Link from "next/link";
 import NotificationSectionWrapper from "@/components/home/NotificationSectionWrapper";
 import { createClient } from "@/lib/supabase/server";
 
+const renderMessageWithMentions = (content: string) => {
+  // @usernameの形式のメンションを検出してスタイリング
+  // \w+ではなく[^\s@]+を使用して、空白と@以外の文字をすべてキャプチャ
+  const mentionRegex = /@([^\s@]+)/g
+  const parts = content.split(mentionRegex)
+  
+  return parts.map((part, index) => {
+    // 奇数インデックスはメンションされたユーザー名
+    if (index % 2 === 1) {
+      return (
+        <span
+          key={index}
+          className="text-blue-600 dark:text-blue-400 font-medium"
+        >
+          @{part}
+        </span>
+      )
+    }
+    return part
+  })
+}
+
 export default async function Home() {
   
   // 人気の掲示板投稿を取得
@@ -222,7 +244,12 @@ export default async function Home() {
                               </span>
                             </div>
                             <h3 className="text-lg font-bold mb-2 japanese-text text-black dark:text-white group-hover:text-blue-600 transition-colors line-clamp-2">
-                              {post.content.length > 80 ? post.content.substring(0, 80) + '...' : post.content}
+                              {post.content.length > 80 ? 
+                                <span>
+                                  {renderMessageWithMentions(post.content.substring(0, 80))}...
+                                </span> : 
+                                renderMessageWithMentions(post.content)
+                              }
                             </h3>
                             <div className="flex items-center gap-6 text-sm text-black dark:text-white">
                               <span className="font-semibold text-black dark:text-white">
@@ -291,7 +318,12 @@ export default async function Home() {
                           </span>
                         </div>
                         <h3 className="text-lg font-bold mb-2 japanese-text text-black dark:text-white group-hover:text-blue-600 transition-colors line-clamp-2">
-                          {post.content.length > 80 ? post.content.substring(0, 80) + '...' : post.content}
+                          {post.content.length > 80 ? 
+                            <span>
+                              {renderMessageWithMentions(post.content.substring(0, 80))}...
+                            </span> : 
+                            renderMessageWithMentions(post.content)
+                          }
                         </h3>
                         <div className="flex items-center gap-6 text-sm text-black dark:text-white">
                           <span className="font-semibold text-black dark:text-white">
