@@ -10,12 +10,17 @@ export default function ErrorHandler() {
       const error = event.error || event.message
 
       // Supabaseクッキー関連のエラーをチェック
+      const errorMessage = error?.message || event.message || ''
+      const errorStack = error?.stack || event.error?.stack || ''
+      
       if (
-        error?.message?.includes('Failed to parse cookie string') ||
-        error?.message?.includes('Unexpected token') ||
-        error?.message?.includes('base64-') ||
-        error?.stack?.includes('__loadSession') ||
-        error?.stack?.includes('getItem')
+        errorMessage.includes('Failed to parse cookie string') ||
+        errorMessage.includes('Unexpected token') ||
+        errorMessage.includes('base64-') ||
+        errorMessage.includes('is not valid JSON') ||
+        errorStack.includes('__loadSession') ||
+        errorStack.includes('getItem') ||
+        errorStack.includes('JSON.parse')
       ) {
         console.warn('🍪 Supabase cookie error detected, attempting auto-recovery')
         
@@ -38,10 +43,17 @@ export default function ErrorHandler() {
       const error = event.reason
 
       // Promise rejectionでもクッキーエラーをチェック
+      const errorMessage = error?.message || ''
+      const errorStack = error?.stack || ''
+      
       if (
-        error?.message?.includes('Failed to parse cookie string') ||
-        error?.message?.includes('Unexpected token') ||
-        error?.message?.includes('base64-')
+        errorMessage.includes('Failed to parse cookie string') ||
+        errorMessage.includes('Unexpected token') ||
+        errorMessage.includes('base64-') ||
+        errorMessage.includes('is not valid JSON') ||
+        errorStack.includes('__loadSession') ||
+        errorStack.includes('getItem') ||
+        errorStack.includes('JSON.parse')
       ) {
         console.warn('🍪 Supabase cookie promise rejection detected, attempting auto-recovery')
         

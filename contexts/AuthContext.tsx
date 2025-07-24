@@ -32,7 +32,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           // クッキー関連のエラーの場合、クッキーをクリア
           if (error.message?.includes('cookie') || 
               error.message?.includes('JSON') || 
-              error.message?.includes('base64')) {
+              error.message?.includes('base64') ||
+              error.message?.includes('Unexpected token') ||
+              error.message?.includes('is not valid JSON')) {
             console.warn('Cookie parsing error detected, clearing Supabase cookies')
             clearSupabaseCookies()
             // ページをリロードして新しいセッションを開始
@@ -43,10 +45,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         
         setUser(session?.user ?? null)
         setLoading(false)
-      } catch (error) {
+      } catch (error: any) {
         console.error('Failed to get session:', error)
-        // セッション取得に失敗した場合もクッキーをクリア
-        clearSupabaseCookies()
+        
+        // JSONパースエラーもキャッチ
+        if (error?.message?.includes('Failed to parse cookie string') ||
+            error?.message?.includes('Unexpected token') ||
+            error?.message?.includes('is not valid JSON') ||
+            error?.message?.includes('base64-')) {
+          console.warn('Cookie JSON parse error detected in getSession, clearing cookies')
+          clearSupabaseCookies()
+          setTimeout(() => window.location.reload(), 1000)
+          return
+        }
+        
+        // その他のセッション取得失敗の場合
         setUser(null)
         setLoading(false)
       }
