@@ -27,15 +27,11 @@ function LoginForm() {
       setError("");
       await signInWithEmail(email, password);
       
-      // セッションが確立されるまで少し待機
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
-      // ログイン成功後、ページをリフレッシュして元のページへリダイレクト
-      router.refresh();
-      router.push(redirectTo);
+      // ログイン成功後、ページ全体をリロードしてセッション状態を確実に同期
+      // これによりミドルウェアとクライアントサイドの認証状態が一致する
+      window.location.href = redirectTo;
     } catch (error: any) {
       setError(error.message || "ログインに失敗しました");
-    } finally {
       setLoading(false);
     }
   };
@@ -45,6 +41,7 @@ function LoginForm() {
       setLoading(true);
       setError("");
       await signInWithGoogle();
+      // Googleログインは別タブまたはリダイレクトを使うため、成功時の処理はcallbackで行われる
     } catch (error: any) {
       setError(error.message || "Googleログインに失敗しました");
       setLoading(false);

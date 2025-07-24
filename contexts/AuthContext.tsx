@@ -104,6 +104,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       throw error
     }
+
+    // ログイン成功後、認証状態が更新されるまで待機
+    return new Promise<void>((resolve) => {
+      const timeout = setTimeout(() => {
+        console.log('Auth state sync timeout, proceeding anyway')
+        resolve()
+      }, 3000) // 3秒でタイムアウト
+
+      const unsubscribe = supabase.auth.onAuthStateChange((event, session) => {
+        if (event === 'SIGNED_IN' && session?.user) {
+          console.log('Auth state confirmed: SIGNED_IN')
+          clearTimeout(timeout)
+          unsubscribe.data.subscription.unsubscribe()
+          resolve()
+        }
+      })
+    })
   }
 
   const signUpWithEmail = async (email: string, password: string, metadata = {}) => {
