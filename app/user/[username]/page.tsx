@@ -76,7 +76,7 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
           id,
           content,
           created_at,
-          channel:channels!messages_channel_id_fkey (
+          channel:channels (
             id,
             name
           ),
@@ -88,11 +88,16 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
           thread_reply_count
         `)
         .eq('author_id', profileData.id)
+        .is('deleted_at', null)
         .order('created_at', { ascending: false })
         .limit(10)
 
-      if (!messagesError && messagesData) {
-        setRecentMessages(messagesData as any[])
+      if (messagesError) {
+        console.error('Messages fetch error:', messagesError)
+      } else {
+        console.log('Fetched messages data:', messagesData)
+        console.log('Profile ID used for query:', profileData.id)
+        setRecentMessages(messagesData || [])
       }
 
       // メッセージ総数を取得
@@ -100,6 +105,7 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
         .from('messages')
         .select('*', { count: 'exact', head: true })
         .eq('author_id', profileData.id)
+        .is('deleted_at', null)
 
       setMessageCount(count || 0)
 
@@ -119,6 +125,7 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
   }
 
   const truncateContent = (content: string, maxLength: number = 100) => {
+    if (!content || content.trim() === '') return '画像を投稿しました'
     if (content.length <= maxLength) return content
     return content.substring(0, maxLength) + '...'
   }
@@ -185,7 +192,21 @@ export default function UserProfilePage({ params }: UserProfilePageProps) {
           <div className="flex flex-col lg:flex-row lg:items-center lg:space-x-8">
             {/* Avatar */}
             <div className="flex-shrink-0 mb-6 lg:mb-0">
-              <div className="w-24 h-24 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center text-2xl font-bold text-gray-700 dark:text-gray-300">
+              {profile.avatar_url ? (
+                <img
+                  src={profile.avatar_url}
+                  alt={`${profile.display_name || profile.username}のプロフィール画像`}
+                  className="w-24 h-24 rounded-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                    const fallbackDiv = e.currentTarget.nextElementSibling as HTMLElement;
+                    if (fallbackDiv) {
+                      fallbackDiv.style.display = 'flex';
+                    }
+                  }}
+                />
+              ) : null}
+              <div className={`w-24 h-24 bg-gray-300 dark:bg-gray-600 rounded-full flex items-center justify-center text-2xl font-bold text-gray-700 dark:text-gray-300 ${profile.avatar_url ? 'hidden' : ''}`}>
                 {profile.display_name?.[0] || profile.username?.[0] || '?'}
               </div>
             </div>

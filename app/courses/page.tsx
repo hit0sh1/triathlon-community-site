@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { MapPin, Activity, Filter, Star } from 'lucide-react'
+import { MapPin, Activity, Filter, Star, Plus } from 'lucide-react'
 import StarRating from '@/components/StarRating'
 import { supabase } from '@/lib/supabase'
 import type { Database } from '@/lib/supabase'
+import { isAdmin } from '@/lib/admin'
 
 type Course = Database['public']['Tables']['courses']['Row'] & {
   average_rating?: number
@@ -21,10 +22,21 @@ export default function CoursesPage() {
   const [courses, setCourses] = useState<Course[]>([])
   const [loading, setLoading] = useState(true)
   const [areas, setAreas] = useState<string[]>(['すべて'])
+  const [userIsAdmin, setUserIsAdmin] = useState(false)
 
   useEffect(() => {
     fetchCourses()
+    checkAdminStatus()
   }, [])
+
+  const checkAdminStatus = async () => {
+    try {
+      const adminStatus = await isAdmin()
+      setUserIsAdmin(adminStatus)
+    } catch (error) {
+      console.error('Error checking admin status:', error)
+    }
+  }
 
   const fetchCourses = async () => {
     try {
@@ -79,13 +91,16 @@ export default function CoursesPage() {
               <h1 className="heading-1 mb-4 japanese-text text-white">おすすめコース</h1>
               <p className="body-large text-white">沖縄の美しい自然を満喫できるトレーニングコース</p>
             </div>
-            <Link
-              href="/courses/create"
-              className="btn-primary bg-white text-blue-600 hover:bg-gray-100 px-6 py-3 font-bold shadow-xl cursor-pointer"
-              onClick={() => console.log('Create course button clicked (PC)')}
-            >
-              新しいコースを投稿
-            </Link>
+            {userIsAdmin && (
+              <Link
+                href="/courses/create"
+                className="btn-primary bg-white text-blue-600 hover:bg-gray-100 px-6 py-3 font-bold shadow-xl cursor-pointer"
+                onClick={() => console.log('Create course button clicked (PC)')}
+              >
+                <Plus size={20} className="mr-2" />
+                新しいコースを投稿
+              </Link>
+            )}
           </div>
 
           {/* Mobile Layout */}
@@ -94,15 +109,18 @@ export default function CoursesPage() {
               <h1 className="heading-1 mb-4 japanese-text text-white">おすすめコース</h1>
               <p className="body-large text-white">沖縄の美しい自然を満喫できるトレーニングコース</p>
             </div>
-            <div className="text-center">
-              <Link
-                href="/courses/create"
-                className="btn-primary bg-white text-blue-600 hover:bg-gray-100 px-6 py-3 font-bold shadow-xl cursor-pointer"
-                onClick={() => console.log('Create course button clicked (Mobile)')}
-              >
-                新しいコースを投稿
-              </Link>
-            </div>
+            {userIsAdmin && (
+              <div className="text-center">
+                <Link
+                  href="/courses/create"
+                  className="btn-primary bg-white text-blue-600 hover:bg-gray-100 px-6 py-3 font-bold shadow-xl cursor-pointer"
+                  onClick={() => console.log('Create course button clicked (Mobile)')}
+                >
+                  <Plus size={20} className="mr-2" />
+                  新しいコースを投稿
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </div>

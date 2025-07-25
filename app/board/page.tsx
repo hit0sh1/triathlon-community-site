@@ -59,6 +59,7 @@ export default function SlackBoardPage() {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
   const [showMessageActions, setShowMessageActions] = useState<string | null>(null)
   const [uploadingImage, setUploadingImage] = useState(false)
+  const [sendingMessage, setSendingMessage] = useState(false)
   const [selectedImages, setSelectedImages] = useState<File[]>([])
   const [imagePreviewUrls, setImagePreviewUrls] = useState<string[]>([])
   const [enlargedImage, setEnlargedImage] = useState<string | null>(null)
@@ -978,7 +979,9 @@ export default function SlackBoardPage() {
   }
 
   const handleSendMessage = async () => {
-    if ((!newMessage.trim() && selectedImages.length === 0) || !user || !selectedChannelId) return
+    if ((!newMessage.trim() && selectedImages.length === 0) || !user || !selectedChannelId || sendingMessage) return
+    
+    setSendingMessage(true)
     
     // 詳細な認証状態チェック
     const supabase = createClientComponentClient()
@@ -1033,6 +1036,8 @@ export default function SlackBoardPage() {
       console.error('Failed to send message:', error)
       // エラーの場合はメッセージをリセットしない
       return
+    } finally {
+      setSendingMessage(false)
     }
   }
 
@@ -1672,7 +1677,21 @@ export default function SlackBoardPage() {
               {/* Avatar */}
               <div className="flex-shrink-0">
                 <Link href={`/user/${message.author.username}`}>
-                  <div className="w-10 h-10 bg-gray-300 dark:bg-gray-600 rounded-lg flex items-center justify-center hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors cursor-pointer">
+                  {message.author.avatar_url ? (
+                    <img
+                      src={message.author.avatar_url}
+                      alt={`${message.author.display_name || message.author.username}のアバター`}
+                      className="w-10 h-10 rounded-lg object-cover hover:opacity-80 transition-opacity cursor-pointer"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                        const fallbackDiv = e.currentTarget.nextElementSibling as HTMLElement;
+                        if (fallbackDiv) {
+                          fallbackDiv.style.display = 'flex';
+                        }
+                      }}
+                    />
+                  ) : null}
+                  <div className={`w-10 h-10 bg-gray-300 dark:bg-gray-600 rounded-lg flex items-center justify-center hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors cursor-pointer ${message.author.avatar_url ? 'hidden' : ''}`}>
                     <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       {message.author.display_name?.[0] || message.author.username?.[0] || '?'}
                     </span>
@@ -2133,10 +2152,10 @@ export default function SlackBoardPage() {
             </div>
             <button
               onClick={handleSendMessage}
-              disabled={(!newMessage.trim() && selectedImages.length === 0) || uploadingImage}
+              disabled={(!newMessage.trim() && selectedImages.length === 0) || uploadingImage || sendingMessage}
               className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
             >
-              {uploadingImage ? (
+              {uploadingImage || sendingMessage ? (
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
               ) : (
                 <Send size={16} />

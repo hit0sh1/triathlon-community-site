@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { createClient } from '@/lib/supabase/client'
 import { Database } from '@/lib/supabase'
 import ImageUploader from '@/components/ImageUploader'
+import { isAdmin } from '@/lib/admin'
 
 type Photo = Database['public']['Tables']['gallery_photos']['Row'] & {
   profiles: {
@@ -38,6 +39,7 @@ export default function GalleryPage() {
     tags: ''
   })
   const [uploading, setUploading] = useState(false)
+  const [userIsAdmin, setUserIsAdmin] = useState(false)
   const supabase = createClient()
 
   const categories = ['全て', '大会', '練習']
@@ -48,7 +50,17 @@ export default function GalleryPage() {
 
   useEffect(() => {
     fetchPhotos()
+    checkAdminStatus()
   }, [])
+
+  const checkAdminStatus = async () => {
+    try {
+      const adminStatus = await isAdmin()
+      setUserIsAdmin(adminStatus)
+    } catch (error) {
+      console.error('Error checking admin status:', error)
+    }
+  }
 
   const fetchPhotos = async () => {
     try {
@@ -233,7 +245,7 @@ export default function GalleryPage() {
               <h1 className="text-4xl font-bold mb-4">フォトギャラリー</h1>
               <p className="text-xl">メンバーが投稿した練習・大会の写真</p>
             </div>
-            {user && (
+            {userIsAdmin && (
               <button
                 onClick={() => setShowPostForm(true)}
                 className="bg-white text-blue-600 hover:bg-gray-100 px-4 py-2 rounded-lg flex items-center gap-2 transition-colors font-medium shadow-lg"

@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
+import { requireAdminServer } from '@/lib/admin-server'
 
 export async function GET(request: Request) {
   const supabase = createClient(
@@ -54,12 +55,14 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  )
-
   try {
+    // Admin権限チェック
+    const user = await requireAdminServer()
+    
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    )
     const body = await request.json()
     const {
       title,
@@ -137,8 +140,11 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ cafe })
-  } catch (error) {
+  } catch (error: any) {
     console.error('Unexpected error:', error)
+    if (error?.message === '管理者権限が必要です') {
+      return NextResponse.json({ error: 'Admin permission required' }, { status: 403 })
+    }
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

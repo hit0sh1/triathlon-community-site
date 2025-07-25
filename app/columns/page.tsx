@@ -6,6 +6,7 @@ import { Plus, BookOpen, Calendar, Eye, User, Edit, Trash2, Search, Filter, Star
 import { useAuth } from '@/contexts/AuthContext'
 import { getColumns, deleteColumnByUser, Column } from '@/lib/columns'
 import { toast } from 'react-hot-toast'
+import { isAdmin } from '@/lib/admin'
 
 export default function ColumnsPage() {
   const [columns, setColumns] = useState<Column[]>([])
@@ -13,11 +14,22 @@ export default function ColumnsPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [sortBy, setSortBy] = useState('created_at')
+  const [userIsAdmin, setUserIsAdmin] = useState(false)
   const { user } = useAuth()
 
   useEffect(() => {
     fetchColumns()
+    checkAdminStatus()
   }, [])
+
+  const checkAdminStatus = async () => {
+    try {
+      const adminStatus = await isAdmin()
+      setUserIsAdmin(adminStatus)
+    } catch (error) {
+      console.error('Error checking admin status:', error)
+    }
+  }
 
   const fetchColumns = async () => {
     try {
@@ -121,7 +133,7 @@ export default function ColumnsPage() {
               専門家による役立つ情報をお届けします
             </p>
           </div>
-          {user && (
+          {userIsAdmin && (
             <Link
               href="/columns/create"
               className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors"
@@ -282,8 +294,8 @@ export default function ColumnsPage() {
                   </div>
                 </Link>
                 
-                {/* Author Actions */}
-                {user && column.created_by === user.id && (
+                {/* Admin Actions */}
+                {userIsAdmin && (
                   <div className="px-6 pb-4 flex items-center gap-2">
                     <Link
                       href={`/columns/${column.id}/edit`}

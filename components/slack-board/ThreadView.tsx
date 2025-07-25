@@ -187,7 +187,21 @@ const ExternalMessageComponent = memo(({
       {/* Avatar */}
       <div className="flex-shrink-0">
         <Link href={`/user/${message.author.username}`}>
-          <div className="w-10 h-10 bg-gray-300 dark:bg-gray-600 rounded-lg flex items-center justify-center hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors cursor-pointer">
+          {message.author.avatar_url ? (
+            <img
+              src={message.author.avatar_url}
+              alt={`${message.author.display_name || message.author.username}のアバター`}
+              className="w-10 h-10 rounded-lg object-cover hover:opacity-80 transition-opacity cursor-pointer"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+                const fallbackDiv = e.currentTarget.nextElementSibling as HTMLElement;
+                if (fallbackDiv) {
+                  fallbackDiv.style.display = 'flex';
+                }
+              }}
+            />
+          ) : null}
+          <div className={`w-10 h-10 bg-gray-300 dark:bg-gray-600 rounded-lg flex items-center justify-center hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors cursor-pointer ${message.author.avatar_url ? 'hidden' : ''}`}>
             <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
               {message.author.display_name?.[0] || message.author.username?.[0] || '?'}
             </span>
@@ -477,6 +491,7 @@ export default function ThreadView({ threadMessage, onClose, onSendReply, onAddR
   const [selectedImages, setSelectedImages] = useState<File[]>([])
   const [imagePreviewUrls, setImagePreviewUrls] = useState<string[]>([])
   const [uploadingImage, setUploadingImage] = useState(false)
+  const [sendingReply, setSendingReply] = useState(false)
   const [enlargedImage, setEnlargedImage] = useState<string | null>(null)
   const emojiPickerRef = useRef<HTMLDivElement>(null)
   const textareaRefs = useRef<{[key: string]: HTMLTextAreaElement}>({})
@@ -735,7 +750,9 @@ export default function ThreadView({ threadMessage, onClose, onSendReply, onAddR
   }
 
   const handleSendReply = async () => {
-    if ((!replyContent.trim() && selectedImages.length === 0) || !user) return
+    if ((!replyContent.trim() && selectedImages.length === 0) || !user || sendingReply) return
+    
+    setSendingReply(true)
     
     console.log('Thread reply attempt:', {
       threadId: threadMessage.id,
@@ -779,6 +796,8 @@ export default function ThreadView({ threadMessage, onClose, onSendReply, onAddR
       }
     } catch (error) {
       console.error('Failed to send reply:', error)
+    } finally {
+      setSendingReply(false)
     }
   }
 
@@ -1181,10 +1200,10 @@ export default function ThreadView({ threadMessage, onClose, onSendReply, onAddR
             </div>
             <button
               onClick={handleSendReply}
-              disabled={(!replyContent.trim() && selectedImages.length === 0) || uploadingImage}
+              disabled={(!replyContent.trim() && selectedImages.length === 0) || uploadingImage || sendingReply}
               className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center"
             >
-              {uploadingImage ? (
+              {uploadingImage || sendingReply ? (
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
               ) : (
                 <Send size={16} />

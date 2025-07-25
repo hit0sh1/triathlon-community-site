@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { MapPin, Wifi, Car, Zap, Star, ArrowRight, Coffee, Plus, Search } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
+import { isAdmin } from '@/lib/admin'
 
 interface CafePost {
   id: string
@@ -37,11 +38,22 @@ export default function CafesPage() {
   const [search, setSearch] = useState('')
   const [selectedTags, setSelectedTags] = useState<string[]>([])
   const [allTags, setAllTags] = useState<string[]>([])
+  const [userIsAdmin, setUserIsAdmin] = useState(false)
   const { user } = useAuth()
 
   useEffect(() => {
     fetchCafes()
+    checkAdminStatus()
   }, [search, selectedTags])
+
+  const checkAdminStatus = async () => {
+    try {
+      const adminStatus = await isAdmin()
+      setUserIsAdmin(adminStatus)
+    } catch (error) {
+      console.error('Error checking admin status:', error)
+    }
+  }
 
   const fetchCafes = async () => {
     try {
@@ -104,8 +116,8 @@ export default function CafesPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* カフェ投稿ボタン */}
-        {user && (
+        {/* カフェ投稿ボタン - Admin Only */}
+        {userIsAdmin && (
           <div className="mb-6">
             <Link
               href="/cafes/new"
@@ -158,7 +170,7 @@ export default function CafesPage() {
           <div className="text-center py-12">
             <Coffee className="h-16 w-16 text-gray-400 mx-auto mb-4" />
             <p className="text-gray-500 text-lg mb-4">該当するカフェがありません</p>
-            {user && (
+            {userIsAdmin && (
               <Link
                 href="/cafes/new"
                 className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors"

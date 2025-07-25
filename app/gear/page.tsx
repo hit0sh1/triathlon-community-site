@@ -7,6 +7,7 @@ import { getGearReviews, getGearCategories } from '@/lib/gear'
 import GearReviewCard from '@/components/gear/GearReviewCard'
 import GearReviewForm from '@/components/gear/GearReviewForm'
 import type { GearReviewWithDetails, GearCategory } from '@/lib/gear'
+import { isAdmin } from '@/lib/admin'
 
 export default function GearPage() {
   const { user } = useAuth()
@@ -16,10 +17,21 @@ export default function GearPage() {
   const [categories, setCategories] = useState<GearCategory[]>([])
   const [loading, setLoading] = useState(true)
   const [editingReview, setEditingReview] = useState<any>(null)
+  const [userIsAdmin, setUserIsAdmin] = useState(false)
 
   useEffect(() => {
     fetchData()
+    checkAdminStatus()
   }, [])
+
+  const checkAdminStatus = async () => {
+    try {
+      const adminStatus = await isAdmin()
+      setUserIsAdmin(adminStatus)
+    } catch (error) {
+      console.error('Error checking admin status:', error)
+    }
+  }
 
   useEffect(() => {
     fetchReviews()
@@ -129,7 +141,7 @@ export default function GearPage() {
             </div>
           </div>
           
-          {user && (
+          {userIsAdmin && (
             <div className="flex-shrink-0">
               <button
                 onClick={() => {
