@@ -11,6 +11,25 @@ import ErrorHandler from '@/components/ErrorHandler';
 export const metadata: Metadata = {
   title: "沖縄トライアスロンコミュニティ",
   description: "沖縄のトライアスロン、サイクリング、ランニングを愛する人々のためのコミュニティサイト",
+  openGraph: {
+    title: "沖縄トライアスロンコミュニティ",
+    description: "沖縄のトライアスロン、サイクリング、ランニングを愛する人々のためのコミュニティサイト",
+    type: "website",
+    siteName: "沖縄トライアスロンコミュニティ",
+    images: [
+      {
+        url: "/api/og",
+        width: 1200,
+        height: 630,
+        alt: "沖縄トライアスロンコミュニティ",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "沖縄トライアスロンコミュニティ",
+    description: "沖縄のトライアスロン、サイクリング、ランニングを愛する人々のためのコミュニティサイト",
+  },
 };
 
 export default function RootLayout({
